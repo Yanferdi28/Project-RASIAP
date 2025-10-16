@@ -1,0 +1,25 @@
+/* Mengimpor tema dasar Filament */
+@import '/vendor/filament/filament/resources/css/theme.css';
+
+/* Konfigurasi Tailwind (biasanya sudah ada) */
+@config '../../../../tailwind.config.js';
+
+/* --- TAMBAHKAN KODE DI BAWAH INI --- */
+
+/* Atur warna header untuk mode terang (light mode) */
+.fi-topbar {
+    @apply bg-gray-200; /* Ganti 'bg-amber-500' dengan warna Tailwind yang Anda inginkan */
+}
+
+.fi-sidebar {
+    @apply bg-gray-300 dark:bg-gray-950;
+}
+
+/* Atur warna header untuk mode gelap (dark mode) */
+.dark .fi-topbar {
+    @apply bg-gray-800; /* Ganti 'bg-amber-700' dengan warna dark mode yang Anda inginkan */
+}
+
+.dark .fi-sidebar {
+    @apply bg-gray-900;
+}

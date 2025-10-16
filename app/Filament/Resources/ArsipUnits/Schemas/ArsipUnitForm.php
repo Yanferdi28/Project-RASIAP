@@ -20,8 +20,10 @@ class ArsipUnitForm
             ->components([
                 Select::make('kode_klasifikasi_id')
                     ->label('Kode Klasifikasi')
-                    ->relationship(name: 'kodeKlasifikasi', titleAttribute: 'uraian')
-                    ->searchable()
+                    ->relationship(name: 'kodeKlasifikasi') // Hapus titleAttribute
+                    // Tambahkan method di bawah ini
+                    ->getOptionLabelFromRecordUsing(fn (KodeKlasifikasi $record) => "{$record->kode_klasifikasi} - {$record->uraian}")
+                    ->searchable(['kode_klasifikasi', 'uraian'])
                     ->preload()
                     ->required()
                     ->live()

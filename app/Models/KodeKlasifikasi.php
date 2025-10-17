@@ -9,7 +9,6 @@ class KodeKlasifikasi extends Model
 {
     use HasFactory;
 
-    // IZINKAN mass assignment untuk field yang diisi dari form Filament
     protected $fillable = [
         'kode_klasifikasi',
         'kode_klasifikasi_induk',

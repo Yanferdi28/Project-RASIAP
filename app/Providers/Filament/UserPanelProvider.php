@@ -23,13 +23,12 @@ class UserPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->id('user') // ID panel
-            ->path('user') // URL panel
+            ->id('user')
+            ->path('user')
             ->homeUrl(fn () => route('filament.user.pages.dashboard'))
             ->colors([
-                'primary' => Color::Blue, // Beri warna berbeda agar mudah dikenali
+                'primary' => Color::Blue,
             ])
-            // Menentukan lokasi resource, page, dan widget untuk panel INI SAJA
             ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')
             ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
             ->pages([
@@ -37,7 +36,6 @@ class UserPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/User/Widgets'), for: 'App\\Filament\\User\\Widgets')
             ->widgets([
-                // daftarkan widget Anda di sini
             ])
             ->middleware([
                 EncryptCookies::class,

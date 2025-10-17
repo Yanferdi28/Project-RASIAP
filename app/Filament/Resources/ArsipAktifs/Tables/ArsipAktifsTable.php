@@ -1,46 +1,45 @@
 <?php
 
-namespace App\Filament\Resources\ArsipUnits\Tables;
+namespace App\Filament\Resources\ArsipAktifs\Tables;
 
+use App\Models\ArsipAktif;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class ArsipUnitsTable
+class ArsipAktifsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('kode_klasifikasi')
-                    ->sortable()
+                TextColumn::make('nama_berkas')
                     ->searchable(),
-                TextColumn::make('indeks')
-                    ->searchable(),
-                TextColumn::make('tanggal')
-                    ->date()
-                    ->sortable(),
-                TextColumn::make('jumlah_nilai')
+
+                TextColumn::make('klasifikasi')
+                    ->label('Klasifikasi')
+                    ->getStateUsing(function (ArsipAktif $record) {
+                        if ($record->klasifikasi) {
+                            return "{$record->klasifikasi->kode_klasifikasi} - {$record->klasifikasi->uraian}";
+                        }
+                        return 'Tidak ada'; 
+                    })
+                    ->searchable(['klasifikasi.kode_klasifikasi', 'klasifikasi.uraian'])
+                    ->sortable('klasifikasi.kode_klasifikasi'),
+
+                TextColumn::make('retensi_aktif')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('jumlah_satuan')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('tingkat_perkembangan')
-                    ->searchable(),
-                TextColumn::make('skkaad')
-                    ->searchable(),
-                TextColumn::make('retensi_aktif')
-                    ->numeric(),
                 TextColumn::make('retensi_inaktif')
-                    ->numeric(),
-                TextColumn::make('ruangan')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('penyusutan_akhir')
                     ->searchable(),
-                TextColumn::make('no_filling')
+                TextColumn::make('lokasi_fisik')
                     ->searchable(),
-                TextColumn::make('no_laci')
+                TextColumn::make('kategori_berkas')
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()

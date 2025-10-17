@@ -3,13 +3,12 @@
 namespace App\Filament\Resources\ArsipUnits\Schemas;
 
 use App\Models\KodeKlasifikasi;
+use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Set;
 use Filament\Schemas\Schema;
-
 
 class ArsipUnitForm
 {
@@ -20,18 +19,17 @@ class ArsipUnitForm
             ->components([
                 Select::make('kode_klasifikasi_id')
                     ->label('Kode Klasifikasi')
-                    ->relationship(name: 'kodeKlasifikasi') // Hapus titleAttribute
-                    // Tambahkan method di bawah ini
+                    ->relationship(name: 'kodeKlasifikasi')
                     ->getOptionLabelFromRecordUsing(fn (KodeKlasifikasi $record) => "{$record->kode_klasifikasi} - {$record->uraian}")
                     ->searchable(['kode_klasifikasi', 'uraian'])
                     ->preload()
                     ->required()
                     ->live()
-                    // DIUBAH: Parameter di dalam function diubah menjadi callable
-                    ->afterStateUpdated(function (?string $state, callable $set) { 
+                    ->afterStateUpdated(function (?string $state, callable $set) {
                         if (blank($state)) {
                             $set('retensi_aktif', null);
                             $set('retensi_inaktif', null);
+                            $set('skkaad', null);
                             return;
                         }
                         
@@ -42,20 +40,10 @@ class ArsipUnitForm
 
                         $set('retensi_aktif', $klasifikasi->retensi_aktif);
                         $set('retensi_inaktif', $klasifikasi->retensi_inaktif);
+                        $set('skkaad', $klasifikasi->klasifikasi_keamanan);
                     })
                     ->columnSpanFull(),
-                
-                TextInput::make('retensi_aktif')
-                    ->label('Retensi Aktif (Tahun)')
-                    ->numeric()
-                    ->disabled(),
 
-                TextInput::make('retensi_inaktif')
-                    ->label('Retensi Inaktif (Tahun)')
-                    ->numeric()
-                    ->disabled(),
-
-                // ... sisa komponen form Anda tetap sama ...
                 Select::make('unit_pengolah_arsip_id')
                     ->label('Unit Pengolah Arsip')
                     ->relationship(name: 'unitPengolah', titleAttribute: 'nama_unit')
@@ -74,9 +62,27 @@ class ArsipUnitForm
                 DatePicker::make('tanggal')
                     ->required(),
                 
-                TextInput::make('jumlah')
-                    ->numeric()
-                    ->required(),
+
+                Grid::make(2)
+                    ->schema([
+                        TextInput::make('jumlah_nilai')
+                            ->label('Jumlah')
+                            ->numeric()
+                            ->required()
+                            ->columnSpan(1),
+
+                        Select::make('jumlah_satuan')
+                            ->label('Satuan')
+                            ->options([
+                                'Lembar' => 'Lembar',
+                                'Jilid' => 'Jilid',
+                                'Bundle' => 'Bundle',
+                            ])
+                            ->default('Lembar')
+                            ->required()
+                            ->columnSpan(1),
+                    ])
+                    ->columns(2),
                 
                 Select::make('tingkat_perkembangan')
                     ->options([
@@ -87,10 +93,18 @@ class ArsipUnitForm
                     ])
                     ->required(),
 
-                TextInput::make('no_item_arsip')
-                    ->label('No. Item Arsip'),
+                TextInput::make('skkaad')
+                    ->disabled(),
 
-                TextInput::make('skkaad'),
+                TextInput::make('retensi_aktif')
+                    ->label('Retensi Aktif (Tahun)')
+                    ->numeric()
+                    ->disabled(),
+
+                TextInput::make('retensi_inaktif')
+                    ->label('Retensi Inaktif (Tahun)')
+                    ->numeric()
+                    ->disabled(),
 
                 TextInput::make('ruangan'),
 
@@ -101,10 +115,7 @@ class ArsipUnitForm
                     ->label('No. Laci'),
 
                 TextInput::make('no_folder')
-                    ->label('No. Folder'),
-                    
-                Textarea::make('keterangan')
-                    ->columnSpanFull(),
+                    ->label('No. Folder'),                   
             ]);
     }
 }

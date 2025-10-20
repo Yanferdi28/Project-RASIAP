@@ -13,20 +13,21 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class ArsipAktifResource extends Resource
 {
     protected static ?string $model = ArsipAktif::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
     protected static ?string $recordTitleAttribute = 'Arsip Aktif';
 
-    protected static ?string $navigationLabel = 'Arsip Aktif';
+    protected static ?string $navigationLabel = 'Pemberkasan Arsip Aktif';
 
-    protected static ?string $modelLabel = 'Arsip Aktif';
+    protected static ?string $modelLabel = 'Pemberkasan Arsip Aktif';
     
-    protected static ?string $pluralLabel = 'Arsip Aktif';
+    protected static ?string $pluralLabel = 'Pemberkasan Arsip Aktif';
+    
+    protected static string | UnitEnum | null $navigationGroup = 'Pemeliharaan Arsip';
 
     public static function form(Schema $schema): Schema
     {

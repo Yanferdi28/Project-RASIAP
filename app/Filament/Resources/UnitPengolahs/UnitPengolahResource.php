@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class UnitPengolahResource extends Resource
 {
@@ -27,6 +28,8 @@ class UnitPengolahResource extends Resource
     protected static ?string $modelLabel = 'Unit Pengolah';
     
     protected static ?string $pluralLabel = 'Unit Pengolah';
+
+    protected static string | UnitEnum | null $navigationGroup = 'Master';
 
     public static function form(Schema $schema): Schema
     {

@@ -14,7 +14,8 @@ class ListArsipAktifs extends ListRecords
     {
         return [
             CreateAction::make()
-            ->label('Tambah Arsip Aktif'),
+            ->label('Tambah Arsip Aktif')
+            ->color('secondary'),
         ];
     }
 }

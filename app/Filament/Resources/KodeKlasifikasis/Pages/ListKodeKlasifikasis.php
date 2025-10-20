@@ -14,7 +14,8 @@ class ListKodeKlasifikasis extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label('Tambah Kode Klasifikasi'),
+                ->label('Tambah Kode Klasifikasi')
+                ->color('secondary'),
         ];
     }
 }

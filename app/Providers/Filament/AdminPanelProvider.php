@@ -19,6 +19,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Widgets\StatsOverview;
+use Filament\Navigation\NavigationGroup;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -32,8 +33,20 @@ class AdminPanelProvider extends PanelProvider
             ->homeUrl(fn () => route('filament.admin.pages.dashboard'))
             ->colors([
                 'primary' => Color::Amber,
+                'secondary' => Color::Blue,
+            ])
+            ->sidebarCollapsibleOnDesktop()
+            ->sidebarWidth('18rem')
+            ->navigationGroups([
+                NavigationGroup::make()
+                     ->label('Pemeliharaan Arsip')
+                     ->icon('heroicon-o-archive-box'),
+                NavigationGroup::make()
+                     ->label('Master')
+                     ->icon('heroicon-o-cog-6-tooth'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
+            
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,

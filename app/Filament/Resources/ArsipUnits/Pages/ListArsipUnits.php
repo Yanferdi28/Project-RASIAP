@@ -14,7 +14,8 @@ class ListArsipUnits extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label('Tambah Arsip Unit'),
+                ->label('Tambah Arsip Unit')
+                ->color('secondary'),
         ];
     }
 }

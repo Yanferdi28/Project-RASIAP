@@ -14,7 +14,8 @@ class ListUnitPengolahs extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label('Tambah Unit Pengolah'),
+                ->label('Tambah Unit Pengolah')
+                ->color('secondary'),
         ];
     }
 }

@@ -40,6 +40,8 @@ class ArsipUnit extends Model
         'no_filling',
         'no_laci',
         'no_folder',
+        'no_box',
+        'dokumen',
         'keterangan',
     ];
 

@@ -9,30 +9,49 @@ use Filament\Facades\Filament;
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
+| Arahkan root "/" langsung ke halaman login Laravel.
+| Pastikan scaffolding auth (Breeze/Jetstream/Fortify) sudah terpasang
+| agar route /login tersedia.
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Root: selalu redirect ke /login
+Route::redirect('/', '/login');
 
+// (Opsional tapi disarankan): semua URL tak dikenal → /login
+Route::fallback(fn () => redirect('/login'));
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard (terproteksi)
+|--------------------------------------------------------------------------
+| Setelah login & verifikasi email, user diarahkan ke sini.
+| Admin → panel 'admin', selain admin → panel 'user'.
+*/
 Route::get('/dashboard', function () {
     $user = Auth::user();
 
-    // DITAMBAHKAN: PHPDoc untuk memberitahu linter tipe dari variabel $user
     /** @var \App\Models\User|null $user */
     if ($user && $user->hasRole('admin')) {
         return redirect(Filament::getPanel('admin')->getUrl());
     }
 
     return redirect(Filament::getPanel('user')->getUrl());
-
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-
+/*
+|--------------------------------------------------------------------------
+| Profil (terproteksi)
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+/*
+|--------------------------------------------------------------------------
+| Auth scaffolding routes
+|--------------------------------------------------------------------------
+*/
+require __DIR__ . '/auth.php';

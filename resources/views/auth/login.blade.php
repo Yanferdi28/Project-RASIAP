@@ -28,9 +28,6 @@
     .clouds::after{ bottom:0; opacity:.7; }
 
     .wrap { position:relative; min-height:100%; display:flex; align-items:center; justify-content:center; padding:16px; }
-    .brand { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
-    .logo { width:32px; height:32px; border-radius:12px; background:#0a0a0a; color:#fff; display:grid; place-items:center; font-weight:700; font-size:13px; }
-    .brand span { color:#6B7280; font-size:13px; }
 
     .card {
       width:100%; max-width:420px; background:var(--card-bg); backdrop-filter: blur(8px);
@@ -38,10 +35,13 @@
     }
     .card-inner { padding:28px; }
 
-    .icon {
-      width:48px; height:48px; border-radius:14px; background:#f3f4f6; margin:0 auto 18px; display:grid; place-items:center;
-    }
-    .icon svg { width:26px; height:26px; stroke:#111827; }
+    .icon img {
+        width: clamp(72px, 10vw, 120px); /* min 72px, bisa membesar sampai 120px */
+        height: auto;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto 18px;
+        }
 
     h1 { margin:0; text-align:center; color:var(--text); font-weight:600; font-size:20px; }
     .sub { margin-top:6px; text-align:center; color:var(--muted); font-size:14px; }
@@ -79,22 +79,16 @@
 
   <div class="wrap">
     <div style="width:100%; max-width:420px;">
-      <div class="brand">
-        <div class="logo">R</div>
-        <span>RASIAP</span>
-      </div>
+      
 
       <div class="card">
         <div class="card-inner">
           <div class="icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"
-                d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-7.5A2.25 2.25 0 003.75 5.25v13.5A2.25 2.25 0 006 21h7.5a2.25 2.25 0 002.25-2.25V15M12 9l3 3m0 0l-3 3m3-3H6"/>
-            </svg>
+            <img src="{{ asset('images/logo-light.png') }}" alt="Logo">
           </div>
 
-          <h1>Sign in with email</h1>
-          <p class="sub">Make a new doc to bring your words, data, and teams together. For free</p>
+          <h1>Login dengan Email</h1>
+          <p class="sub">Selamat Datang</p>
 
           <form method="POST" action="{{ route('login') }}" style="margin-top:16px;">
             @csrf
@@ -123,22 +117,22 @@
             </div>
 
             <div class="row">
-              <label class="remember"><input type="checkbox" name="remember"> Remember me</label>
+              <label class="remember"><input type="checkbox" name="remember"> Ingat Password</label>
               @if (Route::has('password.request'))
-                <a class="link" href="{{ route('password.request') }}">Forgot password?</a>
+                <a class="link" href="{{ route('password.request') }}">Lupa Password?</a>
               @endif
             </div>
 
-            <button type="submit" class="btn">Get Started</button>
+            <button type="submit" class="btn">Login</button>
           </form>
 
           @if (Route::has('register'))
-            <p class="register">Don’t have an account? <a href="{{ route('register') }}">Create one</a></p>
+            <p class="register">Tidak Punya Akun? <a href="{{ route('register') }}">Buat Akun</a></p>
           @endif
         </div>
       </div>
 
-      <p class="footer">© {{ date('Y') }} RASIAP. All rights reserved.</p>
+      <p class="footer">© {{ date('Y') }} All rights reserved.</p>
     </div>
   </div>
 </body>

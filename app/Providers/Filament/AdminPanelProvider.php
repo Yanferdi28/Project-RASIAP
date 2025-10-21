@@ -10,8 +10,6 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -20,6 +18,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Widgets\StatsOverview;
 use Filament\Navigation\NavigationGroup;
+
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -32,18 +31,19 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->homeUrl(fn () => route('filament.admin.pages.dashboard'))
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Blue, 
                 'secondary' => Color::Blue,
             ])
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('18rem')
             ->navigationGroups([
+
                 NavigationGroup::make()
-                     ->label('Pemeliharaan Arsip')
-                     ->icon('heroicon-o-archive-box'),
+                    ->label('Pemeliharaan Arsip')
+                    ->icon('heroicon-o-archive-box'),
                 NavigationGroup::make()
-                     ->label('Master')
-                     ->icon('heroicon-o-cog-6-tooth'),
+                    ->label('Master')
+                    ->icon('heroicon-o-cog-6-tooth'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             

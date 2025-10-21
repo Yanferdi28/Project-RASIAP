@@ -8,6 +8,9 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Actions\ExportAction;
+use App\Filament\Exports\ArsipAktifExporter;
+use Filament\Actions\Exports\Enums\ExportFormat;
 
 class ArsipAktifsTable
 {
@@ -57,6 +60,15 @@ class ArsipAktifsTable
                 EditAction::make(),
             ])
             ->toolbarActions([
+                ExportAction::make()
+                    ->label('Ekspor ke Excel')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->exporter(ArsipAktifExporter::class)
+                    ->formats([
+                        ExportFormat::Xlsx,
+                        ExportFormat::Csv,
+                    ])
+                    ->color('secondary'),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

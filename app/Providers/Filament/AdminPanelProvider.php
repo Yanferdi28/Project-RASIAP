@@ -34,6 +34,8 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Blue, 
                 'secondary' => Color::Blue,
             ])
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('10s')
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('18rem')
             ->navigationGroups([

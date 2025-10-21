@@ -7,6 +7,7 @@ use App\Filament\Resources\ArsipAktifs\Pages\EditArsipAktif;
 use App\Filament\Resources\ArsipAktifs\Pages\ListArsipAktifs;
 use App\Filament\Resources\ArsipAktifs\Schemas\ArsipAktifForm;
 use App\Filament\Resources\ArsipAktifs\Tables\ArsipAktifsTable;
+use App\Filament\Exports\ArsipAktifExporter;
 use App\Models\ArsipAktif;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -44,6 +45,11 @@ class ArsipAktifResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function getExporter(): ?string
+    {
+        return ArsipAktifExporter::class;
     }
 
     public static function getPages(): array

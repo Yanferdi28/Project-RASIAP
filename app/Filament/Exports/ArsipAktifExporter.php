@@ -18,21 +18,17 @@ class ArsipAktifExporter extends Exporter
     public static function getColumns(): array
     {
         return [
-            // Kolom 'nomor_berkas' (primary key)
             ExportColumn::make('nomor_berkas')
                 ->label('Nomor Berkas'),
             
-            // Kolom 'nama_berkas'
             ExportColumn::make('nama_berkas')
                 ->label('Nama Berkas'),
             
-            // Kolom dari relasi 'klasifikasi'
             ExportColumn::make('klasifikasi.kode_klasifikasi')
                 ->label('Kode Klasifikasi'),
             ExportColumn::make('klasifikasi.uraian')
                 ->label('Uraian Klasifikasi'),
 
-            // Kolom lainnya
             ExportColumn::make('retensi_aktif')
                 ->label('Retensi Aktif'),
             ExportColumn::make('retensi_inaktif')

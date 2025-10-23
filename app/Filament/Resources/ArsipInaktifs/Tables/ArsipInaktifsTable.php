@@ -4,10 +4,17 @@ namespace App\Filament\Resources\ArsipInaktifs\Tables;
 
 use App\Models\ArsipInaktif;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Actions\ExportAction;
+use App\Filament\Exports\ArsipInaktifExporter;
+use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Actions\Action;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Response;
 
 class ArsipInaktifsTable
 {
@@ -55,8 +62,40 @@ class ArsipInaktifsTable
             ])
             ->recordActions([
                 EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
+                ExportAction::make()
+                    ->label('Ekspor ke Excel')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->exporter(ArsipInaktifExporter::class)
+                    ->formats([
+                        ExportFormat::Xlsx,
+                        ExportFormat::Csv,
+                    ])
+                    ->color('secondary'),
+
+                Action::make('printCustomPdf')
+                    ->label('Cetak Laporan PDF')
+                    ->icon('heroicon-o-document-check')
+                    ->color('danger')
+                    ->action(function (\Filament\Tables\Contracts\HasTable $livewire) {
+                        
+                        $records = $livewire->getFilteredTableQuery()->get();
+                        
+                        $unitPengolah = 'RRI BANJARMASIN';
+                        $periode = '01 JULI 2025-30 SEPTEMBER 2025';
+
+                        $view = view('pdf.laporan-arsip-inaktif', compact('records', 'unitPengolah', 'periode'))->render();
+
+                        $pdf = Pdf::loadHtml($view)
+                                ->setPaper('a4', 'landscape');
+
+                        return response()->streamDownload(
+                            fn () => print($pdf->output()),
+                            'Laporan Daftar Berkas Arsip Inaktif.pdf'
+                        );
+                    }),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

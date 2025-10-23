@@ -15,6 +15,7 @@ class ListArsipUnits extends ListRecords
         return [
             CreateAction::make()
                 ->label('Tambah Arsip Unit')
+                ->icon('heroicon-o-document-plus')
                 ->color('secondary'),
         ];
     }

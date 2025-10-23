@@ -15,6 +15,7 @@ class ListKodeKlasifikasis extends ListRecords
         return [
             CreateAction::make()
                 ->label('Tambah Kode Klasifikasi')
+                ->icon('heroicon-o-document-plus')
                 ->color('secondary'),
         ];
     }

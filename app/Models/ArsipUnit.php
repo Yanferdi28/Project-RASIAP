@@ -11,6 +11,13 @@ class ArsipUnit extends Model
     use HasFactory;
 
     /**
+     * Nama tabel yang terhubung dengan model ini.
+     * (Opsional jika nama tabel Anda 'arsip_units')
+     * @var string
+     */
+    protected $table = 'arsip_units'; 
+
+    /**
      * Primary key kustom untuk model ini.
      *
      * @var string
@@ -45,9 +52,21 @@ class ArsipUnit extends Model
         'keterangan',
     ];
 
+    /**
+     * Casts tipe data atribut.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'tanggal' => 'date',
+        'jumlah_nilai' => 'integer',
+        'retensi_aktif' => 'integer',
+        'retensi_inaktif' => 'integer',
+    ];
+
     public function kodeKlasifikasi(): BelongsTo
     {
-        return $this->belongsTo(KodeKlasifikasi::class);
+        return $this->belongsTo(KodeKlasifikasi::class, 'kode_klasifikasi_id'); 
     }
 
     public function unitPengolah(): BelongsTo

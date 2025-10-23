@@ -54,24 +54,4 @@ class ArsipAktifExporter extends Exporter
 
         return $body;
     }
-
-    public function getCompletedNotification(Export $export): Notification
-    {
-        $failedRowsCount = $export->failed_rows;
-        $body = 'Ekspor arsip aktif Anda telah selesai dan ' . number_format($export->successful_rows) . ' baris telah diekspor.';
-        
-        $notification = Notification::make()
-            ->title('Ekspor Selesai')
-            ->body($body)
-            ->success();
-
-        if ($failedRowsCount) {
-            $notification
-                ->title('Ekspor selesai sebagian')
-                ->body($body . ' ' . number_format($failedRowsCount) . ' baris gagal diekspor.')
-                ->danger();
-        }
-        
-        return $notification;
-    }
 }

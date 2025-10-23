@@ -96,21 +96,23 @@ class ArsipUnitForm
                     ->required(),
 
                 TextInput::make('skkaad')
-                    ->disabled(),
+                    ->disabled()
+                    ->dehydrated(true),
 
                 TextInput::make('retensi_aktif')
                     ->label('Retensi Aktif (Tahun)')
                     ->numeric()
-                    ->disabled(),
+                    ->disabled()
+                    ->dehydrated(true),
 
                 TextInput::make('retensi_inaktif')
                     ->label('Retensi Inaktif (Tahun)')
                     ->numeric()
-                    ->disabled(),
+                    ->disabled()
+                    ->dehydrated(true),
 
                 Grid::make(2)
                     ->schema([
-                        // Section Lokasi Arsip ada di kolom pertama
                         Section::make('Lokasi Fisik Arsip')
                             ->description('Detail lokasi penyimpanan fisik arsip.')
                             ->schema([
@@ -122,7 +124,6 @@ class ArsipUnitForm
                             ])
                             ->columns(2),
 
-                        // Section untuk Upload Dokumen ada di kolom kedua
                         Section::make('Dokumen Digital')
                             ->description('Unggah hasil pindai (scan) dokumen.')
                             ->schema([
@@ -130,11 +131,10 @@ class ArsipUnitForm
                                     ->label('Upload Dokumen')
                                     ->directory('arsip-dokumen')
                                     ->preserveFilenames()
-                                    // Sembunyikan label agar tidak duplikat dengan judul section
                                     ->hiddenLabel(),
                             ]),
                     ])
-                    ->columnSpanFull(), // Pastikan Grid ini mengambil lebar penuh
+                    ->columnSpanFull(),
             ]);
     }
 }

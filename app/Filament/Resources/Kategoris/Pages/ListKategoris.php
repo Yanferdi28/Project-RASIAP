@@ -15,6 +15,7 @@ class ListKategoris extends ListRecords
         return [
             CreateAction::make()
             ->label('Tambah Kategori')
+            ->icon('heroicon-o-document-plus')
             ->color('secondary'),
         ];
     }

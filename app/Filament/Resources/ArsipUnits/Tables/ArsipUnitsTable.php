@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ArsipUnits\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -14,7 +15,8 @@ class ArsipUnitsTable
     {
         return $table
             ->columns([
-                TextColumn::make('kode_klasifikasi')
+                TextColumn::make('kodeKlasifikasi.kode_klasifikasi')
+                    ->label('Kode Klasifikasi')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('indeks')
@@ -56,6 +58,7 @@ class ArsipUnitsTable
             ])
             ->recordActions([
                 EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

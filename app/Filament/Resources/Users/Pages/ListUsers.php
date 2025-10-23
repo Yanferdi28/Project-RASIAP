@@ -15,6 +15,7 @@ class ListUsers extends ListRecords
         return [
             CreateAction::make()
             ->label('Tambah Pengguna')
+            ->icon('heroicon-o-document-plus')
             ->color('secondary'),
         ];
     }

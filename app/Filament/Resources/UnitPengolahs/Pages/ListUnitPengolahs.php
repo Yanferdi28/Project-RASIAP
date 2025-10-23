@@ -15,6 +15,7 @@ class ListUnitPengolahs extends ListRecords
         return [
             CreateAction::make()
                 ->label('Tambah Unit Pengolah')
+                ->icon('heroicon-o-document-plus')
                 ->color('secondary'),
         ];
     }

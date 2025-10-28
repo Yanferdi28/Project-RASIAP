@@ -28,6 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->font('Poppins')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->homeUrl(fn () => route('filament.admin.pages.dashboard'))
             ->colors([
@@ -40,6 +41,9 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarWidth('18rem')
             ->navigationGroups([
 
+                NavigationGroup::make()
+                    ->label('Naskah Arsip')
+                    ->icon('heroicon-o-document-duplicate'),
                 NavigationGroup::make()
                     ->label('Pemeliharaan Arsip')
                     ->icon('heroicon-o-archive-box'),

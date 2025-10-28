@@ -34,6 +34,7 @@ class ArsipUnitResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return ArsipUnitForm::configure($schema);
+        
     }
 
     public static function table(Table $table): Table
@@ -47,6 +48,8 @@ class ArsipUnitResource extends Resource
             //
         ];
     }
+
+    
 
     public static function getPages(): array
     {

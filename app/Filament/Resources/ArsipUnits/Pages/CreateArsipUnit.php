@@ -7,5 +7,7 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateArsipUnit extends CreateRecord
 {
-    protected static string $resource = ArsipUnitResource::class;
+    protected static string $resource = ArsipUnitResource::class; 
+
+    
 }

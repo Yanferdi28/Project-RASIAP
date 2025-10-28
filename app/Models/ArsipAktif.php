@@ -2,33 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ArsipAktif extends Model
 {
-    use HasFactory;
-
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'arsip_aktif';
-
-    /**
-     * The primary key associated with the table.
-     *
-     * @var string
-     */
+    
     protected $primaryKey = 'nomor_berkas';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    
+    public $incrementing = true;
+    
     protected $fillable = [
         'nama_berkas',
         'klasifikasi_id',
@@ -39,9 +24,19 @@ class ArsipAktif extends Model
         'uraian',
         'kategori_berkas',
     ];
-
+    
+    protected $casts = [
+        'retensi_aktif' => 'integer',
+        'retensi_inaktif' => 'integer',
+    ];
+    
     public function klasifikasi(): BelongsTo
     {
         return $this->belongsTo(KodeKlasifikasi::class, 'klasifikasi_id');
+    }
+    
+    public function naskahMasuks(): HasMany
+    {
+        return $this->hasMany(NaskahMasuk::class, 'arsip_aktif_id', 'nomor_berkas');
     }
 }

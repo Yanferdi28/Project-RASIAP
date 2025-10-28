@@ -7,6 +7,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Actions\ExportAction;
@@ -14,7 +15,6 @@ use App\Filament\Exports\ArsipAktifExporter;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Action;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Response;
 
 class ArsipAktifsTable
 {
@@ -22,8 +22,17 @@ class ArsipAktifsTable
     {
         return $table
             ->columns([
-                TextColumn::make('nama_berkas')
+                TextColumn::make('nomor_berkas')
+                    ->label('Nomor Berkas')
+                    ->sortable()
                     ->searchable(),
+
+                TextColumn::make('nama_berkas')
+                    ->label('Nama Berkas')
+                    ->searchable()
+                    ->sortable()
+                    ->limit(50)
+                    ->tooltip(fn ($state): ?string => strlen($state) > 50 ? $state : null),
 
                 TextColumn::make('klasifikasi')
                     ->label('Klasifikasi')
@@ -34,26 +43,65 @@ class ArsipAktifsTable
                         return 'Tidak ada'; 
                     })
                     ->searchable(['klasifikasi.kode_klasifikasi', 'klasifikasi.uraian'])
-                    ->sortable('klasifikasi.kode_klasifikasi'),
+                    ->sortable('klasifikasi.kode_klasifikasi')
+                    ->limit(50)
+                    ->tooltip(fn ($state): ?string => strlen($state) > 50 ? $state : null),
+
+                TextColumn::make('naskah_masuks_count')
+                    ->label('Jumlah Naskah')
+                    ->counts('naskahMasuks')
+                    ->badge()
+                    ->color(fn ($state): string => $state > 0 ? 'success' : 'gray')
+                    ->sortable(),
+
+                TextColumn::make('kategori_berkas')
+                    ->label('Kategori')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Asli' => 'success',
+                        'Salinan' => 'warning',
+                        'Tembusan' => 'info',
+                        default => 'gray',
+                    })
+                    ->searchable()
+                    ->sortable(),
 
                 TextColumn::make('retensi_aktif')
+                    ->label('Retensi Aktif (Tahun)')
                     ->numeric()
                     ->sortable(),
+
                 TextColumn::make('retensi_inaktif')
+                    ->label('Retensi Inaktif (Tahun)')
                     ->numeric()
-                    ->sortable(),
-                TextColumn::make('penyusutan_akhir')
-                    ->searchable(),
-                TextColumn::make('lokasi_fisik')
-                    ->searchable(),
-                TextColumn::make('kategori_berkas')
-                    ->searchable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('penyusutan_akhir')
+                    ->label('Penyusutan Akhir')
+                    ->badge()
+                    ->color(fn (?string $state): string => match ($state) {
+                        'Permanen' => 'success',
+                        'Musnah' => 'danger',
+                        default => 'gray',
+                    })
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('lokasi_fisik')
+                    ->label('Lokasi Fisik')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('created_at')
+                    ->label('Dibuat Pada')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label('Diperbarui Pada')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -61,8 +109,20 @@ class ArsipAktifsTable
                 //
             ])
             ->recordActions([
+                ViewAction::make()
+                    ->label('Lihat Detail')
+                    ->icon('heroicon-o-eye'),
+
                 EditAction::make(),
-                DeleteAction::make(),
+                
+                DeleteAction::make()
+                    ->requiresConfirmation()
+                    ->modalHeading('Hapus Berkas Arsip')
+                    ->modalDescription(fn (ArsipAktif $record): string => 
+                        $record->naskahMasuks()->count() > 0 
+                            ? "Berkas ini memiliki {$record->naskahMasuks()->count()} naskah. Naskah-naskah tersebut tidak akan dihapus tetapi akan dikeluarkan dari berkas. Apakah Anda yakin?"
+                            : 'Apakah Anda yakin ingin menghapus berkas ini?'
+                    ),
             ])
             ->toolbarActions([
                 ExportAction::make()
@@ -96,9 +156,13 @@ class ArsipAktifsTable
                             'Laporan Daftar Berkas Arsip Aktif.pdf'
                         );
                     }),
+                    
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('nomor_berkas', 'desc')
+            ->striped()
+            ->paginated([10, 25, 50, 100]);
     }
 }

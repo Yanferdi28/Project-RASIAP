@@ -9,14 +9,14 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use UnitEnum; // PENTING: Pastikan UnitEnum diimport
+use UnitEnum;
 use BackedEnum;
 
 class NaskahMasukResource extends Resource
 {
     protected static ?string $model = NaskahMasuk::class;
 
-    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedDocumentText;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentPlus;
 
     protected static ?string $recordTitleAttribute = 'Naskah Masuk';
 
@@ -26,7 +26,7 @@ class NaskahMasukResource extends Resource
     
     protected static ?string $pluralLabel = 'Naskah Masuk';
     
-    protected static string | UnitEnum | null $navigationGroup = 'Kegiatan Arsip';
+    protected static string | UnitEnum | null $navigationGroup = 'Naskah Arsip';
 
     public static function form(Schema $schema): Schema
     {

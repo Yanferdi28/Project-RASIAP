@@ -19,7 +19,7 @@ class ArsipUnitResource extends Resource
 {
     protected static ?string $model = ArsipUnit::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArchiveBoxArrowDown;
 
     protected static ?string $recordTitleAttribute = 'Arsip Unit';
 

@@ -19,7 +19,7 @@ class KodeKlasifikasiResource extends Resource
 {
     protected static ?string $model = KodeKlasifikasi::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocument;
 
     protected static ?string $recordTitleAttribute = 'Kode Klasifikasi';
 

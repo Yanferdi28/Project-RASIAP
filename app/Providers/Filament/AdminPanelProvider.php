@@ -44,6 +44,7 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Naskah Arsip')
                     ->icon('heroicon-o-document-duplicate'),
+                    
                 NavigationGroup::make()
                     ->label('Pemeliharaan Arsip')
                     ->icon('heroicon-o-archive-box'),

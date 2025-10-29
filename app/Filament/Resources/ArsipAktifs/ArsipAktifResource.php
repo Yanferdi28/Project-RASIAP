@@ -9,6 +9,7 @@ use App\Filament\Resources\ArsipAktifs\Pages\ViewArsipAktif;
 use App\Filament\Resources\ArsipAktifs\Schemas\ArsipAktifForm;
 use App\Filament\Resources\ArsipAktifs\Tables\ArsipAktifsTable;
 use App\Filament\Exports\ArsipAktifExporter;
+use Filament\Support\Icons\Heroicon;
 use App\Models\ArsipAktif;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -19,6 +20,8 @@ use UnitEnum;
 class ArsipAktifResource extends Resource
 {
     protected static ?string $model = ArsipAktif::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUpOnSquare;
 
     protected static ?string $recordTitleAttribute = 'nama_berkas';
 

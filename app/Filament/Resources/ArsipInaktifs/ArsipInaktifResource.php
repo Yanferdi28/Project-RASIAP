@@ -20,6 +20,8 @@ class ArsipInaktifResource extends Resource
 {
     protected static ?string $model = ModelsArsipInaktif::class;
 
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowDownOnSquare;
+
     protected static ?string $recordTitleAttribute = 'Arsip Inaktif';
 
     protected static ?string $navigationLabel = 'Pemberkasan Arsip Inaktif';

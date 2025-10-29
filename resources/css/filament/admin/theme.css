@@ -21,3 +21,73 @@
 .fi-sidebar .fi-nav-item-label{
     @apply bg-blue-900;
 }
+
+/* Light Mode */
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-btn .fi-sidebar-group-label {
+  color: #331d1d !important;
+  opacity: 1 !important;
+}
+
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-items .fi-sidebar-item-label {
+  color: #331d1d !important;
+}
+
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-btn:hover .fi-sidebar-group-label,
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-items .fi-sidebar-item-btn:hover .fi-sidebar-item-label {
+  color: #0b1220 !important;
+}
+
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-btn > svg,
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-dropdown-trigger-btn > svg {
+  stroke: #0073ff !important;
+  fill: none !important;
+  stroke-width: 1.5 !important;
+}
+
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-collapse-btn svg {
+  stroke: #000000 !important;
+  fill: none !important;
+  stroke-width: 1.5 !important;
+}
+
+.fi-sidebar .fi-sidebar-item-btn svg,
+.fi-sidebar .fi-sidebar-item-icon {
+  stroke: #0073ff !important;
+  fill: none !important;
+  stroke-width: 1.5 !important;
+}
+
+/* Dark Mode */
+.dark .fi-sidebar .fi-sidebar-group .fi-sidebar-group-btn .fi-sidebar-group-label {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+.dark .fi-sidebar .fi-sidebar-group .fi-sidebar-group-items .fi-sidebar-item-label {
+  color: #ffffff !important;
+}
+
+.dark .fi-sidebar .fi-sidebar-group .fi-sidebar-group-btn:hover .fi-sidebar-group-label,
+.dark .fi-sidebar .fi-sidebar-group .fi-sidebar-group-items .fi-sidebar-item-btn:hover .fi-sidebar-item-label {
+  color: #a4a6aa !important;
+}
+
+.dark .fi-sidebar .fi-sidebar-group .fi-sidebar-group-btn > svg,
+.dark .fi-sidebar .fi-sidebar-group .fi-sidebar-group-dropdown-trigger-btn > svg {
+  stroke: #0073ff !important;
+  fill: none !important;
+  stroke-width: 1.5 !important;
+}
+
+.dark .fi-sidebar .fi-sidebar-group .fi-sidebar-group-collapse-btn svg {
+  stroke: #ffffff !important;
+  fill: none !important;
+  stroke-width: 1.5 !important;
+}
+
+.dark .fi-sidebar .fi-sidebar-item-btn svg,
+.dark .fi-sidebar .fi-sidebar-item-icon {
+  stroke: #0073ff !important;
+  fill: none !important;
+  stroke-width: 1.5 !important;
+}

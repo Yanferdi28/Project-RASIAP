@@ -17,6 +17,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Widgets\StatsOverview;
+use App\Filament\Widgets\AktivitasTerbaruTable;
+use App\Filament\Widgets\NaskahPerBulanChart;
 use Filament\Navigation\NavigationGroup;
 
 
@@ -60,7 +62,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
+                NaskahPerBulanChart::class,
+                AktivitasTerbaruTable::class,
                 StatsOverview::class,
+
             ])
             ->middleware([
                 EncryptCookies::class,

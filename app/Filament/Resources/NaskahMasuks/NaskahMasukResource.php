@@ -48,7 +48,6 @@ class NaskahMasukResource extends Resource
     public static function getPages(): array
     {
         return [
-            // Pastikan Anda membuat file pages ini (ListNaskahMasuks, CreateNaskahMasuk, EditNaskahMasuk)
             'index' => Pages\ListNaskahMasuks::route('/'),
             'create' => Pages\CreateNaskahMasuk::route('/create'),
             'edit' => Pages\EditNaskahMasuk::route('/{record}/edit'),

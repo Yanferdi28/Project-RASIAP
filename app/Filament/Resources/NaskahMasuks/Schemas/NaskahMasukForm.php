@@ -17,9 +17,8 @@ class NaskahMasukForm
         return $schema
             ->schema([
                 
-                // Section 1: Informasi Dasar Naskah
                 Section::make('Informasi Dasar Naskah')
-                    ->columns(3) // Mengatur tata letak 3 kolom di dalam Section
+                    ->columns(3)
                     ->schema([
                         TextInput::make('nomor_naskah')
                             ->required()
@@ -36,9 +35,8 @@ class NaskahMasukForm
                             ->label('Tanggal Diterima'),
                     ]),
                 
-                // Section 2: Identitas Pengirim
                 Section::make('Identitas Pengirim')
-                    ->columns(3) // Mengatur tata letak 3 kolom
+                    ->columns(3)
                     ->schema([
                         TextInput::make('nama_pengirim')
                             ->maxLength(255)
@@ -51,9 +49,8 @@ class NaskahMasukForm
                             ->label('Instansi Pengirim'),
                     ]),
                 
-                // Section 3: Detail Isi Naskah
                 Section::make('Detail Isi Naskah')
-                    ->columns(3) // Mengatur tata letak 3 kolom
+                    ->columns(3)
                     ->schema([
                         Select::make('jenis_naskah')
                             ->options([
@@ -69,38 +66,36 @@ class NaskahMasukForm
                                 'Rahasia' => 'Rahasia',
                             ])
                             ->nullable(),
-                        // Kosongkan satu kolom agar textarea dimulai di baris baru
-                        // Atau pastikan kolom berikutnya menggunakan columnSpanFull()
                         
                         Textarea::make('hal')
                             ->required()
                             ->maxLength(65535)
                             ->label('Perihal / Hal')
-                            ->columnSpanFull(), // Mengambil lebar penuh (3 kolom)
+                            ->columnSpanFull(),
 
                         Textarea::make('isi_ringkas')
                             ->maxLength(65535)
                             ->label('Isi Ringkas')
-                            ->columnSpanFull(), // Mengambil lebar penuh (3 kolom)
+                            ->columnSpanFull(),
                     ]),
 
                 // Section 4: Dokumen Pendukung
                 Section::make('Dokumen Pendukung')
-                    ->columns(3) // Mengatur tata letak 3 kolom
+                    ->columns(3)
                     ->schema([
                         FileUpload::make('file_naskah')
                             ->label('File Naskah Utama')
                             ->directory('naskah-masuk/utama') 
                             ->acceptedFileTypes(['application/pdf', 'image/*', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
                             ->storeFiles()
-                            ->columnSpan(1), // Mengambil 1 dari 3 kolom
+                            ->columnSpan(1),
                             
                         FileUpload::make('lampiran')
                             ->label('Lampiran Dokumen')
                             ->directory('naskah-masuk/lampiran')
                             ->multiple()
                             ->nullable()
-                            ->columnSpan(2), // Mengambil 2 dari 3 kolom
+                            ->columnSpan(2),
                     ]),
             ]);
     }

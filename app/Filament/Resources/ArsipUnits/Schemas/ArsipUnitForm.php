@@ -17,61 +17,72 @@ class ArsipUnitForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->columns(2)
-            ->components([
-                Select::make('kode_klasifikasi_id')
-                    ->label('Kode Klasifikasi')
-                    ->relationship(name: 'kodeKlasifikasi')
-                    ->getOptionLabelFromRecordUsing(fn (KodeKlasifikasi $record) => "{$record->kode_klasifikasi} - {$record->uraian}")
-                    ->searchable(['kode_klasifikasi', 'uraian'])
-                    ->preload()
-                    ->required()
-                    ->live()
-                    ->afterStateUpdated(function (?string $state, callable $set) {
-                        if (blank($state)) {
-                            $set('retensi_aktif', null);
-                            $set('retensi_inaktif', null);
-                            $set('skkaad', null);
-                            return;
-                        }
-                        
-                        $klasifikasi = KodeKlasifikasi::find($state);
-                        if (!$klasifikasi) {
-                            return;
-                        }
+            ->schema([
+                // 1) Klasifikasi & Unit
+                Section::make('Klasifikasi & Unit')
+                    ->columns(2)
+                    ->schema([
+                        Select::make('kode_klasifikasi_id')
+                            ->label('Kode Klasifikasi')
+                            ->relationship(name: 'kodeKlasifikasi')
+                            ->getOptionLabelFromRecordUsing(fn (KodeKlasifikasi $record) => "{$record->kode_klasifikasi} - {$record->uraian}")
+                            ->searchable(['kode_klasifikasi', 'uraian'])
+                            ->preload()
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(function (?string $state, callable $set) {
+                                if (blank($state)) {
+                                    $set('retensi_aktif', null);
+                                    $set('retensi_inaktif', null);
+                                    $set('skkaad', null);
+                                    return;
+                                }
 
-                        $set('retensi_aktif', $klasifikasi->retensi_aktif);
-                        $set('retensi_inaktif', $klasifikasi->retensi_inaktif);
-                        $set('skkaad', $klasifikasi->klasifikasi_keamanan);
-                    })
-                    ->columnSpanFull(),
+                                $klasifikasi = KodeKlasifikasi::find($state);
+                                if (! $klasifikasi) {
+                                    return;
+                                }
 
-                Select::make('unit_pengolah_arsip_id')
-                    ->label('Unit Pengolah Arsip')
-                    ->relationship(name: 'unitPengolah', titleAttribute: 'nama_unit')
-                    ->searchable()
-                    ->preload()
-                    ->required(),
-                
-                TextInput::make('indeks')
-                    ->required(),
+                                $set('retensi_aktif', $klasifikasi->retensi_aktif);
+                                $set('retensi_inaktif', $klasifikasi->retensi_inaktif);
+                                $set('skkaad', $klasifikasi->klasifikasi_keamanan);
+                            })
+                            ->columnSpanFull(),
 
-                Textarea::make('uraian_informasi')
-                    ->label('Uraian Informasi')
-                    ->required()
-                    ->columnSpanFull(),
-                
-                DatePicker::make('tanggal')
-                    ->required(),
-                
+                        Select::make('unit_pengolah_arsip_id')
+                            ->label('Unit Pengolah Arsip')
+                            ->relationship(name: 'unitPengolah', titleAttribute: 'nama_unit')
+                            ->searchable()
+                            ->preload()
+                            ->required(),
+                    ]),
 
-                Grid::make(2)
+                // 2) Deskripsi Arsip
+                Section::make('Deskripsi Arsip')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('indeks')
+                            ->label('Indeks')
+                            ->required(),
+
+                        DatePicker::make('tanggal')
+                            ->label('Tanggal')
+                            ->required(),
+
+                        Textarea::make('uraian_informasi')
+                            ->label('Uraian Informasi')
+                            ->required()
+                            ->columnSpanFull(),
+                    ]),
+
+                // 3) Kuantitas
+                Section::make('Kuantitas')
+                    ->columns(2)
                     ->schema([
                         TextInput::make('jumlah_nilai')
                             ->label('Jumlah')
                             ->numeric()
-                            ->required()
-                            ->columnSpan(1),
+                            ->required(),
 
                         Select::make('jumlah_satuan')
                             ->label('Satuan')
@@ -81,60 +92,69 @@ class ArsipUnitForm
                                 'Bundle' => 'Bundle',
                             ])
                             ->default('Lembar')
+                            ->required(),
+                    ]),
+
+                // 4) Retensi & Keamanan
+                Section::make('Retensi & Keamanan')
+                    ->columns(3)
+                    ->schema([
+                        Select::make('tingkat_perkembangan')
+                            ->label('Tingkat Perkembangan')
+                            ->options([
+                                'Asli' => 'Asli',
+                                'Salinan' => 'Salinan',
+                                'Tembusan' => 'Tembusan',
+                                'Pertinggal' => 'Pertinggal',
+                            ])
                             ->required()
                             ->columnSpan(1),
-                    ])
-                    ->columns(2),
-                
-                Select::make('tingkat_perkembangan')
-                    ->options([
-                        'Asli' => 'Asli',
-                        'Salinan' => 'Salinan',
-                        'Tembusan' => 'Tembusan',
-                        'Pertinggal' => 'Pertinggal',
-                    ])
-                    ->required(),
 
-                TextInput::make('skkaad')
-                    ->disabled()
-                    ->dehydrated(true),
+                        TextInput::make('skkaad')
+                            ->label('Klasifikasi Keamanan (SKKAAD)')
+                            ->disabled()
+                            ->dehydrated(true)
+                            ->columnSpan(1),
 
-                TextInput::make('retensi_aktif')
-                    ->label('Retensi Aktif (Tahun)')
-                    ->numeric()
-                    ->disabled()
-                    ->dehydrated(true),
-
-                TextInput::make('retensi_inaktif')
-                    ->label('Retensi Inaktif (Tahun)')
-                    ->numeric()
-                    ->disabled()
-                    ->dehydrated(true),
-
-                Grid::make(2)
-                    ->schema([
-                        Section::make('Lokasi Fisik Arsip')
-                            ->description('Detail lokasi penyimpanan fisik arsip.')
+                        Grid::make(2)
                             ->schema([
-                                TextInput::make('ruangan'),
-                                TextInput::make('no_filling')->label('No. Filling Cabinet'),
-                                TextInput::make('no_laci')->label('No. Laci'),
-                                TextInput::make('no_folder')->label('No. Folder'),
-                                TextInput::make('no_box')->label('No. Box'),
+                                TextInput::make('retensi_aktif')
+                                    ->label('Retensi Aktif (Tahun)')
+                                    ->numeric()
+                                    ->disabled()
+                                    ->dehydrated(true),
+
+                                TextInput::make('retensi_inaktif')
+                                    ->label('Retensi Inaktif (Tahun)')
+                                    ->numeric()
+                                    ->disabled()
+                                    ->dehydrated(true),
                             ])
-                            ->columns(2),
+                            ->columnSpan(1),
+                    ]),
 
-                        Section::make('Dokumen Digital')
-                            ->description('Unggah hasil pindai (scan) dokumen.')
-                            ->schema([
-                                FileUpload::make('dokumen')
-                                    ->label('Upload Dokumen')
-                                    ->directory('arsip-dokumen')
-                                    ->preserveFilenames()
-                                    ->hiddenLabel(),
-                            ]),
-                    ])
-                    ->columnSpanFull(),
+                // 5) Lokasi Fisik Arsip
+                Section::make('Lokasi Fisik Arsip')
+                    ->description('Detail lokasi penyimpanan fisik arsip.')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('ruangan')->label('Ruangan'),
+                        TextInput::make('no_filling')->label('No. Filling Cabinet'),
+                        TextInput::make('no_laci')->label('No. Laci'),
+                        TextInput::make('no_folder')->label('No. Folder'),
+                        TextInput::make('no_box')->label('No. Box'),
+                    ]),
+
+                // 6) Dokumen Digital
+                Section::make('Dokumen Digital')
+                    ->description('Unggah hasil pindai (scan) dokumen.')
+                    ->schema([
+                        FileUpload::make('dokumen')
+                            ->label('Upload Dokumen')
+                            ->directory('arsip-dokumen')
+                            ->preserveFilenames()
+                            ->hiddenLabel(),
+                    ]),
             ]);
     }
 }

@@ -22,13 +22,13 @@ class StatsOverview extends BaseWidget
                 ->icon('heroicon-o-document-duplicate')
                 ->color('info'),
                 
-            Stat::make('Jumlah Arsip Aktif', ArsipAktif::count())
-                ->description('Total arsip aktif yang tersimpan')
+            Stat::make('Jumlah Pemberkasan Arsip Aktif', ArsipAktif::count())
+                ->description('Total pemberkasan arsip aktif yang tersimpan')
                 ->icon('heroicon-o-archive-box')
                 ->color('info'),
                 
-            Stat::make('Jumlah Arsip Inaktif', ArsipInaktif::count())
-                ->description('Total arsip inaktif yang tersimpan')
+            Stat::make('Jumlah Pemberkasan Arsip Inaktif', ArsipInaktif::count())
+                ->description('Total pemberkasan arsip inaktif yang tersimpan')
                 ->icon('heroicon-o-archive-box')
                 ->color('info'),
         ];

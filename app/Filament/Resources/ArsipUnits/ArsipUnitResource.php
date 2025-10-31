@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Filament\Facades\Filament;
 use UnitEnum;
 
 class ArsipUnitResource extends Resource
@@ -49,6 +50,10 @@ class ArsipUnitResource extends Resource
         ];
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return \Illuminate\Support\Facades\Gate::allows('viewAny', ArsipUnit::class);
+    }
     
 
     public static function getPages(): array

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Kategori extends Model
 {
@@ -14,7 +15,7 @@ class Kategori extends Model
      *
      * @var string
      */
-    protected $table = 'kategori';
+    protected $table = 'kategori'; //
 
     /**
      * Atribut yang dapat diisi secara massal.
@@ -22,7 +23,12 @@ class Kategori extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'nama_kategori',
-        'deskripsi',
+        'nama_kategori', //
+        'deskripsi', //
     ];
+
+    public function subKategori(): HasMany 
+    {
+        return $this->hasMany(SubKategori::class);
+    }
 }

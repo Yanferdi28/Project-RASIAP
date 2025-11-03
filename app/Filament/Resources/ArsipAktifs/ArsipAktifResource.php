@@ -46,7 +46,7 @@ class ArsipAktifResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \App\Filament\Resources\ArsipAktifs\RelationManagers\NaskahMasuksRelationManager::class,
+            \App\Filament\Resources\ArsipAktifs\RelationManagers\ArsipUnitsRelationManager::class,
         ];
     }
 

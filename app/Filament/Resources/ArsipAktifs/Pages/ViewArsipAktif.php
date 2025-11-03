@@ -17,11 +17,7 @@ class ViewArsipAktif extends ViewRecord
             Actions\DeleteAction::make()
                 ->requiresConfirmation()
                 ->modalHeading('Hapus Berkas Arsip')
-                ->modalDescription(fn (): string => 
-                    $this->record->naskahMasuks()->count() > 0 
-                        ? "Berkas ini memiliki {$this->record->naskahMasuks()->count()} naskah. Naskah-naskah tersebut tidak akan dihapus tetapi akan dikeluarkan dari berkas. Apakah Anda yakin?"
-                        : 'Apakah Anda yakin ingin menghapus berkas ini?'
-                ),
+                ->modalDescription('Apakah Anda yakin ingin menghapus berkas ini?'),
         ];
     }
 }

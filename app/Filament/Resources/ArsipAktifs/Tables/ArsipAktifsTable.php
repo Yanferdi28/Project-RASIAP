@@ -47,12 +47,7 @@ class ArsipAktifsTable
                     ->limit(50)
                     ->tooltip(fn ($state): ?string => strlen($state) > 50 ? $state : null),
 
-                TextColumn::make('naskah_masuks_count')
-                    ->label('Jumlah Naskah')
-                    ->counts('naskahMasuks')
-                    ->badge()
-                    ->color(fn ($state): string => $state > 0 ? 'success' : 'gray')
-                    ->sortable(),
+
 
                 TextColumn::make('kategori_berkas')
                     ->label('Kategori')
@@ -118,11 +113,7 @@ class ArsipAktifsTable
                 DeleteAction::make()
                     ->requiresConfirmation()
                     ->modalHeading('Hapus Berkas Arsip')
-                    ->modalDescription(fn (ArsipAktif $record): string => 
-                        $record->naskahMasuks()->count() > 0 
-                            ? "Berkas ini memiliki {$record->naskahMasuks()->count()} naskah. Naskah-naskah tersebut tidak akan dihapus tetapi akan dikeluarkan dari berkas. Apakah Anda yakin?"
-                            : 'Apakah Anda yakin ingin menghapus berkas ini?'
-                    ),
+                    ->modalDescription('Apakah Anda yakin ingin menghapus berkas ini?'),
             ])
             ->toolbarActions([
                 ExportAction::make()

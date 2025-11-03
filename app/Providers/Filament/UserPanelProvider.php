@@ -17,9 +17,9 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
-use App\Filament\Widgets\StatsOverview;
-use App\Filament\Widgets\AktivitasTerbaruTable;
-use App\Filament\Widgets\NaskahPerBulanChart;
+
+
+
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class UserPanelProvider extends PanelProvider
@@ -50,9 +50,9 @@ class UserPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/User/Widgets'), for: 'App\\Filament\\User\\Widgets')
             ->widgets([
-                NaskahPerBulanChart::class,
-                AktivitasTerbaruTable::class,
-                StatsOverview::class,
+                \App\Filament\Widgets\StatsOverview::class,
+                \Filament\Widgets\AccountWidget::class,
+                \Filament\Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

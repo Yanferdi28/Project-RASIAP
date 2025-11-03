@@ -13,7 +13,10 @@ class ListSubkategoris extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+            ->label('Tambah Sub Kategori')
+            ->icon('heroicon-o-document-plus')
+            ->color('secondary'),
         ];
     }
 }

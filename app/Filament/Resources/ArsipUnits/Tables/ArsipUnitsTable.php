@@ -2,10 +2,14 @@
 
 namespace App\Filament\Resources\ArsipUnits\Tables;
 
+use App\Models\ArsipAktif;
+use App\Models\ArsipUnit;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -57,6 +61,34 @@ class ArsipUnitsTable
                 //
             ])
             ->recordActions([
+                Action::make('pilih_berkas')
+                    ->label(fn (ArsipUnit $record): string => $record->arsip_aktif_id ? 'Ganti Berkas' : 'Pilih Berkas')
+                    ->icon('heroicon-o-folder-open')
+                    ->modalIcon('heroicon-o-folder-open')
+                    ->color('warning')
+                    ->modalHeading(fn (ArsipUnit $record): string => $record->arsip_aktif_id ? 'Ganti Berkas Arsip' : 'Pilih Berkas Arsip')
+                    ->modalSubmitActionLabel('Simpan')
+                    ->modalWidth('md')
+                    ->fillForm(fn (ArsipUnit $record): array => [
+                        'arsip_aktif_id' => $record->arsip_aktif_id,
+                    ])
+                    ->schema([
+                        Select::make('arsip_aktif_id')
+                            ->label('Pilih Berkas Arsip Aktif')
+                            ->options(ArsipAktif::all()->pluck('nama_berkas', 'nomor_berkas'))
+                            ->required()
+                            ->searchable()
+                            ->helperText('Pilih berkas arsip aktif tempat dokumen ini akan disimpan.'),
+                    ])
+                    ->action(function (ArsipUnit $record, array $data): void {
+                        $record->arsip_aktif_id = $data['arsip_aktif_id'];
+                        $record->save();
+                        
+                        \Filament\Notifications\Notification::make()
+                            ->title('Naskah berhasil dimasukkan ke berkas!')
+                            ->success()
+                            ->send();
+                    }),
                 EditAction::make(),
                 DeleteAction::make(),
             ])

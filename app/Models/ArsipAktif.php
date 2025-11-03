@@ -34,9 +34,4 @@ class ArsipAktif extends Model
     {
         return $this->belongsTo(KodeKlasifikasi::class, 'klasifikasi_id');
     }
-    
-    public function naskahMasuks(): HasMany
-    {
-        return $this->hasMany(NaskahMasuk::class, 'arsip_aktif_id', 'nomor_berkas');
-    }
 }

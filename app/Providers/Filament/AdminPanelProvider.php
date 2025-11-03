@@ -44,7 +44,7 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
 
                 NavigationGroup::make()
-                    ->label('Naskah Arsip')
+                    ->label('Pembuatan Arsip')
                     ->icon('heroicon-o-document-duplicate'),
                     
                 NavigationGroup::make()

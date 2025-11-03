@@ -30,7 +30,7 @@ class ArsipUnitResource extends Resource
     
     protected static ?string $pluralLabel = 'Arsip Unit';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Master';
+    protected static string | UnitEnum | null $navigationGroup = 'Pembuatan Arsip';
 
     public static function form(Schema $schema): Schema
     {

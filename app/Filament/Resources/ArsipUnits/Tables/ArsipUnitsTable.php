@@ -2,11 +2,14 @@
 
 namespace App\Filament\Resources\ArsipUnits\Tables;
 
+use App\Models\ArsipAktif;
+use App\Models\ArsipUnit;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -58,6 +61,17 @@ class ArsipUnitsTable
                 //
             ])
             ->recordActions([
+                Action::make('kelola_naskah')
+                    ->label('Kelola Naskah')
+                    ->icon('heroicon-o-document-text')
+                    ->color('success')
+                    ->url(fn ($record) => $record->arsip_aktif_id 
+                        ? route('filament.admin.resources.arsip-aktifs.edit', ['record' => $record->arsip_aktif_id]) . '/naskah-masuks'
+                        : null
+                    )
+                    ->link()
+                    ->visible(fn ($record) => $record->arsip_aktif_id !== null)
+                    ->tooltip('Lihat dan kelola naskah yang terkait dengan arsip aktif ini'),
                 Action::make('ubah_arsip_aktif')
                     ->label('Ubah Arsip Aktif')
                     ->icon('heroicon-o-folder-open')

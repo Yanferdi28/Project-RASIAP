@@ -37,8 +37,10 @@ class ArsipAktifExporter extends Exporter
                 ->label('Penyusutan Akhir'),
             ExportColumn::make('lokasi_fisik')
                 ->label('Lokasi Fisik'),
-            ExportColumn::make('kategori_berkas')
-                ->label('Kategori Berkas'),
+            ExportColumn::make('kategori.nama_kategori')
+                ->label('Kategori'),
+            ExportColumn::make('subKategori.nama_sub_kategori')
+                ->label('Sub Kategori'),
             ExportColumn::make('created_at')
                 ->label('Tanggal Dibuat'),
         ];

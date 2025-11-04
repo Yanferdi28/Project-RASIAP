@@ -49,15 +49,15 @@ class ArsipAktifsTable
 
 
 
-                TextColumn::make('kategori_berkas')
+                TextColumn::make('kategori.nama_kategori')
                     ->label('Kategori')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'Asli' => 'success',
-                        'Salinan' => 'warning',
-                        'Tembusan' => 'info',
-                        default => 'gray',
-                    })
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('subKategori.nama_sub_kategori')
+                    ->label('Sub Kategori')
+                    ->badge()
                     ->searchable()
                     ->sortable(),
 

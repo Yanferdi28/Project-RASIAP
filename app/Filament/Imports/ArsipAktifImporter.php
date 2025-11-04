@@ -33,15 +33,29 @@ class ArsipAktifImporter extends Importer
             ImportColumn::make('lokasi_fisik')
                 ->rules(['max:255']),
             ImportColumn::make('uraian'),
-            ImportColumn::make('kategori_berkas')
+            ImportColumn::make('kategori_id')
                 ->requiredMapping()
-                ->rules(['required', 'max:255']),
+                ->relationship(
+                    resolveUsing: fn ($state) => \App\Models\Kategori::where('nama_kategori', $state)->first(),
+                )
+                ->rules(['required']),
+            ImportColumn::make('sub_kategori_id')
+                ->requiredMapping()
+                ->relationship(
+                    resolveUsing: fn ($state) => \App\Models\SubKategori::where('nama_sub_kategori', $state)->first(),
+                )
+                ->rules(['required']),
         ];
     }
 
     public function resolveRecord(): ArsipAktif
     {
-        return new ArsipAktif();
+        // Check if a record already exists with the same nama_berkas
+        $record = ArsipAktif::firstOrNew([
+            'nama_berkas' => $this->data['nama_berkas'],
+        ]);
+
+        return $record;
     }
 
     public static function getCompletedNotificationBody(Import $import): string

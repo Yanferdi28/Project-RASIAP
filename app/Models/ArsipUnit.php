@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Events\ArsipUnitCreated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 
 class ArsipUnit extends Model
 {
@@ -48,6 +50,10 @@ class ArsipUnit extends Model
     'no_box',
     'dokumen',
     'keterangan',
+    'status',
+    'verifikasi_keterangan',
+    'verifikasi_oleh',
+    'verifikasi_tanggal',
 ];
 
      /**
@@ -59,7 +65,23 @@ class ArsipUnit extends Model
         'jumlah_nilai' => 'integer',
         'retensi_aktif' => 'integer',
         'retensi_inaktif' => 'integer',
+        'verifikasi_tanggal' => 'datetime',
      ];
+
+    /**
+     * Boot the model and register event listeners.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($arsipUnit) {
+            // Dispatch event only if status is 'pending' (newly created)
+            if ($arsipUnit->status === 'pending') {
+                event(new ArsipUnitCreated($arsipUnit));
+            }
+        });
+    }
 
     /**
      * Relasi ke ArsipAktif (Berkas)
@@ -82,7 +104,58 @@ class ArsipUnit extends Model
         return $this->belongsTo(UnitPengolah::class, 'unit_pengolah_arsip_id');
     }
     
-
+    public function verifier(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verifikasi_oleh');
+    }
     
-
+    /**
+     * Method to accept the archive unit
+     */
+    public function accept($keterangan = null, $user = null)
+    {
+        $this->update([
+            'status' => 'diterima',
+            'verifikasi_keterangan' => $keterangan,
+            'verifikasi_oleh' => $user ? $user->id : Auth::id(),
+            'verifikasi_tanggal' => now(),
+        ]);
+    }
+    
+    /**
+     * Method to reject the archive unit
+     */
+    public function reject($keterangan = null, $user = null)
+    {
+        $this->update([
+            'status' => 'ditolak',
+            'verifikasi_keterangan' => $keterangan,
+            'verifikasi_oleh' => $user ? $user->id : Auth::id(),
+            'verifikasi_tanggal' => now(),
+        ]);
+    }
+    
+    /**
+     * Scope to get pending archive units
+     */
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
+    }
+    
+    /**
+     * Scope to get accepted archive units
+     */
+    public function scopeAccepted($query)
+    {
+        return $query->where('status', 'diterima');
+    }
+    
+    /**
+     * Scope to get rejected archive units
+     */
+    public function scopeRejected($query)
+    {
+        return $query->where('status', 'ditolak');
+    }
 }

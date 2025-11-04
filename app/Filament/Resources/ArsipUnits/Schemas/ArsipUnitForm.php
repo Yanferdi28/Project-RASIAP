@@ -153,7 +153,14 @@ class ArsipUnitForm
                             ->label('Upload Dokumen')
                             ->directory('arsip-dokumen')
                             ->preserveFilenames()
-                            ->hiddenLabel(),
+                            ->hiddenLabel()
+                            ->visibility('public')
+                            ->disk('public')
+                            ->imagePreviewHeight('250')
+                            ->acceptedFileTypes(['application/pdf', 'image/*', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
+                            ->maxSize(10240) // 10MB
+                            ->downloadable()
+                            ->openable(),
                     ]),
             ]);
     }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ArsipAktif extends Model
 {
@@ -32,5 +33,10 @@ class ArsipAktif extends Model
     public function klasifikasi(): BelongsTo
     {
         return $this->belongsTo(KodeKlasifikasi::class, 'klasifikasi_id');
+    }
+
+    public function arsipUnits(): HasMany
+    {
+        return $this->hasMany(ArsipUnit::class, 'arsip_aktif_id');
     }
 }

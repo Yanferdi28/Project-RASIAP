@@ -64,7 +64,8 @@ class ArsipAktifsTable
                 TextColumn::make('retensi_aktif')
                     ->label('Retensi Aktif (Tahun)')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('retensi_inaktif')
                     ->label('Retensi Inaktif (Tahun)')

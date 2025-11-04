@@ -48,6 +48,11 @@ class ArsipUnit extends Model
     'no_box',
     'dokumen',
     'keterangan',
+    'publish_status',
+    'verified_by',
+    'verified_at',
+    'verification_notes',
+    'submitted_at',
 ];
 
      /**
@@ -59,6 +64,8 @@ class ArsipUnit extends Model
         'jumlah_nilai' => 'integer',
         'retensi_aktif' => 'integer',
         'retensi_inaktif' => 'integer',
+        'verified_at' => 'datetime',
+        'submitted_at' => 'datetime',
      ];
 
     /**
@@ -72,6 +79,11 @@ class ArsipUnit extends Model
         return $this->belongsTo(ArsipAktif::class, 'arsip_aktif_id');
     }
 
+    public function verifier(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verified_by');
+    }
+
     public function kodeKlasifikasi(): BelongsTo
     {
      return $this->belongsTo(KodeKlasifikasi::class, 'kode_klasifikasi_id'); 
@@ -82,6 +94,13 @@ class ArsipUnit extends Model
         return $this->belongsTo(UnitPengolah::class, 'unit_pengolah_arsip_id');
     }
     
+    // Scope publik (hanya yang approved)
+    public function scopePublished($q) { return $q->where('publish_status', 'approved'); }
+
+    // Helper
+    public function canSubmit(): bool   { return $this->publish_status === 'draft'; }
+    public function canVerify(): bool   { return $this->publish_status === 'submitted'; }
+    public function canResubmit(): bool { return $this->publish_status === 'rejected'; }
 
     
 

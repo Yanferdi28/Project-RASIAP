@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\ArsipAktifs\Schemas;
 
 use App\Models\KodeKlasifikasi;
+use App\Models\Kategori;
+use App\Models\SubKategori;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -74,14 +76,28 @@ class ArsipAktifForm
                         TextInput::make('lokasi_fisik')
                             ->label('Lokasi Fisik'),
 
-                        Select::make('kategori_berkas')
-                            ->label('Kategori Berkas')
-                            ->options([
-                                'Asli' => 'Asli',
-                                'Salinan' => 'Salinan',
-                                'Tembusan' => 'Tembusan',
-                                'Pertinggal' => 'Pertinggal',
-                            ])
+                        Select::make('kategori_id')
+                            ->label('Kategori')
+                            ->relationship('kategori', 'nama_kategori')
+                            ->searchable()
+                            ->preload()
+                            ->live()
+                            ->required()
+                            ->afterStateUpdated(function (?string $state, callable $set) {
+                                // Reset sub_kategori when category changes
+                                $set('sub_kategori_id', null);
+                            }),
+
+                        Select::make('sub_kategori_id')
+                            ->label('Sub Kategori')
+                            ->relationship('subKategori', 'nama_sub_kategori', function ($query, $get) {
+                                $kategoriId = $get('kategori_id');
+                                if ($kategoriId) {
+                                    $query->where('kategori_id', $kategoriId);
+                                }
+                            })
+                            ->searchable()
+                            ->preload()
                             ->required(),
 
                         Textarea::make('uraian')

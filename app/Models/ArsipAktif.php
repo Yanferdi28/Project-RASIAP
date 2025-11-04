@@ -23,6 +23,8 @@ class ArsipAktif extends Model
         'lokasi_fisik',
         'uraian',
         'kategori_berkas',
+        'kategori_id',
+        'sub_kategori_id',
     ];
     
     protected $casts = [
@@ -34,9 +36,19 @@ class ArsipAktif extends Model
     {
         return $this->belongsTo(KodeKlasifikasi::class, 'klasifikasi_id');
     }
-
-    public function arsipUnits(): HasMany
+    
+    public function kategori(): BelongsTo
     {
-        return $this->hasMany(ArsipUnit::class, 'arsip_aktif_id');
+        return $this->belongsTo(Kategori::class);
+    }
+    
+    public function subKategori(): BelongsTo
+    {
+        return $this->belongsTo(SubKategori::class);
+    }
+    
+    public function arsipUnits()
+    {
+        return $this->hasMany(\App\Models\ArsipUnit::class, 'arsip_aktif_id', 'nomor_berkas');
     }
 }

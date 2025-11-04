@@ -5,19 +5,9 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Filament\Facades\Filament;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-| Arahkan root "/" langsung ke halaman login Laravel.
-| Pastikan scaffolding auth (Breeze/Jetstream/Fortify) sudah terpasang
-| agar route /login tersedia.
-*/
 
-// Root: selalu redirect ke /login
 Route::redirect('/', '/login');
 
-// (Opsional tapi disarankan): semua URL tak dikenal → /login
 Route::fallback(fn () => redirect('/login'));
 
 /*
@@ -47,7 +37,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/dokumen/download/{id}', [App\Http\Controllers\DocumentController::class, 'download'])->name('dokumen.download');
+    Route::get('/dokumen/view/{id}', [App\Http\Controllers\DocumentController::class, 'view'])->name('dokumen.view');
 });
+
 
 /*
 |--------------------------------------------------------------------------

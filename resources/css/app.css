@@ -3,3 +3,191 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Dark mode logo visibility */
+html:not(.dark) .logo-light {
+  display: block;
+}
+
+html:not(.dark) .logo-dark {
+  display: none;
+}
+
+html.dark .logo-light {
+  display: none;
+}
+
+html.dark .logo-dark {
+  display: block;
+}
+
+/* Force dark mode styles */
+html.dark {
+  color-scheme: dark;
+}
+
+/* Light mode (default) styles */
+html:not(.dark) body {
+  background-color: #f3f4f6; /* bg-gray-100 */
+  color: #111827; /* text-gray-900 */
+}
+
+/* Dark mode overrides for guest layout */
+html.dark body {
+  background-color: #111827 !important; /* dark:bg-gray-900 */
+  color: #f3f4f6 !important; /* dark:text-gray-100 */
+}
+
+/* More specific selectors for login container */
+html:not(.dark) div[class*="bg-white"][class*="rounded-xl"] {
+  background-color: white !important; /* bg-white */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important; /* shadow-xl shadow-gray-900/10 ring-1 ring-gray-900/5 */
+}
+
+html.dark div[class*="bg-white"][class*="rounded-xl"] {
+  background-color: #1f2937 !important; /* dark:bg-gray-800 */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important; /* stronger shadow for dark mode */
+}
+
+/* Text colors in light mode */
+html:not(.dark) .text-gray-900 {
+  color: #111827 !important; /* text-gray-900 */
+}
+
+html:not(.dark) .text-gray-500 {
+  color: #6b7280 !important; /* text-gray-500 */
+}
+
+/* Text colors in dark mode */
+html.dark .text-gray-900 {
+  color: #f9fafb !important; /* dark:text-gray-100 */
+}
+
+html.dark .text-gray-500 {
+  color: #9ca3af !important; /* dark:text-gray-400 */
+}
+
+/* Border colors in light mode */
+html:not(.dark) .border-gray-200 {
+  border-color: #e5e7eb !important; /* border-gray-200 */
+}
+
+/* Border colors in dark mode */
+html.dark .border-gray-200 {
+  border-color: #4b5563 !important; /* dark:border-gray-600 */
+}
+
+/* Input fields in light mode */
+html:not(.dark) .bg-gray-100 {
+  background-color: #f3f4f6 !important; /* bg-gray-100 */
+}
+
+/* Input fields in dark mode */
+html.dark .bg-gray-100 {
+  background-color: #374151 !important; /* dark:bg-gray-700 */
+}
+
+/* Text colors in dark mode */
+html.dark .text-gray-400 {
+  color: #9ca3af !important; /* Maintaining gray-400 for consistency */
+}
+
+/* Placeholder text in light mode */
+html:not(.dark) input::placeholder {
+  color: #9ca3af !important; /* placeholder-gray-400 */
+}
+
+/* Placeholder text in dark mode */
+html.dark input::placeholder {
+  color: #9ca3af !important; /* dark:placeholder-gray-400 */
+}
+
+/* Focus states in light mode */
+html:not(.dark) .focus\:ring-blue-500:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important; /* focus:ring-blue-500/30 */
+}
+
+html:not(.dark) .focus\:border-blue-500:focus {
+  border-color: #3b82f6 !important; /* focus:border-blue-500 */
+}
+
+/* Focus states in dark mode */
+html.dark .focus\:ring-blue-500:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3) !important; /* dark:focus:ring-blue-500/30 */
+}
+
+html.dark .focus\:border-blue-500:focus {
+  border-color: #3b82f6 !important; /* dark:focus:border-blue-500 */
+}
+
+/* Toggle button styles in light mode */
+html:not(.dark) [data-toggle-dark-mode] {
+  background-color: white !important;
+  color: #111827 !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+html:not(.dark) [data-toggle-dark-mode]:hover {
+  background-color: #f3f4f6 !important;
+}
+
+/* Toggle button styles in dark mode */
+html.dark [data-toggle-dark-mode] {
+  background-color: #374151 !important; /* dark:bg-gray-700 */
+  color: #f9fafb !important; /* dark:text-white */
+  border: 1px solid #4b5563 !important; /* dark:border-gray-600 */
+}
+
+html.dark [data-toggle-dark-mode]:hover {
+  background-color: #4b5563 !important; /* dark:hover:bg-gray-600 */
+}
+
+/* Checkbox styles in light mode */
+html:not(.dark) input[type="checkbox"] {
+  background-color: white !important;
+  border-color: #d1d5db !important; /* border-gray-300 */
+}
+
+html:not(.dark) input[type="checkbox"]:checked {
+  background-color: #3b82f6 !important; /* bg-blue-500 - using same blue as dark mode */
+  border-color: #3b82f6 !important; /* border-blue-500 */
+}
+
+/* Checkbox styles in dark mode */
+html.dark input[type="checkbox"] {
+  background-color: #374151 !important; /* dark:bg-gray-700 */
+  border-color: #4b5563 !important; /* dark:border-gray-600 */
+}
+
+html.dark input[type="checkbox"]:checked {
+  background-color: #3b82f6 !important; /* dark:bg-blue-500 */
+  border-color: #3b82f6 !important; /* dark:border-blue-500 */
+}
+
+/* Login button styles to ensure blue color and no shadow */
+.w-full.justify-center.mt-4.bg-blue-500 {
+  background-color: #3b82f6 !important; /* bg-blue-500 */
+  box-shadow: none !important;
+}
+
+.w-full.justify-center.mt-4.bg-blue-500:hover {
+  background-color: #2563eb !important; /* hover:bg-blue-600 */
+}
+
+.w-full.justify-center.mt-4.bg-blue-500:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Override any potential button styles from x-primary-button component */
+button[type="submit"].w-full.justify-center.mt-4 {
+  background-color: #3b82f6 !important; /* bg-blue-500 */
+  border: none !important;
+  box-shadow: none !important;
+}
+
+button[type="submit"].w-full.justify-center.mt-4:hover {
+  background-color: #2563eb !important; /* hover:bg-blue-600 */
+}
+
+

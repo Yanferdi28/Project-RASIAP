@@ -18,9 +18,11 @@ class ArsipAktifImporter extends Importer
             ImportColumn::make('nama_berkas')
                 ->requiredMapping()
                 ->rules(['required', 'max:255']),
-            ImportColumn::make('klasifikasi')
+            ImportColumn::make('klasifikasi_id')
                 ->requiredMapping()
-                ->relationship()
+                ->relationship(
+                    resolveUsing: fn ($state) => \App\Models\KodeKlasifikasi::where('kode_klasifikasi', $state)->first(),
+                )
                 ->rules(['required']),
             ImportColumn::make('retensi_aktif')
                 ->numeric()
@@ -33,6 +35,8 @@ class ArsipAktifImporter extends Importer
             ImportColumn::make('lokasi_fisik')
                 ->rules(['max:255']),
             ImportColumn::make('uraian'),
+            ImportColumn::make('keterangan'),
+
             ImportColumn::make('kategori_id')
                 ->requiredMapping()
                 ->relationship(
@@ -50,7 +54,7 @@ class ArsipAktifImporter extends Importer
 
     public function resolveRecord(): ArsipAktif
     {
-        // Check if a record already exists with the same nama_berkas
+
         $record = ArsipAktif::firstOrNew([
             'nama_berkas' => $this->data['nama_berkas'],
         ]);

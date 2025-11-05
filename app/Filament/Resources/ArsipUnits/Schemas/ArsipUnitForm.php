@@ -18,7 +18,7 @@ class ArsipUnitForm
     {
         return $schema
             ->schema([
-                // 1) Klasifikasi & Unit
+
                 Section::make('Klasifikasi & Unit')
                     ->columns(2)
                     ->schema([
@@ -57,7 +57,7 @@ class ArsipUnitForm
                             ->required(),
                     ]),
 
-                // 2) Deskripsi Arsip
+
                 Section::make('Deskripsi Arsip')
                     ->columns(2)
                     ->schema([
@@ -75,7 +75,7 @@ class ArsipUnitForm
                             ->columnSpanFull(),
                     ]),
 
-                // 3) Kuantitas
+
                 Section::make('Kuantitas')
                     ->columns(2)
                     ->schema([
@@ -95,7 +95,7 @@ class ArsipUnitForm
                             ->required(),
                     ]),
 
-                // 4) Retensi & Keamanan
+
                 Section::make('Retensi & Keamanan')
                     ->columns(3)
                     ->schema([
@@ -133,7 +133,7 @@ class ArsipUnitForm
                             ->columnSpan(1),
                     ]),
 
-                // 5) Lokasi Fisik Arsip
+
                 Section::make('Lokasi Fisik Arsip')
                     ->description('Detail lokasi penyimpanan fisik arsip.')
                     ->columns(2)
@@ -145,7 +145,7 @@ class ArsipUnitForm
                         TextInput::make('no_box')->label('No. Box'),
                     ]),
 
-                // 6) Dokumen Digital
+
                 Section::make('Dokumen Digital')
                     ->description('Unggah hasil pindai (scan) dokumen.')
                     ->schema([
@@ -158,7 +158,7 @@ class ArsipUnitForm
                             ->disk('public')
                             ->imagePreviewHeight('250')
                             ->acceptedFileTypes(['application/pdf', 'image/*', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
-                            ->maxSize(10240) // 10MB
+                            ->maxSize(10240)
                             ->downloadable()
                             ->openable(),
                     ]),

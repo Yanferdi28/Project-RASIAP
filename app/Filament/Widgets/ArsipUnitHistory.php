@@ -13,10 +13,10 @@ use Filament\Actions\Action;
 class ArsipUnitHistory extends BaseWidget
 {
     protected static ?string $heading = 'History Pembuatan Arsip Unit';
-    protected static ?int $sort = 2; // urutan di header/dashboard
-    protected int|string|array $columnSpan = 'full'; // lebar widget
+    protected static ?int $sort = 2;
+    protected int|string|array $columnSpan = 'full';
 
-    // auto refresh tiap 10 detik (opsional)
+
     protected static ?string $pollingInterval = '10s';
 
     public function table(Table $table): Table
@@ -52,7 +52,7 @@ class ArsipUnitHistory extends BaseWidget
                     ->limit(20),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->since()            // tampil “2 hours ago”
+                    ->since()
                     ->label('Dibuat')
                     ->sortable(),
                 
@@ -83,7 +83,7 @@ class ArsipUnitHistory extends BaseWidget
     protected function getQuery(): Builder
     {
         return ArsipUnit::query()
-            ->with(['kodeKlasifikasi'])   // sesuaikan nama relasi di model
+            ->with(['kodeKlasifikasi'])
             ->latest('created_at');
     }
 }

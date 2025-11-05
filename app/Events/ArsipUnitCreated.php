@@ -18,7 +18,7 @@ class ArsipUnitCreated
     public function __construct(
         public ArsipUnit $arsipUnit
     ) {
-        //
+
     }
 
     /**

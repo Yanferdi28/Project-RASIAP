@@ -15,7 +15,7 @@ class Kategori extends Model
      *
      * @var string
      */
-    protected $table = 'kategori'; //
+    protected $table = 'kategori';
 
     /**
      * Atribut yang dapat diisi secara massal.
@@ -23,8 +23,8 @@ class Kategori extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'nama_kategori', //
-        'deskripsi', //
+        'nama_kategori',
+        'deskripsi',
     ];
 
     public function subKategori(): HasMany 

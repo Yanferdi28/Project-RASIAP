@@ -19,30 +19,34 @@ class ArsipAktifExporter extends Exporter
     {
         return [
             ExportColumn::make('nomor_berkas')
-                ->label('Nomor Berkas'),
+                ->label('nomor_berkas'),
             
             ExportColumn::make('nama_berkas')
-                ->label('Nama Berkas'),
+                ->label('nama_berkas'),
             
             ExportColumn::make('klasifikasi.kode_klasifikasi')
-                ->label('Kode Klasifikasi'),
-            ExportColumn::make('klasifikasi.uraian')
-                ->label('Uraian Klasifikasi'),
+                ->label('klasifikasi')
+                ->formatStateUsing(fn ($state, $record) => $record->klasifikasi?->kode_klasifikasi ?? ''),
 
             ExportColumn::make('retensi_aktif')
-                ->label('Retensi Aktif'),
+                ->label('retensi_aktif'),
             ExportColumn::make('retensi_inaktif')
-                ->label('Retensi Inaktif'),
+                ->label('retensi_inaktif'),
             ExportColumn::make('penyusutan_akhir')
-                ->label('Penyusutan Akhir'),
+                ->label('penyusutan_akhir'),
             ExportColumn::make('lokasi_fisik')
-                ->label('Lokasi Fisik'),
+                ->label('lokasi_fisik'),
+            ExportColumn::make('uraian')
+                ->label('uraian'),
+            ExportColumn::make('keterangan')
+                ->label('keterangan'),
+
             ExportColumn::make('kategori.nama_kategori')
-                ->label('Kategori'),
+                ->label('kategori_id')
+                ->formatStateUsing(fn ($state, $record) => $record->kategori?->nama_kategori ?? ''),
             ExportColumn::make('subKategori.nama_sub_kategori')
-                ->label('Sub Kategori'),
-            ExportColumn::make('created_at')
-                ->label('Tanggal Dibuat'),
+                ->label('sub_kategori_id')
+                ->formatStateUsing(fn ($state, $record) => $record->subKategori?->nama_sub_kategori ?? ''),
         ];
     }
 

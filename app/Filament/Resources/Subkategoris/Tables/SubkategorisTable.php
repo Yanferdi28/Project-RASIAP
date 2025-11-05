@@ -15,7 +15,7 @@ class SubkategorisTable
     {
         return $table
             ->columns([
-                // Kolom Main Category
+
                 TextColumn::make('kategori.nama_kategori')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -29,7 +29,7 @@ class SubkategorisTable
                     ->sortable()
                     ->label('Kategori Utama'),
 
-                // Kolom Sub Category
+
                 TextColumn::make('nama_sub_kategori')
                     ->searchable()
                     ->sortable()
@@ -41,7 +41,7 @@ class SubkategorisTable
                     ->label('Keterangan'),
             ])
             ->filters([
-                //
+
             ])
             ->recordActions([
                 EditAction::make(),

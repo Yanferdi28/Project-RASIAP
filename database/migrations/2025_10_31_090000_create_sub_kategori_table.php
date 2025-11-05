@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('sub_kategori', function (Blueprint $table) {
             $table->id();
-            // Foreign Key untuk menghubungkan ke Kategori (Main Category)
+
             $table->foreignId('kategori_id')
                   ->constrained('kategori')
                   ->onDelete('cascade');
                   
-            $table->string('nama_sub_kategori'); // Contoh: Informasi Daftar dan Hasil Penelitian LPP RRI
+            $table->string('nama_sub_kategori');
             $table->text('deskripsi')->nullable();
             $table->timestamps();
         });

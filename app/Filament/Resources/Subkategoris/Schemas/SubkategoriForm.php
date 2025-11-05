@@ -15,7 +15,7 @@ class SubKategoriForm
         return $schema
             ->columns(2)
             ->components([
-                // Kolom Main Category (Kategori Waktu Ketersediaan)
+
                 Select::make('kategori_id')
                     ->label('Kategori Utama (Waktu Ketersediaan)')
                     ->relationship('kategori', 'nama_kategori')
@@ -23,7 +23,7 @@ class SubKategoriForm
                     ->required()
                     ->searchable(),
                     
-                // Kolom Sub Category (Item Informasi)
+
                 TextInput::make('nama_sub_kategori')
                     ->required()
                     ->maxLength(255)

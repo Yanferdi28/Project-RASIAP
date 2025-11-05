@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Models\ArsipAktif;
+use App\Models\KodeKlasifikasi;
+use App\Models\UnitPengolah;
 
 class ArsipUnit extends Model
 {
@@ -76,7 +80,7 @@ class ArsipUnit extends Model
         parent::boot();
 
         static::created(function ($arsipUnit) {
-            // Dispatch event only if status is 'pending' (newly created)
+
             if ($arsipUnit->status === 'pending') {
                 event(new ArsipUnitCreated($arsipUnit));
             }
@@ -89,14 +93,9 @@ class ArsipUnit extends Model
      */
     public function arsipAktif(): BelongsTo
     {
-        // Asumsi: Foreign key di tabel 'arsip_units' adalah 'arsip_aktif_id'
-        // Asumsi: Primary key di tabel 'arsip_aktif' adalah 'id'
-        return $this->belongsTo(ArsipAktif::class, 'arsip_aktif_id');
-    }
 
-    public function verifier(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'verified_by');
+
+        return $this->belongsTo(ArsipAktif::class, 'arsip_aktif_id');
     }
 
     public function kodeKlasifikasi(): BelongsTo

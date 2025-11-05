@@ -6,14 +6,14 @@ use Illuminate\Database\Seeder;
 use App\Models\Kategori;
 use App\Models\SubKategori;
 
-class KategoriSeeder extends Seeder // Nama kelas diubah menjadi KategoriSeeder
+class KategoriSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        // 1. DATA KATEGORI UTAMA (Main Categories)
+
         $mainCategories = [
             'Setiap Saat' => 'Informasi yang wajib disediakan dan diumumkan secara terbuka dan dapat diakses oleh publik tanpa menunggu permohonan.',
             'Berkala' => 'Informasi yang wajib diperbarui dan diumumkan secara teratur dalam jangka waktu tertentu.',
@@ -30,7 +30,7 @@ class KategoriSeeder extends Seeder // Nama kelas diubah menjadi KategoriSeeder
             $kategoriMap[$nama] = $kategori->id;
         }
 
-        // 2. DATA SUB KATEGORI (Sub Categories)
+
         $subCategoriesData = [
             'Setiap Saat' => [
                 'Informasi Daftar dan Hasil Penelitian LPP RRI',
@@ -99,7 +99,7 @@ class KategoriSeeder extends Seeder // Nama kelas diubah menjadi KategoriSeeder
             ],
         ];
 
-        // Memasukkan Sub Kategori ke database
+
         foreach ($subCategoriesData as $kategoriNama => $subKategoris) {
             $kategoriId = $kategoriMap[$kategoriNama];
             

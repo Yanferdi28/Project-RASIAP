@@ -17,7 +17,7 @@ class ArsipAktifForm
     {
         return $schema
             ->schema([
-                // Section 1: Nama Berkas, Klasifikasi, Retensi, Penyusutan
+
                 Section::make('Informasi Utama')
                     ->columns(2)
                     ->schema([
@@ -69,12 +69,14 @@ class ArsipAktifForm
                             ->dehydrated(true),
                     ]),
 
-                // Section 2: Lokasi Fisik, Uraian, Kategori, Nomor Berkas
+
                 Section::make('Detail Berkas')
                     ->columns(2)
                     ->schema([
                         TextInput::make('lokasi_fisik')
                             ->label('Lokasi Fisik'),
+
+
 
                         Select::make('kategori_id')
                             ->label('Kategori')
@@ -84,7 +86,7 @@ class ArsipAktifForm
                             ->live()
                             ->required()
                             ->afterStateUpdated(function (?string $state, callable $set) {
-                                // Reset sub_kategori when category changes
+
                                 $set('sub_kategori_id', null);
                             }),
 

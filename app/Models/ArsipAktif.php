@@ -22,7 +22,6 @@ class ArsipAktif extends Model
         'penyusutan_akhir',
         'lokasi_fisik',
         'uraian',
-        'kategori_berkas',
         'kategori_id',
         'sub_kategori_id',
     ];

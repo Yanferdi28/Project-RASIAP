@@ -15,7 +15,7 @@ class ArsipInaktifForm
     {
         return $schema
             ->schema([
-                // Section 1: Nama Berkas, Klasifikasi, Retensi, Penyusutan
+
                 Section::make('Informasi Utama')
                     ->columns(2)
                     ->schema([
@@ -67,7 +67,7 @@ class ArsipInaktifForm
                             ->dehydrated(true),
                     ]),
 
-                // Section 2: Lokasi Fisik, Uraian, Kategori, Nomor Berkas
+
                 Section::make('Detail Berkas')
                     ->columns(2)
                     ->schema([

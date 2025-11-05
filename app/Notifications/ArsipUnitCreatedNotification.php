@@ -15,7 +15,7 @@ class ArsipUnitCreatedNotification extends Notification
     public function __construct(
         protected ArsipUnit $arsipUnit
     ) {
-        //
+
     }
 
     /**

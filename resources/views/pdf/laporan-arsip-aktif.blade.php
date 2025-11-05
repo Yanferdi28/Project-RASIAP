@@ -71,13 +71,15 @@
             @forelse($records as $index => $record)
                 <tr>
                     <td style="text-align: center;">{{ $index + 1 }}</td>
-                    <td>{{ $record->klasifikasi->kode_klasifikasi ?? 'N/A' }}</td>
+                    <td>{{ $record->klasifikasi->kode_klasifikasi ?? 'N/A' }} / {{ $record->nomor_berkas }}</td>
                     <td>{{ $record->nama_berkas }}</td>
                     <td>{{ $record->created_at->format('d-m-Y') }}</td>
-                    <td>{{ $record->created_at->format('d M Y') }} s/d {{ $record->created_at->format('d M Y') }}</td> <td style="text-align: center;">-</td> <td style="text-align: center;">{{ $record->retensi_aktif }}</td>
+                    <td>{{ $record->created_at->format('d M Y') }} s/d {{ $record->updated_at->format('d M Y') }}</td>
+                    <td style="text-align: center;">1</td>
+                    <td style="text-align: center;">{{ $record->retensi_aktif }}</td>
                     <td style="text-align: center;">{{ $record->retensi_inaktif }}</td>
                     <td>{{ $record->penyusutan_akhir }}</td>
-                    <td>{{ $record->keterangan }}</td>
+                    <td>{{ $record->keterangan ?? $record->lokasi_fisik ?? '' }}</td>
                 </tr>
             @empty
                 <tr>

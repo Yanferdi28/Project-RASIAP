@@ -20,14 +20,14 @@ return new class extends Migration
             $table->integer('retensi_aktif');
             $table->integer('retensi_inaktif');
 
-            // enum untuk status akhir
+
             $table->enum('status_akhir', [
                 'Musnah',
                 'Permanen',
                 'Dinilai Kembali',
             ])->default('Dinilai Kembali');
 
-            // enum untuk klasifikasi keamanan
+
             $table->enum('klasifikasi_keamanan', [
                 'Biasa',
                 'Rahasia',

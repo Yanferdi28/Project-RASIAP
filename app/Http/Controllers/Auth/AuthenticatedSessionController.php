@@ -28,15 +28,15 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
-        // Buang URL intended lama supaya tidak “nyeret” ke panel sebelumnya (mis. /admin)
+
         $request->session()->forget('url.intended');
 
         $user = $request->user();
 
-        // Tentukan panel berdasarkan role (Spatie)
+
         $panelId = $user->hasRole('admin') ? 'admin' : 'user';
 
-        // Ambil URL panel via Filament; sediakan fallback jika panel tidak terdaftar
+
         $panel = Filament::getPanel($panelId);
         $targetUrl = $panel
             ? $panel->getUrl()
@@ -44,7 +44,7 @@ class AuthenticatedSessionController extends Controller
                 ? 'filament.admin.pages.dashboard'
                 : 'filament.user.pages.dashboard');
 
-        // PENTING: jangan pakai intended di sini
+
         return redirect()->to($targetUrl);
     }
 
@@ -55,13 +55,13 @@ class AuthenticatedSessionController extends Controller
     {
         Auth::guard('web')->logout();
 
-        // Buang intended SEBELUM invalidate agar pasti hilang
+
         $request->session()->forget('url.intended');
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // Arahkan kembali ke halaman login Breeze
+
         return redirect()->route('login');
     }
 }

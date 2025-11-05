@@ -15,7 +15,7 @@ class CreateArsipUnit extends CreateRecord
     {
         $user = Auth::user();
         
-        // Prevent operators from accessing the create page
+
         if ($user && $user->hasRole('operator')) {
             abort(403, 'You do not have permission to create archive units.');
         }

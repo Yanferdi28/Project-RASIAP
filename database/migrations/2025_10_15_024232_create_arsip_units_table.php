@@ -12,16 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('arsip_units', function (Blueprint $table) {
-            // Primary key kustom
+
             $table->id('id_berkas');
 
-            // Foreign Key ke tabel kode_klasifikasis
+
             $table->foreignId('kode_klasifikasi_id')
                   ->nullable()
                   ->constrained('kode_klasifikasis')
                   ->onDelete('set null');
 
-            // Foreign Key ke tabel unit_pengolahs
+
             $table->foreignId('unit_pengolah_arsip_id')
                   ->nullable()
                   ->constrained('unit_pengolahs')
@@ -39,7 +39,7 @@ return new class extends Migration
             $table->string('no_laci')->nullable();
             $table->text('keterangan')->nullable();
             
-            // Timestamps standar Laravel (created_at & updated_at)
+
             $table->timestamps();
         });
     }

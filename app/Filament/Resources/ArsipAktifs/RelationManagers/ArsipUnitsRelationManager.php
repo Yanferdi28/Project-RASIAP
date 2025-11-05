@@ -60,7 +60,7 @@ class ArsipUnitsRelationManager extends RelationManager
                     ->sortable(),
             ])
             ->filters([
-                //
+
             ])
             ->emptyStateHeading('Tidak ada unit arsip')
             ->emptyStateDescription('Belum ada unit arsip yang terkait dengan arsip aktif ini.')

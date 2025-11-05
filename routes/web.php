@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/dokumen/download/{id}', [App\Http\Controllers\DocumentController::class, 'download'])->name('dokumen.download');
     Route::get('/dokumen/view/{id}', [App\Http\Controllers\DocumentController::class, 'view'])->name('dokumen.view');
+    Route::get('/dokumen/{id}', [App\Http\Controllers\DocumentController::class, 'show'])->name('dokumen.show');
 });
 
 

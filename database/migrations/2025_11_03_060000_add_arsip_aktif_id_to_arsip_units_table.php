@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('arsip_units', function (Blueprint $table) {
-            // Add the arsip_aktif_id column if it doesn't exist
+
             if (!Schema::hasColumn('arsip_units', 'arsip_aktif_id')) {
                 $table->foreignId('arsip_aktif_id')
                       ->nullable()
@@ -20,7 +20,7 @@ return new class extends Migration
                       ->onDelete('set null')
                       ->onUpdate('cascade');
             } else {
-                // If the column exists but doesn't have proper constraints, update it
+
                 $table->dropForeign(['arsip_aktif_id']);
                 $table->foreign('arsip_aktif_id')
                       ->references('nomor_berkas')

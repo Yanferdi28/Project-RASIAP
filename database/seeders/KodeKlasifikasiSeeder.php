@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use App\Models\KodeKlasifikasi; // Pastikan path model ini sudah benar
+use App\Models\KodeKlasifikasi;
 
 class KodeKlasifikasiSeeder extends Seeder
 {
@@ -15,12 +15,12 @@ class KodeKlasifikasiSeeder extends Seeder
      */
     public function run(): void
     {
-        // Bersih-bersih dulu biar kinclong
+
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         KodeKlasifikasi::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // Ini dia semua datanya, full tank!
+
         $data = [
             ['id' => 1, 'kode_klasifikasi' => 'PR', 'uraian' => 'Program dan Evaluasi', 'retensi_aktif' => 0, 'retensi_inaktif' => 0, 'status_akhir' => 'Permanen', 'klasifikasi_keamanan' => 'Biasa'],
             ['id' => 2, 'kode_klasifikasi' => 'PR.01.01', 'uraian' => 'Perencanaan Kegiatan', 'retensi_aktif' => 2, 'retensi_inaktif' => 3, 'status_akhir' => 'Permanen', 'klasifikasi_keamanan' => 'Terbatas'],
@@ -517,8 +517,8 @@ class KodeKlasifikasiSeeder extends Seeder
             ['id' => 493, 'kode_klasifikasi' => 'KJM.09.09', 'uraian' => 'Laporan Keuangan', 'retensi_aktif' => 2, 'retensi_inaktif' => 8, 'status_akhir' => 'Musnah', 'klasifikasi_keamanan' => 'Biasa'],
         ];
 
-        // Memasukkan data ke dalam database
-        // Menggunakan chunk untuk efisiensi memori jika data sangat besar
+
+
         foreach (array_chunk($data, 200) as $chunk) {
             KodeKlasifikasi::insert($chunk);
         }

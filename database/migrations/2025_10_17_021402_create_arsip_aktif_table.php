@@ -12,28 +12,28 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('arsip_aktif', function (Blueprint $table) {
-            // Kolom Nomor Berkas sebagai Primary Key
+
             $table->id('nomor_berkas');
 
-            // Kolom sesuai urutan di gambar
+
             $table->string('nama_berkas');
 
-            // Asumsi 'Klasifikasi' berelasi dengan tabel lain
+
             $table->foreignId('klasifikasi_id')->constrained('kode_klasifikasis');
 
-            // Kolom Retensi (dibuat nullable karena bisa diisi otomatis)
+
             $table->integer('retensi_aktif')->nullable();
             $table->integer('retensi_inaktif')->nullable();
             
-            // Kolom Penyusutan Akhir (dibuat nullable)
+
             $table->string('penyusutan_akhir')->nullable();
 
-            // Kolom sisi kanan
+
             $table->string('lokasi_fisik')->nullable();
             $table->text('uraian')->nullable();
             $table->string('kategori_berkas');
             
-            // Timestamps standar Laravel
+
             $table->timestamps();
         });
     }

@@ -2,14 +2,24 @@
     <div class="w-full max-w-sm mx-auto 
                 bg-white rounded-xl 
                 shadow-xl shadow-gray-900/10 ring-1 ring-gray-900/5
-                dark:bg-gray-800 dark:shadow-gray-900/50 dark:ring-gray-700">
+                dark:bg-gray-800 dark:shadow-gray-900/50 dark:ring-gray-700 relative">
+
+        <!-- Dark mode toggle button -->
+        <button data-toggle-dark-mode 
+                class="absolute top-4 right-4 p-2 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                aria-label="Toggle dark mode">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path id="sun-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                <path id="moon-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" class="hidden"></path>
+            </svg>
+        </button>
 
         <div class="p-7 sm:p-8">
             
             <div class="text-center mb-4">
                 {{-- Tailwind akan menampilkan keduanya dan media query di CSS akan menyembunyikan/menampilkan yang benar --}}
-                <img src="{{ asset('images/logo-light.png') }}" alt="Logo Light" class="w-24 h-auto object-contain mx-auto block dark:hidden">
-                <img src="{{ asset('images/logo-dark.png') }}" alt="Logo Dark" class="w-24 h-auto object-contain mx-auto hidden dark:block">
+                <img src="{{ asset('images/logo-light.png') }}" alt="Logo Light" class="w-24 h-auto object-contain mx-auto block dark:hidden logo-light">
+                <img src="{{ asset('images/logo-dark.png') }}" alt="Logo Dark" class="w-24 h-auto object-contain mx-auto hidden dark:block logo-dark">
             </div>
 
             <h1 class="text-xl font-semibold text-gray-900 text-center dark:text-gray-100">Login dengan Email</h1>
@@ -79,11 +89,11 @@
                     @endif
                 </div>
 
-                <x-primary-button class="w-full justify-center mt-4 bg-gray-900 hover:bg-black focus:ring-gray-900/50 
-                                        dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-600/50 
+                <button type="submit" class="w-full justify-center mt-4 bg-blue-500 hover:bg-blue-600 focus:outline-none
+                                        dark:bg-blue-600 dark:hover:bg-blue-700
                                         rounded-xl py-3 text-sm font-bold text-white">
                     Login
-                </x-primary-button>
+                </button>
             </form>
             
             @if (Route::has('register'))

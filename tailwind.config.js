@@ -7,8 +7,13 @@ export default {
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
+        './resources/js/**/*.js', // Tambahkan ini agar Tailwind mengenali kelas dari JS
     ],
 
+
+    darkMode: 'class', // atau 'media' jika ingin otomatis berdasarkan preferensi sistem
+
+    
     theme: {
         extend: {
             fontFamily: {

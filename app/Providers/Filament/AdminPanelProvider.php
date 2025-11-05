@@ -17,6 +17,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Widgets\StatsOverview;
+use App\Filament\Widgets\ArsipUnitHistory;
 use Filament\Navigation\NavigationGroup;
 
 
@@ -65,9 +66,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                \App\Filament\Widgets\StatsOverview::class,
-                \Filament\Widgets\AccountWidget::class,
-                \Filament\Widgets\FilamentInfoWidget::class,
+                StatsOverview::class,
+                ArsipUnitHistory::class,
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -38,4 +38,14 @@ class ArsipUnitPolicy
     {
         return $user->hasRole('admin'); // hanya admin
     }
+
+    public function submit(User $user, ArsipUnit $record): bool
+    {
+        return $user->can('arsipunit.submit') || $record->publish_status === 'draft';
+    }
+
+    public function verify(User $user, ArsipUnit $record): bool
+    {
+        return $user->can('arsipunit.verify') && $record->publish_status === 'submitted';
+    }
 }

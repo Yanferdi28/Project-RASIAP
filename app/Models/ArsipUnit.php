@@ -94,6 +94,11 @@ class ArsipUnit extends Model
         return $this->belongsTo(ArsipAktif::class, 'arsip_aktif_id');
     }
 
+    public function verifier(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verified_by');
+    }
+
     public function kodeKlasifikasi(): BelongsTo
     {
      return $this->belongsTo(KodeKlasifikasi::class, 'kode_klasifikasi_id'); 

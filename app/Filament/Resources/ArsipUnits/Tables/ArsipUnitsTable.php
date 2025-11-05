@@ -2,14 +2,16 @@
 
 namespace App\Filament\Resources\ArsipUnits\Tables;
 
+<<<<<<< HEAD
 use App\Models\ArsipAktif;
 use App\Models\ArsipUnit;
+=======
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -101,104 +103,39 @@ class ArsipUnitsTable
                     ->label('Status Verifikasi'),
             ])
             ->recordActions([
-                Action::make('verifikasi')
-                    ->label(function ($record) {
-                        // Change label based on current status
-                        if ($record->status === 'pending') {
-                            return 'Verifikasi';
-                        } elseif ($record->status === 'diterima') {
-                            return 'Ubah Verifikasi (Terima → Tolak)';
-                        } else { // ditolak
-                            return 'Ubah Verifikasi (Tolak → Terima)';
-                        }
-                    })
-                    ->icon('heroicon-o-check-badge')
-                    ->color(function ($record) {
-                        // Set color based on current status
-                        return match($record->status) {
-                            'pending' => 'info',
-                            'diterima' => 'success',
-                            'ditolak' => 'danger',
-                            default => 'info',
-                        };
-                    })
-                    ->visible(function ($record) {
-                        // Show to admin and operator roles regardless of status
-                        /** @var \App\Models\User $user */
-                        $user = \Illuminate\Support\Facades\Auth::user();
-                        return $user->hasAnyRole(['admin', 'operator']);
-                    })
-                    ->modalHeading('Verifikasi Arsip Unit')
-                    ->modalDescription(function ($record) {
-                        // Change description based on current status
-                        if ($record->status === 'pending') {
-                            return 'Pilih tindakan untuk verifikasi arsip unit ini.';
-                        } else {
-                            return 'Ubah verifikasi untuk arsip unit ini.';
-                        }
-                    })
+<<<<<<< HEAD
+                Action::make('pilih_berkas')
+                    ->label(fn (ArsipUnit $record): string => $record->arsip_aktif_id ? 'Ganti Berkas' : 'Pilih Berkas')
+                    ->icon('heroicon-o-folder-open')
+                    ->modalIcon('heroicon-o-folder-open')
+                    ->color('warning')
+                    ->modalHeading(fn (ArsipUnit $record): string => $record->arsip_aktif_id ? 'Ganti Berkas Arsip' : 'Pilih Berkas Arsip')
+                    ->modalSubmitActionLabel('Simpan')
                     ->modalWidth('md')
-                    ->modalIcon('heroicon-o-check-badge')
-                    ->form([
-                        \Filament\Forms\Components\Radio::make('keputusan')
-                            ->label('Keputusan')
-                            ->options([
-                                'diterima' => 'Terima',
-                                'ditolak' => 'Tolak',
-                            ])
-                            ->required()
-                            ->default(fn ($record) => $record->status === 'pending' ? 'diterima' : $record->status),
-                        \Filament\Forms\Components\Textarea::make('keterangan')
-                            ->label('Keterangan (Opsional)')
-                            ->placeholder('Tambahkan keterangan jika diperlukan'),
+                    ->fillForm(fn (ArsipUnit $record): array => [
+                        'arsip_aktif_id' => $record->arsip_aktif_id,
                     ])
-                    ->action(function ($record, array $data) {
-                        if ($data['keputusan'] === 'diterima') {
-                            $record->accept($data['keterangan'] ?? null);
-                            \Filament\Notifications\Notification::make()
-                                ->title('Arsip Unit berhasil diperbarui')
-                                ->success()
-                                ->send();
-                        } else {
-                            $record->reject($data['keterangan'] ?? null);
-                            \Filament\Notifications\Notification::make()
-                                ->title('Arsip Unit berhasil diperbarui')
-                                ->success()
-                                ->send();
-                        }
-                    }),
-                
-                // --- KODE DIPERBAIKI ---
-                Action::make('download_dokumen')
-                    ->label('Download Dokumen')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->color('primary')
-                    // Menggunakan $record->id_berkas (sesuai primaryKey model)
-                    ->url(function ($record) {
-                        if (empty($record) || empty($record->id_berkas)) {
-                            return '#'; 
-                        }
-                        // 'id' di sini adalah nama parameter di route, nilainya adalah $record->id_berkas
-                        return route('dokumen.download', ['id' => $record->id_berkas]);
-                    }, shouldOpenInNewTab: true)
-                    ->visible(fn ($record) => $record && !empty($record->dokumen)),
-                
-                // --- KODE DIPERBAIKI ---
-                Action::make('view_dokumen')
-                    ->label('Preview Dokumen')
-                    ->icon('heroicon-o-eye')
-                    ->color('info')
-                    // Menggunakan $record->id_berkas (sesuai primaryKey model)
-                    ->url(function ($record) {
-                        if (empty($record) || empty($record->id_berkas)) {
-                            return '#';
-                        }
-                        // 'id' di sini adalah nama parameter di route, nilainya adalah $record->id_berkas
-                        return route('dokumen.view', ['id' => $record->id_berkas]);
-                    }, shouldOpenInNewTab: true)
-                    ->visible(fn ($record) => $record && !empty($record->dokumen)),
-                // ---------------------------------------------
-
+                    ->schema([
+                        Select::make('arsip_aktif_id')
+                            ->label('Pilih Berkas Arsip Aktif')
+                            ->options(ArsipAktif::all()->pluck('nama_berkas', 'nomor_berkas'))
+                            ->required()
+                            ->searchable()
+                            ->helperText('Pilih berkas arsip aktif tempat dokumen ini akan disimpan.'),
+                    ])
+                    ->action(function (ArsipUnit $record, array $data): void {
+=======
+                Action::make('kelola_naskah')
+                    ->label('Kelola Naskah')
+                    ->icon('heroicon-o-document-text')
+                    ->color('success')
+                    ->url(fn ($record) => $record->arsip_aktif_id 
+                        ? route('filament.admin.resources.arsip-aktifs.edit', ['record' => $record->arsip_aktif_id]) . '/naskah-masuks'
+                        : null
+                    )
+                    ->link()
+                    ->visible(fn ($record) => $record->arsip_aktif_id !== null)
+                    ->tooltip('Lihat dan kelola naskah yang terkait dengan arsip aktif ini'),
                 Action::make('ubah_arsip_aktif')
                     ->label(fn ($record): string => 
                         $record->arsip_aktif_id 

@@ -22,28 +22,53 @@ class ArsipUnitsTable
     {
         return $table
             ->columns([
-                TextColumn::make('id_berkas')
-                    ->label('ID Berkas')
-                    ->searchable()
-                    ->sortable(),
                 TextColumn::make('kodeKlasifikasi.kode_klasifikasi')
                     ->label('Kode Klasifikasi')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('indeks')
                     ->searchable(),
+                TextColumn::make('uraian_informasi')
+                    ->label('Uraian Informasi')
+                    ->searchable()
+                    ->limit(50)
+                    ->tooltip(fn ($state): ?string => strlen($state) > 50 ? $state : null),
                 TextColumn::make('tanggal')
                     ->date()
                     ->sortable(),
                 TextColumn::make('jumlah_nilai')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('jumlah_satuan')
+                    ->label('Jumlah')
+                    ->formatStateUsing(function ($record) {
+                        return $record->jumlah_nilai . ' ' . $record->jumlah_satuan;
+                    })
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('tingkat_perkembangan')
                     ->searchable(),
+                TextColumn::make('unitPengolah.nama_unit')
+                    ->label('Unit Pengolah')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('retensi_aktif')
+                    ->numeric(),
+                TextColumn::make('retensi_inaktif')
+                    ->numeric(),
                 TextColumn::make('skkaad')
+                    ->searchable(),
+                TextColumn::make('ruangan')
+                    ->label('No Ruang')
+                    ->searchable(),
+                TextColumn::make('no_filling')
+                    ->label('No Filling')
+                    ->searchable(),
+                TextColumn::make('no_laci')
+                    ->label('No Laci')
+                    ->searchable(),
+                TextColumn::make('no_folder')
+                    ->label('No Folder')
+                    ->searchable(),
+                TextColumn::make('no_box')
+                    ->label('No Box')
                     ->searchable(),
                 TextColumn::make('status')
                     ->badge()
@@ -53,36 +78,17 @@ class ArsipUnitsTable
                         'ditolak' => 'danger',
                         default => 'gray',
                     }),
-                TextColumn::make('verifikasi_oleh.name')
-                    ->label('Diverifikasi Oleh')
+                TextColumn::make('kategori.nama_kategori')
+                    ->label('Kategori')
+                    ->badge()
                     ->searchable()
-                    ->visibleFrom('md'),
-                TextColumn::make('verifikasi_tanggal')
-                    ->label('Tanggal Verifikasi')
-                    ->dateTime()
-                    ->sortable()
-                    ->visibleFrom('md'),
-                TextColumn::make('retensi_aktif')
-                    ->numeric(),
-                TextColumn::make('retensi_inaktif')
-                    ->numeric(),
-                TextColumn::make('ruangan')
-                    ->searchable(),
-                TextColumn::make('no_filling')
-                    ->searchable(),
-                TextColumn::make('no_laci')
-                    ->searchable(),
-                TextColumn::make('dokumen')
-                    ->label('Dokumen')
-                    ->formatStateUsing(function ($record) {
-                        if ($record->dokumen) {
-                            $fileName = basename($record->dokumen);
-                            return $fileName;
-                        }
-                        return 'Tidak ada dokumen';
-                    })
+                    ->sortable(),
+                TextColumn::make('subKategori.nama_sub_kategori')
+                    ->label('Sub Kategori')
+                    ->badge()
                     ->searchable()
-                    ->visibleFrom('md'),
+                    ->sortable(),
+                    
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -92,6 +98,8 @@ class ArsipUnitsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->modifyQueryUsing(fn ($query) => $query->with(['kodeKlasifikasi', 'kategori', 'subKategori', 'unitPengolah']))
+            ->defaultSort('id_berkas', 'desc')
             ->filters([
                 SelectFilter::make('status')
                     ->options([
@@ -103,15 +111,9 @@ class ArsipUnitsTable
             ])
             ->recordActions([
                 Action::make('verifikasi')
-                    ->label(function ($record) {
-                        if ($record->status === 'pending') {
-                            return 'Verifikasi';
-                        } elseif ($record->status === 'diterima') {
-                            return 'Ubah Verifikasi (Terima → Tolak)';
-                        }
-                        return 'Ubah Verifikasi (Tolak → Terima)';
-                    })
+                    ->label('')
                     ->icon('heroicon-o-check-badge')
+                    ->tooltip('Verifikasi')
                     ->color(function ($record) {
                         return match ($record->status) {
                             'pending'  => 'info',
@@ -160,8 +162,9 @@ class ArsipUnitsTable
                     }),
 
                 Action::make('ubah_arsip_aktif')
-                    ->label(fn ($record): string => $record->arsip_aktif_id ? 'Pemberkasan' : 'Pilih Berkas')
+                    ->label('')
                     ->icon('heroicon-o-folder-open')
+                    ->tooltip(fn ($record): string => $record->arsip_aktif_id ? 'Ubah Berkas' : 'Pilih Berkas')
                     ->modalIcon('heroicon-o-folder-open')
                     ->color('warning')
                     ->modalHeading(fn ($record): string => $record->arsip_aktif_id ? 'Ubah Arsip Aktif untuk Unit Ini' : 'Pilih Arsip Aktif')
@@ -199,7 +202,7 @@ class ArsipUnitsTable
                 ActionGroup::make([
 
                     Action::make('download_dokumen')
-                        ->label('Download Dokumen')
+                        ->label('Download')
                         ->icon('heroicon-o-arrow-down-tray')
                         ->color('primary')
                         ->disabled(fn ($record) => empty($record) || empty($record->id_berkas))
@@ -212,7 +215,7 @@ class ArsipUnitsTable
                         ->visible(fn ($record) => $record && !empty($record->dokumen)),
 
                     Action::make('view_dokumen')
-                        ->label('Preview Dokumen')
+                        ->label('Preview')
                         ->icon('heroicon-o-eye')
                         ->color('info')
                         ->disabled(fn ($record) => empty($record) || empty($record->id_berkas))
@@ -224,18 +227,23 @@ class ArsipUnitsTable
                         }, shouldOpenInNewTab: true)
                         ->visible(fn ($record) => $record && !empty($record->dokumen)),
                 ])
-                    ->link()
-                    ->label('Dokumen')
+                    ->dropdown()
+                    ->label('')
                     ->icon('heroicon-m-document-text')
                     ->color('gray')
                     ->tooltip('Aksi dokumen'),
 
                 ActionGroup::make([
-                    EditAction::make(),
-                    DeleteAction::make(),
+                    ViewAction::make()
+                        ->icon('heroicon-m-eye')
+                        ->label('Lihat'),
+                    EditAction::make()
+                        ->icon('heroicon-m-pencil')
+                        ->label('Edit'),
                 ])
-                    ->label('Kelola')
-                    ->icon('heroicon-m-wrench-screwdriver')
+                    ->dropdown()
+                    ->label('')
+                    ->icon('heroicon-m-ellipsis-vertical')
                     ->visible(function () {
                         /** @var \App\Models\User $user */
                         $user = \Illuminate\Support\Facades\Auth::user();
@@ -245,18 +253,7 @@ class ArsipUnitsTable
                         ])
 
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->visible(function () {
-                            /** @var \App\Models\User $user */
-                            $user = \Illuminate\Support\Facades\Auth::user();
-                            return !$user->hasRole('operator');
-                        }),
-                ])->visible(function () {
-                    /** @var \App\Models\User $user */
-                    $user = \Illuminate\Support\Facades\Auth::user();
-                    return !$user->hasRole('operator');
-                }),
+                
             ]);
     }
 }

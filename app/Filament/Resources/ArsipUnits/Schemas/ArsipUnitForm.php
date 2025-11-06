@@ -61,6 +61,32 @@ class ArsipUnitForm
                 Section::make('Deskripsi Arsip')
                     ->columns(2)
                     ->schema([
+                        Select::make('kategori_id')
+                            ->label('Kategori')
+                            ->relationship(name: 'kategori', titleAttribute: 'nama_kategori')
+                            ->searchable()
+                            ->preload()
+                            ->live()
+                            ->afterStateUpdated(function (?string $state, callable $set, ?string $old) {
+                                if ($old !== $state) {
+                                    $set('sub_kategori_id', null);
+                                }
+                            }),
+
+                        Select::make('sub_kategori_id')
+                            ->label('Sub Kategori')
+                            ->relationship(
+                                name: 'subKategori',
+                                titleAttribute: 'nama_sub_kategori',
+                                modifyQueryUsing: fn ($query, callable $get) => $query->where('kategori_id', $get('kategori_id'))
+                            )
+                            ->searchable()
+                            ->preload()
+                            ->visible(function ($get) {
+                                return $get('kategori_id') !== null;
+                            })
+                            ->live(),
+
                         TextInput::make('indeks')
                             ->label('Indeks')
                             ->required(),

@@ -58,6 +58,8 @@ class ArsipUnit extends Model
     'verifikasi_keterangan',
     'verifikasi_oleh',
     'verifikasi_tanggal',
+    'kategori_id',
+    'sub_kategori_id',
 ];
 
      /**
@@ -93,15 +95,25 @@ class ArsipUnit extends Model
      */
     public function arsipAktif(): BelongsTo
     {
-
-
         return $this->belongsTo(ArsipAktif::class, 'arsip_aktif_id');
+    }
+
+    public function kategori(): BelongsTo
+    {
+        return $this->belongsTo(Kategori::class);
+    }
+
+    public function subKategori(): BelongsTo
+    {
+        return $this->belongsTo(SubKategori::class);
     }
 
     public function kodeKlasifikasi(): BelongsTo
     {
      return $this->belongsTo(KodeKlasifikasi::class, 'kode_klasifikasi_id'); 
     }
+
+
 
     public function unitPengolah(): BelongsTo
     {

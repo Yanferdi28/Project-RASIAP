@@ -16,8 +16,6 @@ class KodeKlasifikasisTable
             ->columns([
                 TextColumn::make('kode_klasifikasi')
                     ->searchable(),
-                TextColumn::make('kode_klasifikasi_induk')
-                    ->searchable(),
                 TextColumn::make('uraian')
                     ->searchable(),
                 TextColumn::make('retensi_aktif')

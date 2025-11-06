@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ArsipUnits;
 use App\Filament\Resources\ArsipUnits\Pages\CreateArsipUnit;
 use App\Filament\Resources\ArsipUnits\Pages\EditArsipUnit;
 use App\Filament\Resources\ArsipUnits\Pages\ListArsipUnits;
+use App\Filament\Resources\ArsipUnits\Pages\ViewArsipUnit;
 use App\Filament\Resources\ArsipUnits\Schemas\ArsipUnitForm;
 use App\Filament\Resources\ArsipUnits\Tables\ArsipUnitsTable;
 use App\Models\ArsipUnit;
@@ -30,7 +31,7 @@ class ArsipUnitResource extends Resource
     
     protected static ?string $pluralLabel = 'Arsip Unit';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Pembuatan Arsip';
+    protected static string | UnitEnum | null $navigationGroup = 'Daftar Arsip';
 
     public static function form(Schema $schema): Schema
     {
@@ -61,6 +62,7 @@ class ArsipUnitResource extends Resource
             'index' => ListArsipUnits::route('/'),
             'create' => CreateArsipUnit::route('/create'),
             'edit' => EditArsipUnit::route('/{record}/edit'),
+            'view' => ViewArsipUnit::route('/{record}'),
         ];
     }
 }

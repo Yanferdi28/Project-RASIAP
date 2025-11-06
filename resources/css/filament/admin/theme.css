@@ -91,3 +91,46 @@
   fill: none !important;
   stroke-width: 1.5 !important;
 }
+
+/* Remove table borders but keep border for action column */
+.filament-tables-container .filament-tables-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.filament-tables-container .filament-tables-table td {
+  padding: 0.75rem !important;
+}
+
+.filament-tables-container .filament-tables-table th {
+  padding: 0.75rem !important;
+  background-color: #f9fafb; /* Light gray header background */
+}
+
+/* Add border only to the last column (action buttons column) */
+.filament-tables-container .filament-tables-table td:last-child,
+.filament-tables-container .filament-tables-table th:last-child {
+  border-left: 1px solid #d1d5db;
+}
+
+/* More specific selectors for Filament tables */
+.fi-ta-ctn table {
+  border-collapse: collapse;
+}
+
+.fi-ta-ctn table th,
+.fi-ta-ctn table td {
+}
+
+.fi-ta-ctn table th:last-child,
+.fi-ta-ctn table td:last-child {
+  border-left: 1px solid #d1d5db;
+}
+
+/* Remove positioning context that was needed for pseudo-elements */
+.filament-tables-container table tr td,
+.filament-tables-container table tr th,
+.fi-ta-ctn table tr td,
+.fi-ta-ctn table tr th {
+  position: static;
+}

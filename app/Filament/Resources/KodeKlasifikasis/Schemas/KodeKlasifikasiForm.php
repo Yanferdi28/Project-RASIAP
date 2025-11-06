@@ -14,7 +14,6 @@ class KodeKlasifikasiForm
             ->components([
                 TextInput::make('kode_klasifikasi')
                     ->required(),
-                TextInput::make('kode_klasifikasi_induk'),
                 TextInput::make('uraian')
                     ->required(),
                 TextInput::make('retensi_aktif')

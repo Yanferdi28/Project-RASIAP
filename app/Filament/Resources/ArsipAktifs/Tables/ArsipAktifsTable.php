@@ -22,10 +22,17 @@ class ArsipAktifsTable
     {
         return $table
             ->columns([
-                TextColumn::make('nomor_berkas')
-                    ->label('Nomor Berkas')
-                    ->sortable()
-                    ->searchable(),
+                TextColumn::make('no')
+                    ->label('No')
+                    ->getStateUsing(function ($rowLoop) {
+                        return $rowLoop->iteration;
+                    })
+                    ->alignCenter(),
+
+                TextColumn::make('klasifikasi.kode_klasifikasi')
+                    ->label('Kode Klasifikasi')
+                    ->searchable()
+                    ->sortable(),
 
                 TextColumn::make('nama_berkas')
                     ->label('Nama Berkas')
@@ -34,31 +41,9 @@ class ArsipAktifsTable
                     ->limit(50)
                     ->tooltip(fn ($state): ?string => strlen($state) > 50 ? $state : null),
 
-                TextColumn::make('klasifikasi')
-                    ->label('Klasifikasi')
-                    ->getStateUsing(function (ArsipAktif $record) {
-                        if ($record->klasifikasi) {
-                            return "{$record->klasifikasi->kode_klasifikasi} - {$record->klasifikasi->uraian}";
-                        }
-                        return 'Tidak ada'; 
-                    })
-                    ->searchable(['klasifikasi.kode_klasifikasi', 'klasifikasi.uraian'])
-                    ->sortable('klasifikasi.kode_klasifikasi')
-                    ->limit(50)
-                    ->tooltip(fn ($state): ?string => strlen($state) > 50 ? $state : null),
-
-
-
-                TextColumn::make('kategori.nama_kategori')
-                    ->label('Kategori')
-                    ->badge()
-                    ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('subKategori.nama_sub_kategori')
-                    ->label('Sub Kategori')
-                    ->badge()
-                    ->searchable()
+                TextColumn::make('created_at')
+                    ->label('Tanggal Buat Berkas')
+                    ->dateTime('d/m/Y')
                     ->sortable(),
 
                 TextColumn::make('retensi_aktif')
@@ -89,16 +74,23 @@ class ArsipAktifsTable
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('created_at')
-                    ->label('Dibuat Pada')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
                 TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('uraian')
+                    ->label('Uraian')
+                    ->searchable()
+                    ->sortable()
+                    ->limit(50)
+                    ->tooltip(fn ($state): ?string => strlen($state) > 50 ? $state : null),
+
+                TextColumn::make('nomor_berkas')
+                    ->label('Nomor Berkas')
+                    ->sortable()
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -153,7 +145,7 @@ class ArsipAktifsTable
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('nomor_berkas', 'desc')
+            ->defaultSort('created_at', 'desc')
             ->striped()
             ->paginated([10, 25, 50, 100]);
     }

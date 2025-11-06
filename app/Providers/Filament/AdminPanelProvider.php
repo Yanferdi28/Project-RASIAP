@@ -43,7 +43,7 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
 
                 NavigationGroup::make()
-                    ->label('Pembuatan Arsip')
+                    ->label('Daftar Arsip')
                     ->icon('heroicon-o-document-duplicate'),
                     
                 NavigationGroup::make()

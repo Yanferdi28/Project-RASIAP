@@ -76,32 +76,6 @@ class ArsipAktifForm
                         TextInput::make('lokasi_fisik')
                             ->label('Lokasi Fisik'),
 
-
-
-                        Select::make('kategori_id')
-                            ->label('Kategori')
-                            ->relationship('kategori', 'nama_kategori')
-                            ->searchable()
-                            ->preload()
-                            ->live()
-                            ->required()
-                            ->afterStateUpdated(function (?string $state, callable $set) {
-
-                                $set('sub_kategori_id', null);
-                            }),
-
-                        Select::make('sub_kategori_id')
-                            ->label('Sub Kategori')
-                            ->relationship('subKategori', 'nama_sub_kategori', function ($query, $get) {
-                                $kategoriId = $get('kategori_id');
-                                if ($kategoriId) {
-                                    $query->where('kategori_id', $kategoriId);
-                                }
-                            })
-                            ->searchable()
-                            ->preload()
-                            ->required(),
-
                         Textarea::make('uraian')
                             ->label('Uraian')
                             ->columnSpanFull(),

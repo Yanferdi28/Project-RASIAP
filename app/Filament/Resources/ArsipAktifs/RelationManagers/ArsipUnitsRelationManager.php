@@ -21,11 +21,31 @@ class ArsipUnitsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('id_berkas')
+            ->modifyQueryUsing(function (Builder $query) {
+                // Order by created_at to ensure consistent numbering
+                return $query->orderBy('created_at', 'asc');
+            })
             ->columns([
-                Tables\Columns\TextColumn::make('id_berkas')
-                    ->label('ID Berkas')
-                    ->searchable()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('no_urut')
+                    ->label('No. Item')
+                    ->getStateUsing(function ($record, $livewire) {
+                        // Get the related arsip aktif record
+                        $parentRecord = $livewire->getOwnerRecord();
+                        
+                        // Get all related arsip units ordered by creation date
+                        $relatedUnits = $parentRecord->arsipUnits()
+                            ->orderBy('created_at', 'asc')
+                            ->get();
+                        
+                        // Find the position of the current record
+                        $position = $relatedUnits->search(function ($item) use ($record) {
+                            return $item->getKey() === $record->getKey();
+                        });
+                        
+                        return $position !== false ? $position + 1 : null;
+                    })
+                    ->default('')
+                    ->sortable(false),
                     
                 Tables\Columns\TextColumn::make('kodeKlasifikasi.kode_klasifikasi')
                     ->label('Kode Klasifikasi')

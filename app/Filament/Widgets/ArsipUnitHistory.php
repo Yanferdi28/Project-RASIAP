@@ -37,13 +37,22 @@ class ArsipUnitHistory extends BaseWidget
                     ->toggleable()
                     ->limit(30),
 
+                Tables\Columns\TextColumn::make('uraian_informasi')
+                    ->label('Uraian Informasi')
+                    ->toggleable()
+                    ->limit(30)
+                    ->tooltip(fn ($state): ?string => strlen($state) > 30 ? $state : null),
+
                 Tables\Columns\TextColumn::make('tanggal')
                     ->date('d M Y')
                     ->label('Tanggal')
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('jumlah_satuan')
-                    ->label('Jumlah Satuan')
+                Tables\Columns\TextColumn::make('jumlah_nilai')
+                    ->label('Jumlah')
+                    ->formatStateUsing(function ($record) {
+                        return $record->jumlah_nilai . ' ' . $record->jumlah_satuan;
+                    })
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('tingkat_perkembangan')
@@ -51,11 +60,49 @@ class ArsipUnitHistory extends BaseWidget
                     ->toggleable()
                     ->limit(20),
 
+                Tables\Columns\TextColumn::make('unitPengolah.nama_unit')
+                    ->label('Unit Pengolah')
+                    ->toggleable()
+                    ->wrap(),
+
+                Tables\Columns\TextColumn::make('retensi_aktif')
+                    ->label('Retensi Aktif')
+                    ->toggleable()
+                    ->numeric(),
+
+                Tables\Columns\TextColumn::make('retensi_inaktif')
+                    ->label('Retensi Inaktif')
+                    ->toggleable()
+                    ->numeric(),
+
+                Tables\Columns\TextColumn::make('skkaad')
+                    ->label('SKKAAD')
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('ruangan')
+                    ->label('No Ruang')
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('no_filling')
+                    ->label('No Filling')
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('no_laci')
+                    ->label('No Laci')
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('no_folder')
+                    ->label('No Folder')
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('no_box')
+                    ->label('No Box')
+                    ->toggleable(),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->since()
                     ->label('Dibuat')
                     ->sortable(),
-                
             ])
             ->filters([
                 Tables\Filters\Filter::make('range_tanggal')
@@ -71,10 +118,10 @@ class ArsipUnitHistory extends BaseWidget
                     }),
             ])
             ->actions([
-                Action::make('edit')
-                    ->label('Edit')
-                    ->url(fn (ArsipUnit $record) => route('filament.admin.resources.arsip-units.edit', $record))
-                    ->icon('heroicon-m-pencil-square'),
+                Action::make('view')
+                    ->label('View')
+                    ->url(fn (ArsipUnit $record) => route('filament.admin.resources.arsip-units.view', $record))
+                    ->icon('heroicon-m-eye'),
             ])
             ->emptyStateHeading('Belum ada data')
             ->emptyStateDescription('Record Arsip Unit yang baru dibuat akan muncul di sini.');
@@ -83,7 +130,7 @@ class ArsipUnitHistory extends BaseWidget
     protected function getQuery(): Builder
     {
         return ArsipUnit::query()
-            ->with(['kodeKlasifikasi'])
+            ->with(['kodeKlasifikasi', 'kategori', 'subKategori', 'unitPengolah'])
             ->latest('created_at');
     }
 }

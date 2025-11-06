@@ -22,8 +22,6 @@ class ListArsipAktifs extends ListRecords
             ->visible(auth()->user()->can('create', \App\Models\ArsipAktif::class)),
 
             ImportArsipAktifLaravelExcelAction::make(),
-                    
-            ExportArsipAktifLaravelExcelAction::make(),
         ];
     }
 }

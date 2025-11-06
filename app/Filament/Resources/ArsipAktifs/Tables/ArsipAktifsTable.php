@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ArsipAktifs\Tables;
 
 use App\Models\ArsipAktif;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
@@ -13,7 +14,6 @@ use Filament\Tables\Table;
 use Filament\Actions\ExportAction;
 use App\Filament\Exports\ArsipAktifExporter;
 use Filament\Actions\Exports\Enums\ExportFormat;
-use Filament\Actions\Action;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class ArsipAktifsTable
@@ -97,25 +97,50 @@ class ArsipAktifsTable
 
             ])
             ->recordActions([
+                ViewAction::make()
+                    ->label('')
+                    ->size('3md')
+                    ->tooltip('Lihat Detail Arsip'),
+                
                 EditAction::make()
                     ->label('')
-                    ->size('3md'),
+                    ->size('3md')
+                    ->tooltip('Edit Arsip'),
                 
                 DeleteAction::make()
                     ->label('')
                     ->size('3md')
                     ->requiresConfirmation()
                     ->modalHeading('Hapus Berkas Arsip')
-                    ->modalDescription('Apakah Anda yakin ingin menghapus berkas ini?'),
+                    ->modalDescription('Apakah Anda yakin ingin menghapus berkas ini?')
+                    ->tooltip('Hapus Arsip'),
             ])
             ->toolbarActions([
                 Action::make('printCustomPdf')
-                    ->label('Cetak Laporan PDF')
-                    ->icon('heroicon-o-document-check')
-                    ->color('danger')
+                    ->label('Cetak Berkas')
                     ->requiresConfirmation()
-                    ->modalHeading('Cetak Laporan PDF Arsip Aktif')
-                    ->modalDescription('Pilih rentang tanggal untuk mencetak laporan arsip aktif')
+                    ->modalHeading('Cetak Berkas Arsip Aktif')
+                    ->modalDescription('Pilih format ekspor dan rentang tanggal')
+                    ->form([
+                        \Filament\Forms\Components\Select::make('format_ekspor')
+                            ->label('Format Ekspor')
+                            ->options([
+                                'pdf' => 'PDF',
+                                'excel' => 'Excel',
+                            ])
+                            ->default('pdf')
+                            ->required(),
+                            
+                        \Filament\Forms\Components\DatePicker::make('tanggal_cetak_dari')
+                            ->label('Dari Tanggal')
+                            ->displayFormat('d/m/Y')
+                            ->extraInputAttributes(['placeholder' => 'Pilih tanggal mulai']),
+                            
+                        \Filament\Forms\Components\DatePicker::make('tanggal_cetak_sampai')
+                            ->label('Sampai Tanggal')
+                            ->displayFormat('d/m/Y')
+                            ->extraInputAttributes(['placeholder' => 'Pilih tanggal akhir']),
+                    ])
                     ->action(function (array $data, \Filament\Tables\Contracts\HasTable $livewire) {
                         // Buat query dasar dari tabel yang sudah difilter
                         $query = $livewire->getFilteredTableQuery();
@@ -137,29 +162,30 @@ class ArsipAktifsTable
                         $periode = \Carbon\Carbon::parse($dari)->format('d F Y') . ' - ' . \Carbon\Carbon::parse($sampai)->format('d F Y');
                         
                         $unitPengolah = 'RRI BANJARMASIN';
+                        
+                        $format = $data['format_ekspor'];
+                        
+                        if ($format === 'pdf') {
+                            $view = view('pdf.laporan-arsip-aktif', compact('records', 'unitPengolah', 'periode'))->render();
 
-                        $view = view('pdf.laporan-arsip-aktif', compact('records', 'unitPengolah', 'periode'))->render();
+                            $pdf = Pdf::loadHtml($view)
+                                    ->setPaper('a4', 'landscape');
 
-                        $pdf = Pdf::loadHtml($view)
-                                ->setPaper('a4', 'landscape');
-
-                        return response()->streamDownload(
-                            fn () => print($pdf->output()),
-                            'Laporan Daftar Berkas Arsip Aktif.pdf'
-                        );
-                    })
-                    ->form([
-                        \Filament\Forms\Components\DatePicker::make('tanggal_cetak_dari')
-                            ->label('Dari Tanggal')
-                            ->displayFormat('d/m/Y')
-                            ->extraInputAttributes(['placeholder' => 'Pilih tanggal mulai']),
+                            return response()->streamDownload(
+                                fn () => print($pdf->output()),
+                                'Laporan Daftar Berkas Arsip Aktif.pdf'
+                            );
+                        } else { // Excel
+                            // Use the new export class with proper styling
+                            $export = new \App\Exports\ArsipAktifLaporanExport($records);
+                            $filename = 'laporan_arsip_aktif_' . date('Y-m-d_H-i-s') . '.xlsx';
                             
-                        \Filament\Forms\Components\DatePicker::make('tanggal_cetak_sampai')
-                            ->label('Sampai Tanggal')
-                            ->displayFormat('d/m/Y')
-                            ->extraInputAttributes(['placeholder' => 'Pilih tanggal akhir']),
-                    ]),
+                            return \Maatwebsite\Excel\Facades\Excel::download($export, $filename);
+                        }
+                    }),
                     
+                \App\Actions\DaftarIsiBerkasAction::make(),
+                
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

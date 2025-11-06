@@ -31,6 +31,8 @@ class UserResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = 'Master';
 
+    protected static ?int $navigationSort = 6;
+
     public static function form(Schema $schema): Schema
     {
         return UserForm::configure($schema);
@@ -44,7 +46,8 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-
+            // Tidak ada relasi khusus untuk unit pengolah karena ini adalah relasi belongsTo
+            // Relasi akan ditangani di form dan tabel
         ];
     }
 

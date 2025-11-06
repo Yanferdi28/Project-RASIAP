@@ -31,6 +31,8 @@ class UnitPengolahResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = 'Master';
 
+    protected static ?int $navigationSort = 5;
+
     public static function form(Schema $schema): Schema
     {
         return UnitPengolahForm::configure($schema);

@@ -165,7 +165,7 @@ class ArsipUnitForm
                     ->columns(2)
                     ->schema([
                         TextInput::make('ruangan')->label('Ruangan'),
-                        TextInput::make('no_filling')->label('No. Filling Cabinet'),
+                        TextInput::make('no_filling')->label('No. Filling/Rak/Lemari'),
                         TextInput::make('no_laci')->label('No. Laci'),
                         TextInput::make('no_folder')->label('No. Folder'),
                         TextInput::make('no_box')->label('No. Box'),

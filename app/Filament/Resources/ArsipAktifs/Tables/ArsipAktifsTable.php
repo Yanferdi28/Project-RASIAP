@@ -97,38 +97,46 @@ class ArsipAktifsTable
 
             ])
             ->recordActions([
-                ViewAction::make()
-                    ->label('Lihat Detail')
-                    ->icon('heroicon-o-eye'),
-
-                EditAction::make(),
+                EditAction::make()
+                    ->label('')
+                    ->size('3md'),
                 
                 DeleteAction::make()
+                    ->label('')
+                    ->size('3md')
                     ->requiresConfirmation()
                     ->modalHeading('Hapus Berkas Arsip')
                     ->modalDescription('Apakah Anda yakin ingin menghapus berkas ini?'),
             ])
             ->toolbarActions([
-                ExportAction::make()
-                    ->label('Ekspor ke Excel')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->exporter(ArsipAktifExporter::class)
-                    ->formats([
-                        ExportFormat::Xlsx,
-                        ExportFormat::Csv,
-                    ])
-                    ->color('secondary'),
-
                 Action::make('printCustomPdf')
                     ->label('Cetak Laporan PDF')
                     ->icon('heroicon-o-document-check')
                     ->color('danger')
-                    ->action(function (\Filament\Tables\Contracts\HasTable $livewire) {
+                    ->requiresConfirmation()
+                    ->modalHeading('Cetak Laporan PDF Arsip Aktif')
+                    ->modalDescription('Pilih rentang tanggal untuk mencetak laporan arsip aktif')
+                    ->action(function (array $data, \Filament\Tables\Contracts\HasTable $livewire) {
+                        // Buat query dasar dari tabel yang sudah difilter
+                        $query = $livewire->getFilteredTableQuery();
                         
-                        $records = $livewire->getFilteredTableQuery()->get();
+                        // Tambahkan filter berdasarkan tanggal jika disediakan
+                        if (isset($data['tanggal_cetak_dari']) && $data['tanggal_cetak_dari']) {
+                            $query->whereDate('created_at', '>=', $data['tanggal_cetak_dari']);
+                        }
+                        
+                        if (isset($data['tanggal_cetak_sampai']) && $data['tanggal_cetak_sampai']) {
+                            $query->whereDate('created_at', '<=', $data['tanggal_cetak_sampai']);
+                        }
+                        
+                        $records = $query->get();
+                        
+                        // Buat periode untuk ditampilkan di laporan
+                        $dari = $data['tanggal_cetak_dari'] ?? now()->subMonth()->format('d/m/Y');
+                        $sampai = $data['tanggal_cetak_sampai'] ?? now()->format('d/m/Y');
+                        $periode = \Carbon\Carbon::parse($dari)->format('d F Y') . ' - ' . \Carbon\Carbon::parse($sampai)->format('d F Y');
                         
                         $unitPengolah = 'RRI BANJARMASIN';
-                        $periode = '01 JULI 2025-30 SEPTEMBER 2025';
 
                         $view = view('pdf.laporan-arsip-aktif', compact('records', 'unitPengolah', 'periode'))->render();
 
@@ -139,7 +147,18 @@ class ArsipAktifsTable
                             fn () => print($pdf->output()),
                             'Laporan Daftar Berkas Arsip Aktif.pdf'
                         );
-                    }),
+                    })
+                    ->form([
+                        \Filament\Forms\Components\DatePicker::make('tanggal_cetak_dari')
+                            ->label('Dari Tanggal')
+                            ->displayFormat('d/m/Y')
+                            ->extraInputAttributes(['placeholder' => 'Pilih tanggal mulai']),
+                            
+                        \Filament\Forms\Components\DatePicker::make('tanggal_cetak_sampai')
+                            ->label('Sampai Tanggal')
+                            ->displayFormat('d/m/Y')
+                            ->extraInputAttributes(['placeholder' => 'Pilih tanggal akhir']),
+                    ]),
                     
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

@@ -24,7 +24,9 @@ class UnitPengolahsTable
 
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->label('')
+                    ->size('3md'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

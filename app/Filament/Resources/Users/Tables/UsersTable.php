@@ -25,6 +25,11 @@ class UsersTable
                     ->searchable()
                     ->sortable(),
 
+                TextColumn::make('unitPengolah.nama_unit')
+                    ->label('Unit Pengolah')
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('roles.name')
                     ->label('Peran')
                     ->badge()
@@ -33,7 +38,8 @@ class UsersTable
                         'user' => 'success',
                         default => 'gray',
                     })
-                    ->searchable(),
+                    ->searchable()
+                    ->separator(', '), // Menambahkan pemisah antar role
 
                 TextColumn::make('created_at')
                     ->label('Tanggal Dibuat')
@@ -45,14 +51,23 @@ class UsersTable
                 SelectFilter::make('roles')
                     ->relationship('roles', 'name')
                     ->label('Filter Berdasarkan Peran')
+                    ->preload()
+                    ->multiple(),
+                
+                SelectFilter::make('unit_pengolah_id')
+                    ->relationship('unitPengolah', 'nama_unit')
+                    ->label('Filter Berdasarkan Unit Pengolah')
                     ->preload(),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->label('Edit')
+                    ->size('3md'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                    ->label('Hapus'),
                 ]),
             ]);
     }

@@ -50,4 +50,30 @@ class ArsipAktif extends Model
     {
         return $this->hasMany(\App\Models\ArsipUnit::class, 'arsip_aktif_id', 'nomor_berkas');
     }
+    
+    /**
+     * Periksa apakah pengguna saat ini dapat melihat model ini
+     */
+    public function userCanView(): bool
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return false;
+        }
+        
+        return $user->can('view', $this);
+    }
+    
+    /**
+     * Periksa apakah pengguna saat ini dapat memperbarui model ini
+     */
+    public function userCanUpdate(): bool
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return false;
+        }
+        
+        return $user->can('update', $this);
+    }
 }

@@ -54,9 +54,6 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Master')
                     ->icon('heroicon-o-cog-6-tooth'),
                     
-                NavigationGroup::make()
-                    ->label('Kategori')
-                    ->icon('heroicon-o-cog-6-tooth'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             

@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources\Subkategoris\Pages;
 
-use App\Filament\Resources\Subkategoris\SubkategoriResource;
+use App\Filament\Resources\Subkategoris\SubKategoriResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
-class ListSubkategoris extends ListRecords
+class ListSubKategoris extends ListRecords
 {
-    protected static string $resource = SubkategoriResource::class;
+    protected static string $resource = SubKategoriResource::class;
 
     protected function getHeaderActions(): array
     {

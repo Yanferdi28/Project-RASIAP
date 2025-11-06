@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\Subkategoris\Pages;
 
-use App\Filament\Resources\Subkategoris\SubkategoriResource;
+use App\Filament\Resources\Subkategoris\SubKategoriResource;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateSubkategori extends CreateRecord
+class CreateSubKategori extends CreateRecord
 {
-    protected static string $resource = SubkategoriResource::class;
+    protected static string $resource = SubKategoriResource::class;
 }

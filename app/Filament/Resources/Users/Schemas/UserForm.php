@@ -2,7 +2,8 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
-use Filament\Forms\Components\CheckboxList;
+use App\Models\UnitPengolah;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
@@ -33,9 +34,20 @@ class UserForm
                     ->required(fn (string $context): bool => $context === 'create')
                     ->maxLength(255),
                 
-                CheckboxList::make('roles')
+                Select::make('unit_pengolah_id')
+                    ->label('Unit Pengolah')
+                    ->relationship('unitPengolah', 'nama_unit')
+                    ->placeholder('Pilih Unit Pengolah')
+                    ->searchable()
+                    ->preload(),
+                
+                Select::make('roles')
+                    ->label('Peran (Roles)')
                     ->relationship('roles', 'name')
-                    ->label('Peran (Roles)'),
+                    ->placeholder('Pilih Peran')
+                    ->searchable()
+                    ->preload()
+                    ->multiple(), // Multiple select agar bisa memilih lebih dari satu role
             ]);
     }
 }

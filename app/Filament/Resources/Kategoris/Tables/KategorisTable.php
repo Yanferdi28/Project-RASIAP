@@ -30,8 +30,12 @@ class KategorisTable
 
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
+                EditAction::make()
+                    ->label('')
+                    ->size('3md'),
+                DeleteAction::make()
+                    ->label('')
+                    ->size('3md'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

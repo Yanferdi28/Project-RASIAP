@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources\Subkategoris\Pages;
 
-use App\Filament\Resources\Subkategoris\SubkategoriResource;
+use App\Filament\Resources\Subkategoris\SubKategoriResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
-class EditSubkategori extends EditRecord
+class EditSubKategori extends EditRecord
 {
-    protected static string $resource = SubkategoriResource::class;
+    protected static string $resource = SubKategoriResource::class;
 
     protected function getHeaderActions(): array
     {

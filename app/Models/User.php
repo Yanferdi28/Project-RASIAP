@@ -5,6 +5,7 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\Access\Authorizable;  
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -23,6 +24,7 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'unit_pengolah_id',
     ];
 
     /**
@@ -60,4 +62,11 @@ class User extends Authenticatable implements FilamentUser
         };
     }
 
+    /**
+     * Relasi ke unit pengolah
+     */
+    public function unitPengolah(): BelongsTo
+    {
+        return $this->belongsTo(UnitPengolah::class, 'unit_pengolah_id');
+    }
 }

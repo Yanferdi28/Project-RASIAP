@@ -10,6 +10,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use App\Filament\Resources\ArsipAktifs\ArsipAktifResource;
 use App\Filament\Resources\ArsipUnits\ArsipUnitResource;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -39,6 +40,7 @@ class UserPanelProvider extends PanelProvider
             ])
             ->resources([
                 ArsipUnitResource::class,
+                ArsipAktifResource::class,
             ])
             ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
             ->databaseNotifications()

@@ -29,7 +29,9 @@ class SubKategoriResource extends Resource
     
     protected static ?string $pluralLabel = 'Sub Kategori';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Kategori';
+    protected static string | UnitEnum | null $navigationGroup = 'Master';
+
+    protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema
     {

@@ -59,7 +59,7 @@ class ArsipUnitsTable
                     ->label('No Ruang')
                     ->searchable(),
                 TextColumn::make('no_filling')
-                    ->label('No Filling')
+                    ->label('No Filling/Rak/Lemari')
                     ->searchable(),
                 TextColumn::make('no_laci')
                     ->label('No Laci')
@@ -111,6 +111,7 @@ class ArsipUnitsTable
             ])
             ->recordActions([
                 Action::make('verifikasi')
+                    ->size('3md')
                     ->label('')
                     ->icon('heroicon-o-check-badge')
                     ->tooltip('Verifikasi')
@@ -162,6 +163,7 @@ class ArsipUnitsTable
                     }),
 
                 Action::make('ubah_arsip_aktif')
+                    ->size('3md')
                     ->label('')
                     ->icon('heroicon-o-folder-open')
                     ->tooltip(fn ($record): string => $record->arsip_aktif_id ? 'Ubah Berkas' : 'Pilih Berkas')
@@ -228,6 +230,7 @@ class ArsipUnitsTable
                         ->visible(fn ($record) => $record && !empty($record->dokumen)),
                 ])
                     ->dropdown()
+                    ->size('3md')
                     ->label('')
                     ->icon('heroicon-m-document-text')
                     ->color('gray')
@@ -242,6 +245,7 @@ class ArsipUnitsTable
                         ->label('Edit'),
                 ])
                     ->dropdown()
+                    ->size('3md')
                     ->label('')
                     ->icon('heroicon-m-ellipsis-vertical')
                     ->visible(function () {

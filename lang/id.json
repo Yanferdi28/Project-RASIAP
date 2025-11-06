@@ -1,0 +1,127 @@
+{
+  "filament": {
+    "global-search": {
+      "field": {
+        "label": "Pencarian global",
+        "placeholder": "Cari"
+      },
+      "no-results-message": "Tidak ada hasil ditemukan"
+    },
+    "login": {
+      "title": "Masuk kembali",
+      "username-field-label": "Username",
+      "password-field-label": "Password",
+      "remember-me-label": "Ingat saya",
+      "submit-btn-label": "Masuk"
+    },
+    "passwords": {
+      "reset": {
+        "submit-btn-label": "Atur ulang password",
+        "email-field-label": "Alamat email"
+      },
+      "email": {
+        "submit-btn-label": "Kirim tautan pengaturan ulang"
+      }
+    },
+    "actions": {
+      "modal": {
+        "confirmation-message": "Apakah Anda yakin ingin melakukan ini?"
+      },
+      "create": {
+        "single": {
+          "label": "Buat :label"
+        },
+        "multiple": {
+          "label": "Buat"
+        }
+      },
+      "replicate": {
+        "single": {
+          "label": "Duplikat :label"
+        },
+        "multiple": {
+          "label": "Duplikat"
+        }
+      },
+      "delete": {
+        "single": {
+          "label": "Hapus :label"
+        },
+        "multiple": {
+          "label": "Hapus"
+        }
+      },
+      "edit": {
+        "single": {
+          "label": "Edit :label"
+        },
+        "multiple": {
+          "label": "Edit"
+        }
+      },
+      "view": {
+        "single": {
+          "label": "Lihat :label"
+        },
+        "multiple": {
+          "label": "Lihat"
+        }
+      },
+      "force-delete": {
+        "single": {
+          "label": "Hapus permanen :label"
+        },
+        "multiple": {
+          "label": "Hapus permanen"
+        }
+      },
+      "restore": {
+        "single": {
+          "label": "Pulihkan :label"
+        },
+        "multiple": {
+          "label": "Pulihkan"
+        }
+      }
+    },
+    "table": {
+      "actions": {
+        "cell": {
+          "more-actions-label": "Lebih banyak tindakan"
+        }
+      },
+      "empty": {
+        "heading": "Tidak ada data",
+        "description": "Buat :model untuk memulai"
+      },
+      "selection": {
+        "actions": {
+          "select-all": "Pilih semua :count"
+        }
+      },
+      "bulk-actions": {
+        "message": ":count item diproses"
+      }
+    },
+    "create": {
+      "title": "Buat :label",
+      "create-another-btn-label": "Buat & buat yang lain",
+      "submit-btn-label": "Buat"
+    },
+    "edit": {
+      "title": "Edit :label",
+      "submit-btn-label": "Simpan",
+      "saved-message": "Tersimpan!"
+    },
+    "view": {
+      "title": "Lihat :label"
+    }
+  },
+  "Create": "Buat",
+  "Cancel": "Batal",
+  "Save": "Simpan",
+  "Edit": "Edit",
+  "Delete": "Hapus",
+  "View": "Lihat",
+  "Actions": "Tindakan"
+}

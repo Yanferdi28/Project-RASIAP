@@ -15,6 +15,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
 class ArsipAktifResource extends Resource
@@ -33,6 +34,42 @@ class ArsipAktifResource extends Resource
     
     protected static string | UnitEnum | null $navigationGroup = 'Pemeliharaan Arsip';
 
+    public static function canAccess(): bool
+    {
+        $user = auth()->user();
+        
+        if (!$user) {
+            return false;
+        }
+        
+        // Hanya admin, user, atau operator yang bisa mengakses resource ini
+        return $user->hasAnyRole(['admin', 'user', 'operator']);
+    }
+    
+    public static function canViewAny(): bool
+    {
+        $user = auth()->user();
+        
+        if (!$user) {
+            return false;
+        }
+        
+        // Hanya admin, user, atau operator yang bisa melihat daftar resource
+        return $user->can('viewAny', static::$model);
+    }
+    
+    public static function canCreate(): bool
+    {
+        $user = auth()->user();
+        
+        if (!$user) {
+            return false;
+        }
+        
+        // Hanya admin dan user yang bisa membuat resource baru
+        return $user->can('create', static::$model);
+    }
+    
     public static function form(Schema $schema): Schema
     {
         return ArsipAktifForm::configure($schema);
@@ -48,11 +85,6 @@ class ArsipAktifResource extends Resource
         return [
             \App\Filament\Resources\ArsipAktifs\RelationManagers\ArsipUnitsRelationManager::class,
         ];
-    }
-
-    public static function getExporter(): ?string
-    {
-        return ArsipAktifExporter::class;
     }
 
     public static function getPages(): array

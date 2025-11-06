@@ -92,45 +92,65 @@
   stroke-width: 1.5 !important;
 }
 
-/* Remove table borders but keep border for action column */
-.filament-tables-container .filament-tables-table {
+/* ---- Theme tokens (bisa kamu ubah sesuka hati) ---- */
+:root {
+  --fi-table-header-bg: #f9fafb;   /* light header background */
+  --fi-table-text: #111827;        /* light text */
+  --fi-table-action-border: #d1d5db; /* light border for action column */
+}
+
+.dark {
+  --fi-table-header-bg: #111827;   /* dark header background */
+  --fi-table-text: #e5e7eb;        /* dark text */
+  --fi-table-action-border: #374151; /* dark border for action column */
+}
+
+/* ---- Reset & layout dasar tabel ---- */
+.filament-tables-container .filament-tables-table,
+.fi-ta-ctn table {
   border-collapse: collapse;
   width: 100%;
 }
 
-.filament-tables-container .filament-tables-table td {
+/* Padding sel */
+.filament-tables-container .filament-tables-table td,
+.filament-tables-container .filament-tables-table th,
+.fi-ta-ctn table td,
+.fi-ta-ctn table th {
   padding: 0.75rem !important;
+  position: static; /* pastikan tidak ada positioning yang bikin pseudo-element residual */
+  color: var(--fi-table-text);
 }
 
-.filament-tables-container .filament-tables-table th {
-  padding: 0.75rem !important;
-  background-color: #f9fafb; /* Light gray header background */
+/* Header */
+.filament-tables-container .filament-tables-table th,
+.fi-ta-ctn table th {
+  background-color: var(--fi-table-header-bg);
 }
 
-/* Add border only to the last column (action buttons column) */
-.filament-tables-container .filament-tables-table td:last-child,
-.filament-tables-container .filament-tables-table th:last-child {
-  border-left: 1px solid #d1d5db;
-}
-
-/* More specific selectors for Filament tables */
-.fi-ta-ctn table {
-  border-collapse: collapse;
-}
-
+/* Hapus semua border default (biar bersih) */
+.filament-tables-container .filament-tables-table th,
+.filament-tables-container .filament-tables-table td,
 .fi-ta-ctn table th,
 .fi-ta-ctn table td {
+  border: 0;
 }
 
+/* Tambahkan garis pemisah HANYA di kolom terakhir (aksi) */
+.filament-tables-container .filament-tables-table th:last-child,
+.filament-tables-container .filament-tables-table td:last-child,
 .fi-ta-ctn table th:last-child,
 .fi-ta-ctn table td:last-child {
-  border-left: 1px solid #d1d5db;
+  border-left: 1px solid var(--fi-table-action-border);
 }
 
-/* Remove positioning context that was needed for pseudo-elements */
-.filament-tables-container table tr td,
-.filament-tables-container table tr th,
-.fi-ta-ctn table tr td,
-.fi-ta-ctn table tr th {
-  position: static;
+/* Opsional: sedikit kontras saat hover baris (tetap netral) */
+.filament-tables-container .filament-tables-table tbody tr:hover td,
+.fi-ta-ctn table tbody tr:hover td {
+  background-color: color-mix(in srgb, var(--fi-table-header-bg) 12%, transparent);
+}
+
+/* Jika tabel punya sticky header dari Filament, biar nggak bentrok */
+.filament-tables-container .filament-tables-table thead th {
+  z-index: 1;
 }

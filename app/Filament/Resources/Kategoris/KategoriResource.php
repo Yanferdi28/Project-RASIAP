@@ -29,7 +29,9 @@ class KategoriResource extends Resource
     
     protected static ?string $pluralLabel = 'Kategori';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Kategori';
+    protected static string | UnitEnum | null $navigationGroup = 'Master';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {

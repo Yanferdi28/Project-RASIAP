@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Daftar Isi Berkas Arsip Aktif</title>
+    <title>Laporan Daftar Isi Arsip</title>
     <style>
         body {
             font-family: 'Helvetica', sans-serif;
@@ -43,20 +43,18 @@
         .page-break {
             page-break-after: always;
         }
-        .arsip-aktif-row {
-            background-color: #e6f3ff;
+        .archive-header {
+            background-color: #d3d3d3;
+            font-weight: bold;
         }
-        .arsip-unit-row {
-            background-color: #ffffff;
-        }
-        .indent {
-            padding-left: 20px;
+        .archive-unit {
+            background-color: #f9f9f9;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Daftar Isi Berkas Arsip Aktif</h1>
+        <h1>Laporan Daftar Isi Arsip Aktif</h1>
         <h2>UNIT PENGOLAH: {{ $unitPengolah }}</h2> 
         <h2>PERIODE: {{ $periode }}</h2> 
     </div>
@@ -65,59 +63,77 @@
         <thead>
             <tr>
                 <th>No</th>
+                <th>Kode Klasifikasi /<br>Nomor Berkas</th>
                 <th>Nama Berkas</th>
-                <th>Jumlah Item</th>
-                <th>Uraian Informasi</th>
-                <th>Tanggal</th>
+                <th>Jumlah<br>Item</th>
                 <th>Unit Pengolah</th>
+                <th>Tanggal</th>
+                <th>Uraian Informasi</th>
+                <th>Jumlah<br>Nilai</th>
+                <th>Jumlah<br>Satuan</th>
+                <th>No Item<br>Arsip</th>
+                <th>Keterangan</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
             @php
-                $arsipAktifCounter = 1;
-                $totalArsipAktif = 0;
-                $totalArsipUnit = 0;
+                $rowCounter = 1;
             @endphp
-            
-            @forelse($records as $arsipAktif)
+            @forelse($records as $index => $record)
                 @php
-                    $arsipUnits = $arsipAktif->arsipUnits;
-                    $jumlahItem = $arsipUnits->count();
-                    $totalArsipAktif++;
-                    $totalArsipUnit += $jumlahItem;
+                    $arsipUnits = $record->arsipUnits;
+                    $totalUnits = $arsipUnits->count();
                 @endphp
-                <tr class="arsip-aktif-row">
-                    <td style="text-align: center;">{{ $arsipAktifCounter++ }}.</td>
-                    <td><strong>{{ $arsipAktif->nama_berkas }}</strong></td>
-                    <td style="text-align: center;">{{ $jumlahItem }}</td>
-                    <td>{{ $arsipAktif->uraian ?? '' }}</td>
-                    <td>{{ $arsipAktif->created_at->format('d-m-Y') }}</td>
-                    <td>{{ $arsipAktif->klasifikasi->kode_klasifikasi ?? 'N/A' }}</td>
+                
+                {{-- First row: Archive header --}}
+                <tr class="archive-header">
+                    <td style="text-align: center;">{{ $rowCounter++ }}</td>
+                    <td>{{ $record->klasifikasi->kode_klasifikasi ?? 'N/A' }} / {{ $record->nomor_berkas }}</td>
+                    <td>{{ $record->nama_berkas }}</td>
+                    <td style="text-align: center;">{{ $totalUnits }}</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td style="text-align: center;">-</td>
+                    <td style="text-align: center;">-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
                 </tr>
                 
-                @foreach($arsipUnits as $index => $arsipUnit)
-                <tr class="arsip-unit-row">
-                    <td style="text-align: center;" class="indent">{{ $index + 1 }}</td>
-                    <td class="indent">{{ $arsipUnit->uraian_informasi }}</td>
-                    <td style="text-align: center;">-</td>
-                    <td>{{ $arsipUnit->uraian_informasi }}</td>
-                    <td>{{ $arsipUnit->tanggal ? $arsipUnit->tanggal->format('d-m-Y') : '' }}</td>
-                    <td>{{ $arsipUnit->unitPengolah->nama_unit ?? '' }}</td>
-                </tr>
-                @endforeach
+                {{-- Following rows: Related units --}}
+                @if($totalUnits > 0)
+                    @foreach($arsipUnits as $unitIndex => $unit)
+                    <tr class="archive-unit">
+                        <td style="text-align: center;">-</td>
+                        <td>{{ $unit->kodeKlasifikasi->kode_klasifikasi ?? '-' }} / {{ $unit->no_item_arsip ?? '-' }}</td>
+                        <td>{{ $unit->uraian_informasi ?? '-' }}</td>
+                        <td>-</td>
+                        <td>{{ $unit->unitPengolah->nama_unit ?? 'N/A' }}</td>
+                        <td>{{ $unit->tanggal ? $unit->tanggal->format('d-m-Y') : '-' }}</td>
+                        <td>{{ $unit->uraian_informasi ?? '-' }}</td>
+                        <td style="text-align: center;">{{ $unit->jumlah_nilai ?? '-' }}</td>
+                        <td style="text-align: center;">{{ $unit->jumlah_satuan ?? '-' }}</td>
+                        <td>{{ $unit->no_item_arsip ?? '-' }}</td>
+                        <td>{{ $unit->keterangan ?? '-' }}</td>
+                        <td>{{ ucfirst($unit->status) ?? '-' }}</td>
+                    </tr>
+                    @endforeach
+                @else
+                    <tr class="archive-unit">
+                        <td style="text-align: center;">-</td>
+                        <td>-</td>
+                        <td colspan="9">Tidak ada unit arsip terkait</td>
+                        <td>-</td>
+                    </tr>
+                @endif
             @empty
                 <tr>
-                    <td colspan="6" style="text-align: center;">Tidak ada data.</td>
+                    <td colspan="12" style="text-align: center;">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>
-        <tfoot>
-            <tr>
-                <th colspan="2" style="text-align: right;">TOTAL:</th>
-                <th style="text-align: center;">{{ $totalArsipUnit }}</th>
-                <th colspan="3" style="text-align: center;">Arsip Aktif: {{ $totalArsipAktif }}, Arsip Unit: {{ $totalArsipUnit }}</th>
-            </tr>
-        </tfoot>
     </table>
 </body>
 </html>

@@ -15,11 +15,13 @@ class CreateArsipUnit extends CreateRecord
     {
         $user = Auth::user();
         
-
-        if ($user && $user->hasRole('operator')) {
-            abort(403, 'You do not have permission to create archive units.');
-        }
-        
         parent::mount();
+        
+        // Auto-select the user's unit_pengolah if they have one
+        if ($user && $user->unit_pengolah_id) {
+            $this->form->fill([
+                'unit_pengolah_arsip_id' => $user->unit_pengolah_id,
+            ]);
+        }
     }
 }

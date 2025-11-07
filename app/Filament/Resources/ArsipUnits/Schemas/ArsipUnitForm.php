@@ -24,7 +24,10 @@ class ArsipUnitForm
                     ->schema([
                         Select::make('kode_klasifikasi_id')
                             ->label('Kode Klasifikasi')
-                            ->relationship(name: 'kodeKlasifikasi')
+                            ->relationship(
+                                name: 'kodeKlasifikasi',
+                                modifyQueryUsing: fn ($query) => $query->orderBy('kode_klasifikasi')
+                            )
                             ->getOptionLabelFromRecordUsing(fn (KodeKlasifikasi $record) => "{$record->kode_klasifikasi} - {$record->uraian}")
                             ->searchable(['kode_klasifikasi', 'uraian'])
                             ->preload()
@@ -38,7 +41,8 @@ class ArsipUnitForm
                                     return;
                                 }
 
-                                $klasifikasi = KodeKlasifikasi::find($state);
+                                // Use cached model to get the classification
+                                $klasifikasi = \App\Models\KodeKlasifikasi::find($state);
                                 if (! $klasifikasi) {
                                     return;
                                 }
@@ -51,7 +55,14 @@ class ArsipUnitForm
 
                         Select::make('unit_pengolah_arsip_id')
                             ->label('Unit Pengolah Arsip')
-                            ->relationship(name: 'unitPengolah', titleAttribute: 'nama_unit')
+                            ->relationship(
+                                name: 'unitPengolah', 
+                                titleAttribute: 'nama_unit',
+                                modifyQueryUsing: fn ($query) => $query->when(
+                                    !\Illuminate\Support\Facades\Auth::user()?->hasRole('admin'),
+                                    fn ($query) => $query->where('id', \Illuminate\Support\Facades\Auth::user()?->unit_pengolah_id)
+                                )
+                            )
                             ->searchable()
                             ->preload()
                             ->required(),
@@ -81,7 +92,7 @@ class ArsipUnitForm
                                 modifyQueryUsing: fn ($query, callable $get) => $query->where('kategori_id', $get('kategori_id'))
                             )
                             ->searchable()
-                            ->preload()
+                            ->preload(false) // Disable preload for performance, will be loaded when needed
                             ->visible(function ($get) {
                                 return $get('kategori_id') !== null;
                             })

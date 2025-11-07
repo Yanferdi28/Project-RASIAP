@@ -41,6 +41,18 @@ class UsersTable
                     ->searchable()
                     ->separator(', '), // Menambahkan pemisah antar role
 
+                TextColumn::make('verification_status')
+                    ->label('Status Verifikasi')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'warning',
+                        'verified' => 'success',
+                        'rejected' => 'danger',
+                        default => 'gray',
+                    })
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('created_at')
                     ->label('Tanggal Dibuat')
                     ->dateTime('d M Y, H:i')
@@ -58,10 +70,19 @@ class UsersTable
                     ->relationship('unitPengolah', 'nama_unit')
                     ->label('Filter Berdasarkan Unit Pengolah')
                     ->preload(),
+                
+                SelectFilter::make('verification_status')
+                    ->options([
+                        'pending' => 'Menunggu Verifikasi',
+                        'verified' => 'Terverifikasi',
+                        'rejected' => 'Ditolak',
+                    ])
+                    ->label('Status Verifikasi')
+                    ->preload(),
             ])
             ->recordActions([
                 EditAction::make()
-                    ->label('Edit')
+                    ->label('')
                     ->size('3md'),
             ])
             ->toolbarActions([

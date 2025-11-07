@@ -75,6 +75,22 @@ class ArsipUnit extends Model
      ];
 
     /**
+     * Scope to include commonly used relationships for better performance
+     */
+    public function scopeWithCommonRelationships($query)
+    {
+        return $query->with(['kodeKlasifikasi', 'kategori', 'subKategori', 'unitPengolah']);
+    }
+    
+    /**
+     * Scope to include verification relationship
+     */
+    public function scopeWithVerifier($query)
+    {
+        return $query->with(['verifier']);
+    }
+
+    /**
      * Boot the model and register event listeners.
      */
     protected static function boot()

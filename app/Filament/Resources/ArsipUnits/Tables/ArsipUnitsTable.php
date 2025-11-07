@@ -98,7 +98,7 @@ class ArsipUnitsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->modifyQueryUsing(fn ($query) => $query->with(['kodeKlasifikasi', 'kategori', 'subKategori', 'unitPengolah']))
+            ->modifyQueryUsing(fn ($query) => $query->withCommonRelationships())
             ->defaultSort('id_berkas', 'desc')
             ->filters([
                 SelectFilter::make('status')

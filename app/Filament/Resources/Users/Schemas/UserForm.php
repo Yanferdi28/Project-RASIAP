@@ -48,6 +48,35 @@ class UserForm
                     ->searchable()
                     ->preload()
                     ->multiple(), // Multiple select agar bisa memilih lebih dari satu role
+
+                Select::make('verification_status')
+                    ->label('Status Verifikasi')
+                    ->options([
+                        'pending' => 'Menunggu Verifikasi',
+                        'verified' => 'Terverifikasi',
+                        'rejected' => 'Ditolak',
+                    ])
+                    ->default('pending')
+                    ->required()
+                    ->visibleOn('edit'),
+                
+                Select::make('verified_by')
+                    ->label('Diverifikasi Oleh')
+                    ->relationship('verifiedBy', 'name')
+                    ->placeholder('Pilih Administrator')
+                    ->searchable()
+                    ->preload()
+                    ->visibleOn('edit'),
+                
+                \Filament\Forms\Components\DateTimePicker::make('verified_at')
+                    ->label('Tanggal Verifikasi')
+                    ->visibleOn('edit'),
+                
+                \Filament\Forms\Components\Textarea::make('verification_notes')
+                    ->label('Catatan Verifikasi')
+                    ->rows(3)
+                    ->placeholder('Masukkan catatan verifikasi (jika ada)')
+                    ->visibleOn('edit'),
             ]);
     }
 }

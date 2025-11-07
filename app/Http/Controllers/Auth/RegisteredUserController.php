@@ -39,12 +39,14 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'verification_status' => 'pending',
         ]);
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // Don't log the user in immediately - they need admin verification
+        // Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('login')->with('status', 'Registrasi berhasil! Akun Anda sedang menunggu verifikasi dari administrator.');
     }
 }

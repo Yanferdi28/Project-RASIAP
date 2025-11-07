@@ -83,7 +83,7 @@ class ViewArsipUnit extends ViewRecord
                 TextInput::make('status')
                     ->label('Status')
                     ->disabled(),
-                TextInput::make('verifikasi_oleh.name')
+                TextInput::make('verifier.name') // Changed from 'verifikasi_oleh.name' to use the relationship method
                     ->label('Diverifikasi Oleh')
                     ->disabled()
                     ->formatStateUsing(function ($record) {
@@ -112,6 +112,30 @@ class ViewArsipUnit extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('download_document')
+                ->label('Download Dokumen')
+                ->icon('heroicon-o-arrow-down-tray')
+                ->color('primary')
+                ->url(function ($record) {
+                    if (empty($record) || empty($record->id_berkas)) {
+                        return '#';
+                    }
+                    return route('dokumen.show', ['id' => $record->id_berkas, 'action' => 'download']);
+                }, shouldOpenInNewTab: true)
+                ->visible(fn ($record) => $record && !empty($record->dokumen)),
+            
+            Actions\Action::make('view_document')
+                ->label('Lihat Dokumen')
+                ->icon('heroicon-o-eye')
+                ->color('info')
+                ->url(function ($record) {
+                    if (empty($record) || empty($record->id_berkas)) {
+                        return '#';
+                    }
+                    return route('dokumen.show', ['id' => $record->id_berkas, 'action' => 'view']);
+                }, shouldOpenInNewTab: true)
+                ->visible(fn ($record) => $record && !empty($record->dokumen)),
+            
             Actions\EditAction::make(),
         ];
     }

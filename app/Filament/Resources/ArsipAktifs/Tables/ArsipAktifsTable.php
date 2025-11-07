@@ -118,6 +118,7 @@ class ArsipAktifsTable
             ->toolbarActions([
                 Action::make('printCustomPdf')
                     ->label('Cetak Berkas')
+                    ->icon('heroicon-o-arrow-down-tray')
                     ->requiresConfirmation()
                     ->modalHeading('Cetak Berkas Arsip Aktif')
                     ->modalDescription('Pilih format ekspor dan rentang tanggal')

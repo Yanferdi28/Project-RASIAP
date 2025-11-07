@@ -15,6 +15,7 @@ class DaftarIsiBerkasAction
     {
         return Action::make('cetak_daftar_isi_berkas')
             ->label('Cetak Daftar Isi Berkas')
+            ->icon('heroicon-o-arrow-down-tray')
             ->requiresConfirmation()
             ->modalHeading('Cetak Daftar Isi Berkas Arsip Aktif')
             ->modalDescription('Pilih format ekspor dan rentang tanggal')

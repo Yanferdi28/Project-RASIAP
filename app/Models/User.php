@@ -25,6 +25,10 @@ class User extends Authenticatable implements FilamentUser
         'email',
         'password',
         'unit_pengolah_id',
+        'verification_status',
+        'verified_at',
+        'verified_by',
+        'verification_notes',
     ];
 
     /**
@@ -46,6 +50,7 @@ class User extends Authenticatable implements FilamentUser
     {
         return [
             'email_verified_at' => 'datetime',
+            'verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -68,5 +73,21 @@ class User extends Authenticatable implements FilamentUser
     public function unitPengolah(): BelongsTo
     {
         return $this->belongsTo(UnitPengolah::class, 'unit_pengolah_id');
+    }
+
+    /**
+     * Relasi ke user yang melakukan verifikasi
+     */
+    public function verifiedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verified_by');
+    }
+    
+    /**
+     * Assign roles to the user
+     */
+    public function assignRoles(array $roles): void
+    {
+        $this->syncRoles($roles);
     }
 }

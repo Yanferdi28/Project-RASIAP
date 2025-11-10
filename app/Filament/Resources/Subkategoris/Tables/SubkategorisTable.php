@@ -16,6 +16,13 @@ class SubkategorisTable
         return $table
             ->columns([
 
+                TextColumn::make('no')
+                    ->label('No')
+                    ->getStateUsing(function ($rowLoop) {
+                        return $rowLoop->iteration;
+                    })
+                    ->alignCenter(),
+
                 TextColumn::make('kategori.nama_kategori')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -52,9 +59,7 @@ class SubkategorisTable
                     ->size('3md'),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+
             ]);
     }
 }

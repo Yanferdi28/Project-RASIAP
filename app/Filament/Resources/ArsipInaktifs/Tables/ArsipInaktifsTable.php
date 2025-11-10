@@ -22,6 +22,13 @@ class ArsipInaktifsTable
     {
         return $table
             ->columns([
+                TextColumn::make('no')
+                    ->label('No')
+                    ->getStateUsing(function ($rowLoop) {
+                        return $rowLoop->iteration;
+                    })
+                    ->alignCenter(),
+
                 TextColumn::make('nama_berkas')
                     ->searchable(),
 
@@ -96,9 +103,7 @@ class ArsipInaktifsTable
                             'Laporan Daftar Berkas Arsip Inaktif.pdf'
                         );
                     }),
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+
             ]);
     }
 }

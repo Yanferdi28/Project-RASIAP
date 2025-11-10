@@ -14,6 +14,13 @@ class KodeKlasifikasisTable
     {
         return $table
             ->columns([
+                TextColumn::make('no')
+                    ->label('No')
+                    ->getStateUsing(function ($rowLoop) {
+                        return $rowLoop->iteration;
+                    })
+                    ->alignCenter(),
+
                 TextColumn::make('kode_klasifikasi')
                     ->searchable(),
                 TextColumn::make('uraian')
@@ -45,9 +52,7 @@ class KodeKlasifikasisTable
                     
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+
             ]);
     }
 }

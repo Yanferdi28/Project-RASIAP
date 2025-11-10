@@ -15,6 +15,13 @@ class KategorisTable
     {
         return $table
             ->columns([
+                TextColumn::make('no')
+                    ->label('No')
+                    ->getStateUsing(function ($rowLoop) {
+                        return $rowLoop->iteration;
+                    })
+                    ->alignCenter(),
+
                 TextColumn::make('nama_kategori')
                     ->searchable(),
                 TextColumn::make('created_at')
@@ -38,9 +45,7 @@ class KategorisTable
                     ->size('3md'),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+
             ]);
     }
 }

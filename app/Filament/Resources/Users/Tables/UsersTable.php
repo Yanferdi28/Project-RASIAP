@@ -15,6 +15,13 @@ class UsersTable
     {
         return $table
             ->columns([
+                TextColumn::make('no')
+                    ->label('No')
+                    ->getStateUsing(function ($rowLoop) {
+                        return $rowLoop->iteration;
+                    })
+                    ->alignCenter(),
+
                 TextColumn::make('name')
                     ->label('Nama Pengguna')
                     ->searchable()
@@ -86,10 +93,7 @@ class UsersTable
                     ->size('3md'),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                    ->label('Hapus'),
-                ]),
+
             ]);
     }
 }

@@ -15,6 +15,8 @@ use Filament\Actions\ExportAction;
 use App\Filament\Exports\ArsipAktifExporter;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 
 class ArsipAktifsTable
 {
@@ -94,7 +96,11 @@ class ArsipAktifsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-
+                SelectFilter::make('klasifikasi_id')
+                    ->relationship('klasifikasi', 'kode_klasifikasi', fn (Builder $query) => $query->orderBy('kode_klasifikasi'))
+                    ->searchable()
+                    ->preload()
+                    ->label('Kode Klasifikasi'),
             ])
             ->recordActions([
                 ViewAction::make()
@@ -187,9 +193,7 @@ class ArsipAktifsTable
                     
                 \App\Actions\DaftarIsiBerkasAction::make(),
                 
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+
             ])
             ->defaultSort('created_at', 'desc')
             ->striped()

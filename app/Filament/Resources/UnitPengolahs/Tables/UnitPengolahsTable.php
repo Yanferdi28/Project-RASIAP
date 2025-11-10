@@ -14,9 +14,13 @@ class UnitPengolahsTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')
-                    ->numeric()
-                    ->sortable(),
+                TextColumn::make('no')
+                    ->label('No')
+                    ->getStateUsing(function ($rowLoop) {
+                        return $rowLoop->iteration;
+                    })
+                    ->alignCenter(),
+
                 TextColumn::make('nama_unit')
                     ->searchable(),
             ])
@@ -29,9 +33,7 @@ class UnitPengolahsTable
                     ->size('3md'),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+
             ]);
     }
 }

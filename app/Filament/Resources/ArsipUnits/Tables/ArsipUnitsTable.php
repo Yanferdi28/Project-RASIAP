@@ -15,6 +15,10 @@ use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
+use Illuminate\Database\Eloquent\Builder;
 
 class ArsipUnitsTable
 {
@@ -22,6 +26,13 @@ class ArsipUnitsTable
     {
         return $table
             ->columns([
+                TextColumn::make('no')
+                    ->label('No')
+                    ->getStateUsing(function ($rowLoop) {
+                        return $rowLoop->iteration;
+                    })
+                    ->alignCenter(),
+
                 TextColumn::make('kodeKlasifikasi.kode_klasifikasi')
                     ->label('Kode Klasifikasi')
                     ->sortable()
@@ -108,6 +119,56 @@ class ArsipUnitsTable
                         'ditolak' => 'Ditolak',
                     ])
                     ->label('Status Verifikasi'),
+                    
+                SelectFilter::make('kode_klasifikasi_id')
+                    ->relationship('kodeKlasifikasi', 'kode_klasifikasi', fn (Builder $query) => $query->orderBy('kode_klasifikasi'))
+                    ->searchable()
+                    ->preload()
+                    ->label('Kode Klasifikasi'),
+                    
+                Filter::make('tanggal_range')
+                    ->form([
+                        DatePicker::make('tanggal_mulai')
+                            ->label('Tanggal Mulai')
+                            ->displayFormat('d/m/Y'),
+                        DatePicker::make('tanggal_selesai')
+                            ->label('Tanggal Selesai')
+                            ->displayFormat('d/m/Y'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['tanggal_mulai'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('tanggal', '>=', $date),
+                            )
+                            ->when(
+                                $data['tanggal_selesai'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('tanggal', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['tanggal_mulai'] ?? null) {
+                            $indicators['tanggal_mulai'] = 'Tanggal dari ' . $data['tanggal_mulai'];
+                        }
+                        if ($data['tanggal_selesai'] ?? null) {
+                            $indicators['tanggal_selesai'] = 'Tanggal hingga ' . $data['tanggal_selesai'];
+                        }
+                        
+                        return $indicators;
+                    }),
+                    
+                SelectFilter::make('unit_pengolah_id')
+                    ->relationship('unitPengolah', 'nama_unit', fn (Builder $query) => $query->orderBy('nama_unit'))
+                    ->searchable()
+                    ->preload()
+                    ->label('Unit Pengolah'),
+                    
+                SelectFilter::make('kategori_id')
+                    ->relationship('kategori', 'nama_kategori', fn (Builder $query) => $query->orderBy('nama_kategori'))
+                    ->searchable()
+                    ->preload()
+                    ->label('Kategori'),
             ])
             ->recordActions([
                 Action::make('verifikasi')

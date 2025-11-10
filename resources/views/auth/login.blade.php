@@ -18,11 +18,11 @@
             
             <div class="text-center mb-4">
                 {{-- Tailwind akan menampilkan keduanya dan media query di CSS akan menyembunyikan/menampilkan yang benar --}}
-                <img src="{{ asset('images/logo-light.png') }}" alt="Logo Light" class="w-24 h-auto object-contain mx-auto block dark:hidden logo-light">
-                <img src="{{ asset('images/logo-dark.png') }}" alt="Logo Dark" class="w-24 h-auto object-contain mx-auto hidden dark:block logo-dark">
+                <img src="{{ asset('images/logo-light.png') }}" alt="Logo Light" class="w-40 h-auto object-contain mx-auto block dark:hidden logo-light">
+                <img src="{{ asset('images/logo-dark.png') }}" alt="Logo Dark" class="w-40 h-auto object-contain mx-auto hidden dark:block logo-dark">
             </div>
 
-            <h1 class="text-xl font-semibold text-gray-900 text-center dark:text-gray-100">Login dengan Email</h1>
+            <h1 class="text-xl font-semibold text-gray-900 text-center dark:text-gray-100">Login</h1>
             <p class="text-sm text-gray-500 text-center mt-1 dark:text-gray-400">Selamat Datang</p>
             
             <x-auth-session-status class="mb-4 mt-4" :status="session('status')" />
@@ -31,7 +31,7 @@
                 @csrf
 
                 <div class="mt-4">
-                    <label for="email" class="sr-only">Email</label>
+                    <label for="email" class="sr-only">Email or Name</label>
 
                     <div class="relative">
                         <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -42,13 +42,13 @@
                                         class="block w-full pl-10 text-sm py-3 rounded-xl border border-gray-200 bg-gray-100 text-gray-900 placeholder-gray-400 
                                         focus:border-blue-500 focus:ring focus:ring-blue-500/30
                                         dark:bg-gray-700 dark:text-gray-50 dark:placeholder-gray-400 dark:border-gray-600"
-                                        type="email"
+                                        type="text"
                                         name="email"
                                         :value="old('email')"
                                         required
                                         autofocus
                                         autocomplete="username"
-                                        placeholder="Email"
+                                        placeholder="Email atau Nama Pengguna"
                         />
                     </div>
                     <x-input-error :messages="$errors->get('email')" class="mt-1" />

@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\ArsipAktif;
+use App\Models\BerkasArsip;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
@@ -22,60 +22,60 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
 
     public function array(): array
     {
-        $query = ArsipAktif::with(['arsipUnits', 'klasifikasi', 'arsipUnits.unitPengolah'])
+        $query = BerkasArsip::with(['arsipUnits', 'klasifikasi', 'arsipUnits.unitPengolah'])
             ->orderBy('created_at', 'desc');
-        
+
         // Terapkan filter tanggal jika ada
         if (isset($this->filters['created_from']) && $this->filters['created_from']) {
             $query->whereDate('created_at', '>=', $this->filters['created_from']);
         }
-        
+
         if (isset($this->filters['created_until']) && $this->filters['created_until']) {
             $query->whereDate('created_at', '<=', $this->filters['created_until']);
         }
-        
-        $arsipAktifs = $query->get();
-        $rows = [];
-        $arsipAktifCounter = 1;
 
-        foreach ($arsipAktifs as $arsipAktif) {
-            $arsipUnits = $arsipAktif->arsipUnits;
+        $berkasArsips = $query->get();
+        $rows = [];
+        $berkasArsipCounter = 1;
+
+        foreach ($berkasArsips as $berkasArsip) {
+            $arsipUnits = $berkasArsip->arsipUnits;
             $jumlahItem = $arsipUnits->count();
-            
-            // Row pertama untuk ArsipAktif
+
+            // Row pertama untuk BerkasArsip
             $rows[] = [
-                'no' => $arsipAktifCounter . '.',
-                'nama_berkas' => $arsipAktif->nama_berkas,
+                'no' => $berkasArsipCounter . '.',
+                'nama_berkas' => $berkasArsip->nama_berkas,
                 'jumlah_item' => $jumlahItem,
-                'uraian_informasi' => $arsipAktif->uraian ?? '',
-                'tanggal' => $arsipAktif->created_at ? $arsipAktif->created_at->format('d-m-Y') : null,
-                'unit_pengolah' => $arsipAktif->klasifikasi->kode_klasifikasi ?? 'N/A',
-                'is_arsip_aktif' => true,
+                'uraian_informasi' => $berkasArsip->uraian ?? '',
+                'tanggal' => $berkasArsip->created_at ? $berkasArsip->created_at->format('d-m-Y') : null,
+                'unit_pengolah' => $berkasArsip->klasifikasi->kode_klasifikasi ?? 'N/A',
+                'is_berkas_arsip' => true,
             ];
-            
-            $arsipAktifCounter++;
-            
+
+            $berkasArsipCounter++;
+
             // Tambahkan row untuk setiap ArsipUnit terkait
             foreach ($arsipUnits as $index => $arsipUnit) {
                 $rows[] = [
-                    'no' => '   ' . ($index + 1), // Indentasi untuk menunjukkan bahwa ini anak dari arsip aktif
+                    'no' => '   ' . ($index + 1), // Indentasi untuk menunjukkan bahwa ini anak dari berkas arsip
                     'nama_berkas' => $arsipUnit->uraian_informasi,
                     'jumlah_item' => '-',
                     'uraian_informasi' => $arsipUnit->uraian_informasi,
                     'tanggal' => $arsipUnit->tanggal ? $arsipUnit->tanggal->format('d-m-Y') : null,
                     'unit_pengolah' => $arsipUnit->unitPengolah->nama_unit ?? '',
-                    'is_arsip_aktif' => false,
+                    'is_berkas_arsip' => false,
                 ];
             }
         }
-        
-        // Hapus kolom is_arsip_aktif dari hasil akhir karena hanya digunakan untuk styling
+
+        // Hapus kolom is_berkas_arsip dari hasil akhir karena hanya digunakan untuk styling
         $cleanRows = [];
         foreach ($rows as $row) {
-            unset($row['is_arsip_aktif']);
+            unset($row['is_berkas_arsip']);
             $cleanRows[] = $row;
         }
-        
+
         return $cleanRows;
     }
 
@@ -115,16 +115,16 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
         return [
             AfterSheet::class => function(AfterSheet $event) {
                 $highestRow = $event->sheet->getHighestRow();
-                
-                // Iterate through each row to style based on whether it's an arsip_aktif or arsip_unit
+
+                // Iterate through each row to style based on whether it's an berkas_arsip or arsip_unit
                 $rowNumber = 2; // Start from row 2 (after header)
-                
+
                 while ($rowNumber <= $highestRow) {
-                    // Check if the 'No' column starts with a number followed by a dot (indicating arsip_aktif)
+                    // Check if the 'No' column starts with a number followed by a dot (indicating berkas_arsip)
                     $noValue = $event->sheet->getCell('A' . $rowNumber)->getValue();
-                    
+
                     if (preg_match('/^\d+\.$/', trim($noValue))) {
-                        // This is an ArsipAktif row (Bold and background color)
+                        // This is an BerkasArsip row (Bold and background color)
                         $event->sheet->getStyle('A' . $rowNumber . ':F' . $rowNumber)->applyFromArray([
                             'font' => [
                                 'bold' => true,
@@ -135,7 +135,7 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
                             ],
                         ]);
                     }
-                    
+
                     $rowNumber++;
                 }
             },

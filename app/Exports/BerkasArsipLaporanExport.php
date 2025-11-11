@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\ArsipAktif;
+use App\Models\BerkasArsip;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 
-class ArsipAktifLaporanExport implements FromArray, WithHeadings, WithColumnWidths, WithStyles
+class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWidths, WithStyles
 {
     protected $records;
 
@@ -37,7 +37,7 @@ class ArsipAktifLaporanExport implements FromArray, WithHeadings, WithColumnWidt
                 'keterangan' => $record->keterangan ?? $record->lokasi_fisik ?? ''
             ];
         }
-        
+
         return $rows;
     }
 
@@ -87,16 +87,16 @@ class ArsipAktifLaporanExport implements FromArray, WithHeadings, WithColumnWidt
                 'startColor' => ['rgb' => 'E6E6E6'],
             ],
         ];
-        
+
         // Apply header style to the first row
         $sheet->getStyle(1)->applyFromArray($headerStyle);
-        
+
         // Apply borders to the entire range
         $lastColumn = count($this->headings());
         $lastColumnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($lastColumn);
         $highestRow = $sheet->getHighestRow();
         $range = 'A1:' . $lastColumnLetter . $highestRow;
-        
+
         $sheet->getStyle($range)->applyFromArray([
             'borders' => [
                 'allBorders' => [
@@ -105,15 +105,15 @@ class ArsipAktifLaporanExport implements FromArray, WithHeadings, WithColumnWidt
                 ],
             ],
         ]);
-        
+
         // Center align the 'No' and 'Jumlah Item' columns
         $sheet->getStyle('A:A')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle('G:G')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        
+
         // Wrap text for the 'Nama Berkas' and 'Keterangan' columns
         $sheet->getStyle('D:D')->getAlignment()->setWrapText(true);
         $sheet->getStyle('K:K')->getAlignment()->setWrapText(true);
-        
+
         return [];
     }
 }

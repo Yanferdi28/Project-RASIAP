@@ -54,9 +54,9 @@
 </head>
 <body>
     <div class="header">
-        <h1>Laporan Daftar Isi Arsip Aktif</h1>
-        <h2>UNIT PENGOLAH: {{ $unitPengolah }}</h2> 
-        <h2>PERIODE: {{ $periode }}</h2> 
+        <h1>Laporan Daftar Isi Berkas Arsip</h1>
+        <h2>UNIT PENGOLAH: {{ $unitPengolah }}</h2>
+        <h2>PERIODE: {{ $periode }}</h2>
     </div>
 
     <table>
@@ -85,7 +85,7 @@
                     $arsipUnits = $record->arsipUnits;
                     $totalUnits = $arsipUnits->count();
                 @endphp
-                
+
                 {{-- First row: Archive header --}}
                 <tr class="archive-header">
                     <td style="text-align: center;">{{ $rowCounter++ }}</td>
@@ -101,7 +101,7 @@
                     <td>-</td>
                     <td>-</td>
                 </tr>
-                
+
                 {{-- Following rows: Related units --}}
                 @if($totalUnits > 0)
                     @foreach($arsipUnits as $unitIndex => $unit)

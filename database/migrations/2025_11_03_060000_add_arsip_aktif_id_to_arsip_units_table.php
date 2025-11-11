@@ -13,18 +13,18 @@ return new class extends Migration
     {
         Schema::table('arsip_units', function (Blueprint $table) {
 
-            if (!Schema::hasColumn('arsip_units', 'arsip_aktif_id')) {
-                $table->foreignId('arsip_aktif_id')
+            if (!Schema::hasColumn('arsip_units', 'berkas_arsip_id')) {
+                $table->foreignId('berkas_arsip_id')
                       ->nullable()
-                      ->constrained('arsip_aktif', 'nomor_berkas')
+                      ->constrained('berkas_arsip', 'nomor_berkas')
                       ->onDelete('set null')
                       ->onUpdate('cascade');
             } else {
 
-                $table->dropForeign(['arsip_aktif_id']);
-                $table->foreign('arsip_aktif_id')
+                $table->dropForeign(['berkas_arsip_id']);
+                $table->foreign('berkas_arsip_id')
                       ->references('nomor_berkas')
-                      ->on('arsip_aktif')
+                      ->on('berkas_arsip')
                       ->onDelete('set null')
                       ->onUpdate('cascade');
             }
@@ -37,8 +37,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('arsip_units', function (Blueprint $table) {
-            $table->dropForeign(['arsip_aktif_id']);
-            $table->dropColumn('arsip_aktif_id');
+            $table->dropForeign(['berkas_arsip_id']);
+            $table->dropColumn('berkas_arsip_id');
         });
     }
 };

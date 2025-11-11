@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use App\Models\ArsipAktif;
+use App\Models\BerkasArsip;
 use App\Models\KodeKlasifikasi;
 use App\Models\UnitPengolah;
 
@@ -17,23 +17,23 @@ class ArsipUnit extends Model
     use HasFactory;
 
      /**
-      * Nama tabel yang terhubung dengan model ini.
-      * @var string
-      */
-    protected $table = 'arsip_units'; 
+      * Nama tabel yang terhubung dengan model ini.
+      * @var string
+      */
+    protected $table = 'arsip_units';
 
     /**
-      * Primary key kustom untuk model ini.
-      * @var string
-      */
+      * Primary key kustom untuk model ini.
+      * @var string
+      */
     protected $primaryKey = 'id_berkas';
 
     /**
-      * Atribut yang dapat diisi secara massal.
-      * @var array<int, string>
-      */
+      * Atribut yang dapat diisi secara massal.
+      * @var array<int, string>
+      */
     protected $fillable = [
-    'arsip_aktif_id',  
+    'berkas_arsip_id',
     'kode_klasifikasi_id',
     'unit_pengolah_arsip_id',
     'retensi_aktif',
@@ -63,9 +63,9 @@ class ArsipUnit extends Model
 ];
 
      /**
-      * Casts tipe data atribut.
-      * @var array<string, string>
-      */
+      * Casts tipe data atribut.
+      * @var array<string, string>
+      */
     protected $casts = [
         'tanggal' => 'date',
         'jumlah_nilai' => 'integer',
@@ -81,7 +81,7 @@ class ArsipUnit extends Model
     {
         return $query->with(['kodeKlasifikasi', 'kategori', 'subKategori', 'unitPengolah']);
     }
-    
+
     /**
      * Scope to include verification relationship
      */
@@ -106,12 +106,12 @@ class ArsipUnit extends Model
     }
 
     /**
-     * Relasi ke ArsipAktif (Berkas)
+     * Relasi ke BerkasArsip (Berkas)
      * <-- TAMBAHAN BARU
      */
-    public function arsipAktif(): BelongsTo
+    public function berkasArsip(): BelongsTo
     {
-        return $this->belongsTo(ArsipAktif::class, 'arsip_aktif_id');
+        return $this->belongsTo(BerkasArsip::class, 'berkas_arsip_id');
     }
 
     public function kategori(): BelongsTo
@@ -126,7 +126,7 @@ class ArsipUnit extends Model
 
     public function kodeKlasifikasi(): BelongsTo
     {
-     return $this->belongsTo(KodeKlasifikasi::class, 'kode_klasifikasi_id'); 
+     return $this->belongsTo(KodeKlasifikasi::class, 'kode_klasifikasi_id');
     }
 
 
@@ -135,12 +135,12 @@ class ArsipUnit extends Model
     {
         return $this->belongsTo(UnitPengolah::class, 'unit_pengolah_arsip_id');
     }
-    
+
     public function verifier(): BelongsTo
     {
         return $this->belongsTo(User::class, 'verifikasi_oleh');
     }
-    
+
     /**
      * Method to accept the archive unit
      */
@@ -153,7 +153,7 @@ class ArsipUnit extends Model
             'verifikasi_tanggal' => now(),
         ]);
     }
-    
+
     /**
      * Method to reject the archive unit
      */
@@ -166,7 +166,7 @@ class ArsipUnit extends Model
             'verifikasi_tanggal' => now(),
         ]);
     }
-    
+
     /**
      * Scope to get pending archive units
      */
@@ -174,7 +174,7 @@ class ArsipUnit extends Model
     {
         return $query->where('status', 'pending');
     }
-    
+
     /**
      * Scope to get accepted archive units
      */
@@ -182,7 +182,7 @@ class ArsipUnit extends Model
     {
         return $query->where('status', 'diterima');
     }
-    
+
     /**
      * Scope to get rejected archive units
      */

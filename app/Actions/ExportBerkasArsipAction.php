@@ -2,46 +2,46 @@
 
 namespace App\Actions;
 
-use App\Models\ArsipAktif;
+use App\Models\BerkasArsip;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 
-class ExportArsipAktifAction
+class ExportBerkasArsipAction
 {
     public static function make(): Action
     {
-        return Action::make('export_arsip_aktif')
-            ->label('Ekspor Arsip Aktif (CSV)')
+        return Action::make('export_berkas_arsip')
+            ->label('Ekspor Berkas Arsip (CSV)')
             ->icon('heroicon-o-arrow-down-tray')
             ->color('success')
             ->action(function (array $data) {
                 // Buat nama file
-                $filename = 'arsip_aktif_' . date('Y-m-d_H-i-s') . '.csv';
-                
+                $filename = 'berkas_arsip_' . date('Y-m-d_H-i-s') . '.csv';
+
                 // Query data dengan filter
-                $query = ArsipAktif::query();
-                
+                $query = BerkasArsip::query();
+
                 if (isset($data['created_from']) && $data['created_from']) {
                     $query->whereDate('created_at', '>=', $data['created_from']);
                 }
-                
+
                 if (isset($data['created_until']) && $data['created_until']) {
                     $query->whereDate('created_at', '<=', $data['created_until']);
                 }
-                
-                $arsipAktif = $query->get();
-                
+
+                $berkasArsip = $query->get();
+
                 // Generate CSV content
                 $headers = [
                     'Content-Type' => 'text/csv',
                     'Content-Disposition' => 'attachment; filename="' . $filename . '"',
                 ];
-                
-                $callback = function() use ($arsipAktif) {
+
+                $callback = function() use ($berkasArsip) {
                     $file = fopen('php://output', 'w');
-                    
+
                     // Tulis header
                     fputcsv($file, [
                         'Nomor Berkas',
@@ -56,9 +56,9 @@ class ExportArsipAktifAction
                         'Sub Kategori',
                         'Tanggal Pembuatan'
                     ]);
-                    
+
                     // Tulis data
-                    foreach ($arsipAktif as $item) {
+                    foreach ($berkasArsip as $item) {
                         fputcsv($file, [
                             $item->nomor_berkas,
                             $item->nama_berkas,
@@ -73,10 +73,10 @@ class ExportArsipAktifAction
                             $item->created_at,
                         ]);
                     }
-                    
+
                     fclose($file);
                 };
-                
+
                 // Kirim file
                 return response()->stream($callback, 200, $headers);
             })
@@ -85,7 +85,7 @@ class ExportArsipAktifAction
                     ->label('Dari Tanggal')
                     ->displayFormat('d/m/Y')
                     ->extraInputAttributes(['placeholder' => 'Pilih tanggal mulai']),
-                    
+
                 \Filament\Forms\Components\DatePicker::make('created_until')
                     ->label('Sampai Tanggal')
                     ->displayFormat('d/m/Y')

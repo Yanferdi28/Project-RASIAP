@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\ArsipAktifs\Tables;
+namespace App\Filament\Resources\BerkasArsips\Tables;
 
-use App\Models\ArsipAktif;
+use App\Models\BerkasArsip;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -12,13 +12,13 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Actions\ExportAction;
-use App\Filament\Exports\ArsipAktifExporter;
+use App\Filament\Exports\BerkasArsipExporter;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 
-class ArsipAktifsTable
+class BerkasArsipsTable
 {
     public static function configure(Table $table): Table
     {
@@ -106,27 +106,27 @@ class ArsipAktifsTable
                 ViewAction::make()
                     ->label('')
                     ->size('3md')
-                    ->tooltip('Lihat Detail Arsip'),
-                
+                    ->tooltip('Lihat Detail Berkas'),
+
                 EditAction::make()
                     ->label('')
                     ->size('3md')
-                    ->tooltip('Edit Arsip'),
-                
+                    ->tooltip('Edit Berkas'),
+
                 DeleteAction::make()
                     ->label('')
                     ->size('3md')
                     ->requiresConfirmation()
                     ->modalHeading('Hapus Berkas Arsip')
                     ->modalDescription('Apakah Anda yakin ingin menghapus berkas ini?')
-                    ->tooltip('Hapus Arsip'),
+                    ->tooltip('Hapus Berkas'),
             ])
             ->toolbarActions([
                 Action::make('printCustomPdf')
                     ->label('Cetak Berkas')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->requiresConfirmation()
-                    ->modalHeading('Cetak Berkas Arsip Aktif')
+                    ->modalHeading('Cetak Berkas Arsip')
                     ->modalDescription('Pilih format ekspor dan rentang tanggal')
                     ->form([
                         \Filament\Forms\Components\Select::make('format_ekspor')
@@ -137,12 +137,12 @@ class ArsipAktifsTable
                             ])
                             ->default('pdf')
                             ->required(),
-                            
+
                         \Filament\Forms\Components\DatePicker::make('tanggal_cetak_dari')
                             ->label('Dari Tanggal')
                             ->displayFormat('d/m/Y')
                             ->extraInputAttributes(['placeholder' => 'Pilih tanggal mulai']),
-                            
+
                         \Filament\Forms\Components\DatePicker::make('tanggal_cetak_sampai')
                             ->label('Sampai Tanggal')
                             ->displayFormat('d/m/Y')
@@ -151,27 +151,27 @@ class ArsipAktifsTable
                     ->action(function (array $data, \Filament\Tables\Contracts\HasTable $livewire) {
                         // Buat query dasar dari tabel yang sudah difilter
                         $query = $livewire->getFilteredTableQuery();
-                        
+
                         // Tambahkan filter berdasarkan tanggal jika disediakan
                         if (isset($data['tanggal_cetak_dari']) && $data['tanggal_cetak_dari']) {
                             $query->whereDate('created_at', '>=', $data['tanggal_cetak_dari']);
                         }
-                        
+
                         if (isset($data['tanggal_cetak_sampai']) && $data['tanggal_cetak_sampai']) {
                             $query->whereDate('created_at', '<=', $data['tanggal_cetak_sampai']);
                         }
-                        
+
                         $records = $query->get();
-                        
+
                         // Buat periode untuk ditampilkan di laporan
                         $dari = $data['tanggal_cetak_dari'] ?? now()->subMonth()->format('d/m/Y');
                         $sampai = $data['tanggal_cetak_sampai'] ?? now()->format('d/m/Y');
                         $periode = \Carbon\Carbon::parse($dari)->format('d F Y') . ' - ' . \Carbon\Carbon::parse($sampai)->format('d F Y');
-                        
+
                         $unitPengolah = 'RRI BANJARMASIN';
-                        
+
                         $format = $data['format_ekspor'];
-                        
+
                         if ($format === 'pdf') {
                             $view = view('pdf.laporan-arsip-aktif', compact('records', 'unitPengolah', 'periode'))->render();
 
@@ -180,19 +180,19 @@ class ArsipAktifsTable
 
                             return response()->streamDownload(
                                 fn () => print($pdf->output()),
-                                'Laporan Daftar Berkas Arsip Aktif.pdf'
+                                'Laporan Daftar Berkas Arsip.pdf'
                             );
                         } else { // Excel
                             // Use the new export class with proper styling
-                            $export = new \App\Exports\ArsipAktifLaporanExport($records);
-                            $filename = 'laporan_arsip_aktif_' . date('Y-m-d_H-i-s') . '.xlsx';
-                            
+                            $export = new \App\Exports\BerkasArsipLaporanExport($records);
+                            $filename = 'laporan_berkas_arsip_' . date('Y-m-d_H-i-s') . '.xlsx';
+
                             return \Maatwebsite\Excel\Facades\Excel::download($export, $filename);
                         }
                     }),
-                    
+
                 \App\Actions\DaftarIsiBerkasAction::make(),
-                
+
 
             ])
             ->defaultSort('created_at', 'desc')

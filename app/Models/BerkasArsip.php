@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ArsipAktif extends Model
+class BerkasArsip extends Model
 {
-    protected $table = 'arsip_aktif';
+    protected $table = 'berkas_arsip';
     
     protected $primaryKey = 'nomor_berkas';
     
@@ -48,7 +48,7 @@ class ArsipAktif extends Model
     
     public function arsipUnits()
     {
-        return $this->hasMany(\App\Models\ArsipUnit::class, 'arsip_aktif_id', 'nomor_berkas');
+        return $this->hasMany(\App\Models\ArsipUnit::class, 'berkas_arsip_id', 'nomor_berkas');
     }
     
     /**

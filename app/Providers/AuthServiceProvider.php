@@ -2,14 +2,14 @@
 
 namespace App\Providers;
 
-use App\Models\ArsipAktif;
-use App\Policies\ArsipAktifPolicy;
+use App\Models\BerkasArsip;
+use App\Policies\BerkasArsipPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {
     protected $policies = [
-        ArsipAktif::class => ArsipAktifPolicy::class,
+        BerkasArsip::class => BerkasArsipPolicy::class,
     ];
 
     public function boot(): void

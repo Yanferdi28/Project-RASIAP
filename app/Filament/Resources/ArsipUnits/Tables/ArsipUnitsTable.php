@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\ArsipUnits\Tables;
 
-use App\Models\ArsipAktif;
+use App\Models\BerkasArsip;
 use App\Models\ArsipUnit;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -99,7 +99,7 @@ class ArsipUnitsTable
                     ->badge()
                     ->searchable()
                     ->sortable(),
-                    
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -119,13 +119,13 @@ class ArsipUnitsTable
                         'ditolak' => 'Ditolak',
                     ])
                     ->label('Status Verifikasi'),
-                    
+
                 SelectFilter::make('kode_klasifikasi_id')
                     ->relationship('kodeKlasifikasi', 'kode_klasifikasi', fn (Builder $query) => $query->orderBy('kode_klasifikasi'))
                     ->searchable()
                     ->preload()
                     ->label('Kode Klasifikasi'),
-                    
+
                 Filter::make('tanggal_range')
                     ->form([
                         DatePicker::make('tanggal_mulai')
@@ -154,16 +154,16 @@ class ArsipUnitsTable
                         if ($data['tanggal_selesai'] ?? null) {
                             $indicators['tanggal_selesai'] = 'Tanggal hingga ' . $data['tanggal_selesai'];
                         }
-                        
+
                         return $indicators;
                     }),
-                    
+
                 SelectFilter::make('unit_pengolah_id')
                     ->relationship('unitPengolah', 'nama_unit', fn (Builder $query) => $query->orderBy('nama_unit'))
                     ->searchable()
                     ->preload()
                     ->label('Unit Pengolah'),
-                    
+
                 SelectFilter::make('kategori_id')
                     ->relationship('kategori', 'nama_kategori', fn (Builder $query) => $query->orderBy('nama_kategori'))
                     ->searchable()
@@ -223,18 +223,18 @@ class ArsipUnitsTable
                             ->send();
                     }),
 
-                Action::make('ubah_arsip_aktif')
+                Action::make('ubah_berkas_arsip')
                     ->size('3md')
                     ->label('')
                     ->icon('heroicon-o-folder-open')
-                    ->tooltip(fn ($record): string => $record->arsip_aktif_id ? 'Ubah Berkas' : 'Pilih Berkas')
+                    ->tooltip(fn ($record): string => $record->berkas_arsip_id ? 'Ubah Berkas' : 'Pilih Berkas')
                     ->modalIcon('heroicon-o-folder-open')
                     ->color('warning')
-                    ->modalHeading(fn ($record): string => $record->arsip_aktif_id ? 'Ubah Arsip Aktif untuk Unit Ini' : 'Pilih Arsip Aktif')
+                    ->modalHeading(fn ($record): string => $record->berkas_arsip_id ? 'Ubah Berkas Arsip untuk Unit Ini' : 'Pilih Berkas Arsip')
                     ->modalSubmitActionLabel('Simpan')
                     ->modalWidth('md')
                     ->fillForm(fn ($record): array => [
-                        'arsip_aktif_id' => $record->arsip_aktif_id,
+                        'berkas_arsip_id' => $record->berkas_arsip_id,
                     ])
                     ->visible(function ($record) {
                         /** @var \App\Models\User $user */
@@ -245,15 +245,15 @@ class ArsipUnitsTable
                         return true;
                     })
                     ->form([
-                        \Filament\Forms\Components\Select::make('arsip_aktif_id')
-                            ->label('Pilih Arsip Aktif')
-                            ->options(\App\Models\ArsipAktif::query()->pluck('nama_berkas', 'nomor_berkas'))
+                        \Filament\Forms\Components\Select::make('berkas_arsip_id')
+                            ->label('Pilih Berkas Arsip')
+                            ->options(\App\Models\BerkasArsip::query()->pluck('nama_berkas', 'nomor_berkas'))
                             ->required()
                             ->searchable()
-                            ->helperText('Pilih arsip aktif tempat naskah akan dihubungkan.'),
+                            ->helperText('Pilih berkas arsip tempat naskah akan dihubungkan.'),
                     ])
                     ->action(function ($record, array $data): void {
-                        $record->arsip_aktif_id = $data['arsip_aktif_id'];
+                        $record->berkas_arsip_id = $data['berkas_arsip_id'];
                         $record->save();
 
                         \Filament\Notifications\Notification::make()
@@ -329,7 +329,7 @@ class ArsipUnitsTable
                         ])
 
             ->toolbarActions([
-                
+
             ]);
     }
 }

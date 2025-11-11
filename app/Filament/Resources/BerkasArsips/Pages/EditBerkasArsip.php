@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Filament\Resources\ArsipAktifs\Pages;
+namespace App\Filament\Resources\BerkasArsips\Pages;
 
-use App\Filament\Resources\ArsipAktifs\ArsipAktifResource;
+use App\Filament\Resources\BerkasArsips\BerkasArsipResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
-class EditArsipAktif extends EditRecord
+class EditBerkasArsip extends EditRecord
 {
-    protected static string $resource = ArsipAktifResource::class;
+    protected static string $resource = BerkasArsipResource::class;
 
     public function mount($record): void
     {
         parent::mount($record);
-        
+
         if (!$this->getRecord()->userCanUpdate()) {
-            abort(403, 'Anda tidak memiliki akses untuk mengedit arsip ini');
+            abort(403, 'Anda tidak memiliki akses untuk mengedit berkas ini');
         }
     }
 

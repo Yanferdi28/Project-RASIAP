@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ArsipAktifs\RelationManagers;
+namespace App\Filament\Resources\BerkasArsips\RelationManagers;
 
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -16,11 +16,11 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 
-class ArsipUnitsRelationManager extends RelationManager
+class BerkasArsipUnitsRelationManager extends RelationManager
 {
     protected static string $relationship = 'arsipUnits';
 
-    protected static ?string $title = 'Unit Arsip Terkait';
+    protected static ?string $title = 'Unit Berkas Terkait';
 
     protected static ?string $recordTitleAttribute = 'id_berkas';
 
@@ -36,51 +36,51 @@ class ArsipUnitsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('no_urut')
                     ->label('No. Item')
                     ->getStateUsing(function ($record, $livewire) {
-                        // Get the related arsip aktif record
+                        // Get the related berkas arsip record
                         $parentRecord = $livewire->getOwnerRecord();
-                        
+
                         // Get all related arsip units ordered by creation date
                         $relatedUnits = $parentRecord->arsipUnits()
                             ->orderBy('created_at', 'asc')
                             ->get();
-                        
+
                         // Find the position of the current record
                         $position = $relatedUnits->search(function ($item) use ($record) {
                             return $item->getKey() === $record->getKey();
                         });
-                        
+
                         return $position !== false ? $position + 1 : null;
                     })
                     ->default('')
                     ->sortable(false),
-                    
+
                 Tables\Columns\TextColumn::make('kodeKlasifikasi.kode_klasifikasi')
                     ->label('Kode Klasifikasi')
                     ->searchable()
                     ->sortable(),
-                    
+
                 Tables\Columns\TextColumn::make('kodeKlasifikasi.uraian')
                     ->label('Uraian Klasifikasi')
                     ->limit(50)
                     ->tooltip(fn ($record) => $record->kodeKlasifikasi->uraian ?? '')
                     ->searchable()
                     ->sortable(),
-                    
+
                 Tables\Columns\TextColumn::make('indeks')
                     ->label('Indeks')
                     ->searchable()
                     ->sortable(),
-                    
+
                 Tables\Columns\TextColumn::make('tanggal')
                     ->label('Tanggal')
                     ->date()
                     ->sortable(),
-                    
+
                 Tables\Columns\TextColumn::make('jumlah_nilai')
                     ->label('Jumlah')
                     ->numeric()
                     ->sortable(),
-                    
+
                 Tables\Columns\TextColumn::make('jumlah_satuan')
                     ->label('Satuan')
                     ->searchable()
@@ -89,8 +89,8 @@ class ArsipUnitsRelationManager extends RelationManager
             ->filters([
 
             ])
-            ->emptyStateHeading('Tidak ada unit arsip')
-            ->emptyStateDescription('Belum ada unit arsip yang terkait dengan arsip aktif ini.')
+            ->emptyStateHeading('Tidak ada unit berkas')
+            ->emptyStateDescription('Belum ada unit berkas yang terkait dengan berkas arsip ini.')
             ->emptyStateIcon('heroicon-o-archive-box');
     }
 
@@ -144,7 +144,7 @@ class ArsipUnitsRelationManager extends RelationManager
                         ->disabled()
                         ->columnSpanFull(),
                 ])
-                ->modalHeading(fn ($record) => 'Detail Arsip Unit: ' . ($record->indeks ?? 'N/A'))
+                ->modalHeading(fn ($record) => 'Detail Unit Berkas: ' . ($record->indeks ?? 'N/A'))
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel('Tutup')
                 ->visible(function ($record) {

@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Filament\Resources\ArsipAktifs\Pages;
+namespace App\Filament\Resources\BerkasArsips\Pages;
 
-use App\Filament\Resources\ArsipAktifs\ArsipAktifResource;
+use App\Filament\Resources\BerkasArsips\BerkasArsipResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
-class ViewArsipAktif extends ViewRecord
+class ViewBerkasArsip extends ViewRecord
 {
-    protected static string $resource = ArsipAktifResource::class;
+    protected static string $resource = BerkasArsipResource::class;
 
     public function mount($record): void
     {
         parent::mount($record);
-        
+
         if (!$this->getRecord()->userCanView()) {
-            abort(403, 'Anda tidak memiliki akses untuk melihat arsip ini');
+            abort(403, 'Anda tidak memiliki akses untuk melihat berkas ini');
         }
     }
 

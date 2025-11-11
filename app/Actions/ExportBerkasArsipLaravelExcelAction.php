@@ -2,40 +2,40 @@
 
 namespace App\Actions;
 
-use App\Exports\ArsipAktifExport;
+use App\Exports\BerkasArsipExport;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ExportArsipAktifLaravelExcelAction
+class ExportBerkasArsipLaravelExcelAction
 {
     public static function make(): Action
     {
-        return Action::make('export_arsip_aktif_laravel_excel')
-            ->label('Ekspor Arsip Aktif (Excel)')
+        return Action::make('export_berkas_arsip_laravel_excel')
+            ->label('Ekspor Berkas Arsip (Excel)')
             ->icon('heroicon-o-arrow-down-tray')
             ->color('success')
             ->requiresConfirmation()
-            ->modalHeading('Ekspor Arsip Aktif')
-            ->modalDescription('Pilih rentang tanggal untuk mengekspor data arsip aktif.')
+            ->modalHeading('Ekspor Berkas Arsip')
+            ->modalDescription('Pilih rentang tanggal untuk mengekspor data berkas arsip.')
             ->action(function (array $data) {
                 try {
                     // Generate filename
-                    $filename = 'arsip_aktif_' . date('Y-m-d_H-i-s') . '.xlsx';
-                    
+                    $filename = 'berkas_arsip_' . date('Y-m-d_H-i-s') . '.xlsx';
+
                     // Create export instance with filters
-                    $export = new ArsipAktifExport([
+                    $export = new BerkasArsipExport([
                         'created_from' => $data['created_from'] ?? null,
                         'created_until' => $data['created_until'] ?? null,
                     ]);
-                    
+
                     // Send success notification before download
                     Notification::make()
                         ->title('Ekspor Dimulai')
                         ->body('File ekspor sedang disiapkan...')
                         ->success()
                         ->send();
-                    
+
                     // Return Excel download response
                     return Excel::download($export, $filename);
                 } catch (\Exception $e) {
@@ -51,7 +51,7 @@ class ExportArsipAktifLaravelExcelAction
                     ->label('Dari Tanggal')
                     ->displayFormat('d/m/Y')
                     ->extraInputAttributes(['placeholder' => 'Pilih tanggal mulai']),
-                    
+
                 \Filament\Forms\Components\DatePicker::make('created_until')
                     ->label('Sampai Tanggal')
                     ->displayFormat('d/m/Y')

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Laporan Daftar Berkas Arsip Aktif</title>
+    <title>Laporan Daftar Berkas Arsip</title>
     <style>
         body {
             font-family: 'Helvetica', sans-serif;
@@ -47,9 +47,9 @@
 </head>
 <body>
     <div class="header">
-        <h1>Laporan Daftar Berkas Arsip Aktif</h1>
-        <h2>UNIT PENGOLAH: {{ $unitPengolah }}</h2> 
-        <h2>PERIODE: {{ $periode }}</h2> 
+        <h1>Laporan Daftar Berkas Arsip</h1>
+        <h2>UNIT PENGOLAH: {{ $unitPengolah }}</h2>
+        <h2>PERIODE: {{ $periode }}</h2>
     </div>
 
     <table>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ArsipAktifs\Schemas;
+namespace App\Filament\Resources\BerkasArsips\Schemas;
 
 use App\Models\KodeKlasifikasi;
 use App\Models\Kategori;
@@ -11,7 +11,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
-class ArsipAktifForm
+class BerkasArsipForm
 {
     public static function configure(Schema $schema): Schema
     {

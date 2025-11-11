@@ -18,16 +18,16 @@ return new class extends Migration
             $table->index('unit_pengolah_arsip_id');
             $table->index('kategori_id');
             $table->index('sub_kategori_id');
-            $table->index('arsip_aktif_id');
+            $table->index('berkas_arsip_id');
             $table->index('verifikasi_oleh');
-            
+
             // Add index for status column which is frequently used in queries
             $table->index('status');
-            
+
             // Add index for created_at for sorting
             $table->index('created_at');
         });
-        
+
         // Add composite indexes using raw SQL
         DB::statement('CREATE INDEX idx_status_unit_pengolah ON arsip_units (status, unit_pengolah_arsip_id)');
         DB::statement('CREATE INDEX idx_unit_pengolah_status ON arsip_units (unit_pengolah_arsip_id, status)');
@@ -43,14 +43,14 @@ return new class extends Migration
             $table->dropIndex(['unit_pengolah_arsip_id']);
             $table->dropIndex(['kategori_id']);
             $table->dropIndex(['sub_kategori_id']);
-            $table->dropIndex(['arsip_aktif_id']);
+            $table->dropIndex(['berkas_arsip_id']);
             $table->dropIndex(['verifikasi_oleh']);
             $table->dropIndex(['status']);
             $table->dropIndex(['created_at']);
-            
+
             // Drop composite indexes using raw SQL since Blueprint doesn't support named composite indexes as easily
         });
-        
+
         // Drop composite indexes using raw SQL
         DB::statement('DROP INDEX IF EXISTS idx_status_unit_pengolah ON arsip_units');
         DB::statement('DROP INDEX IF EXISTS idx_unit_pengolah_status ON arsip_units');

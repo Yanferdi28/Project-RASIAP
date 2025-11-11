@@ -6,7 +6,7 @@ var Zo=Object.defineProperty;var Jo=(i,t,e)=>t in i?Zo(i,t,{enumerable:!0,config
 @kurkle/color/dist/color.esm.js:
   (*!
    * @kurkle/color v0.3.4
-   * https:
+   * https://github.com/kurkle/color#readme
    * (c) 2024 Jukka Kurkela
    * Released under the MIT License
    *)
@@ -15,7 +15,7 @@ chart.js/dist/chunks/helpers.dataset.js:
 chart.js/dist/chart.js:
   (*!
    * Chart.js v4.5.0
-   * https:
+   * https://www.chartjs.org
    * (c) 2025 Chart.js Contributors
    * Released under the MIT License
    *)

@@ -53,8 +53,8 @@ class UserPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/User/Widgets'), for: 'App\\Filament\\User\\Widgets')
             ->widgets([
                 \App\Filament\Widgets\StatsOverview::class,
-                \Filament\Widgets\AccountWidget::class,
-                \Filament\Widgets\FilamentInfoWidget::class,
+                \App\Filament\Widgets\ArsipUnitHistory::class,
+
             ])
             ->middleware([
                 EncryptCookies::class,

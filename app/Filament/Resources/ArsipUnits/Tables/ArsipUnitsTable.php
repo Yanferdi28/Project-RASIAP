@@ -300,19 +300,30 @@ class ArsipUnitsTable
                 ActionGroup::make([
                     ViewAction::make()
                         ->icon('heroicon-m-eye')
-                        ->label('Lihat'),
+                        ->label('Lihat')
+                        ->visible(function ($record) {
+                            /** @var \App\Models\User $user */
+                            $user = \Illuminate\Support\Facades\Auth::user();
+                            return $user->can('view', $record);
+                        }),
                     EditAction::make()
                         ->icon('heroicon-m-pencil')
-                        ->label('Edit'),
+                        ->label('Edit')
+                        ->visible(function ($record) {
+                            /** @var \App\Models\User $user */
+                            $user = \Illuminate\Support\Facades\Auth::user();
+                            return $user->can('update', $record);
+                        }),
                 ])
                     ->dropdown()
                     ->size('3md')
                     ->label('')
                     ->icon('heroicon-m-ellipsis-vertical')
-                    ->visible(function () {
+                    ->visible(function ($record) {
                         /** @var \App\Models\User $user */
                         $user = \Illuminate\Support\Facades\Auth::user();
-                        return ! $user->hasRole('operator');
+                        // Show dropdown if user has permission to view OR update (or both)
+                        return $user->can('view', $record) || $user->can('update', $record);
                     })
                     ->link(),
                         ])

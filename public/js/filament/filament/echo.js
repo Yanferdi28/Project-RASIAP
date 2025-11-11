@@ -5,7 +5,7 @@
 pusher-js/dist/web/pusher.js:
   (*!
    * Pusher JavaScript Library v7.6.0
-   * https:
+   * https://pusher.com/
    *
    * Copyright 2020, Pusher
    * Released under the MIT licence.

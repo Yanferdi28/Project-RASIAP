@@ -48,7 +48,8 @@ class KodeKlasifikasisTable
             ->recordActions([
                 EditAction::make()
                     ->label('')
-                    ->size('3md'),
+                    ->size('3md')
+                    ->tooltip('Edit Kode Klasifikasi'),
                     
             ])
             ->toolbarActions([

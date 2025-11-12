@@ -26,11 +26,11 @@ class BerkasArsipResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'nama_berkas';
 
-    protected static ?string $navigationLabel = 'Pemberkasan Berkas Arsip';
+    protected static ?string $navigationLabel = 'Berkas Arsip';
 
-    protected static ?string $modelLabel = 'Pemberkasan Berkas Arsip';
+    protected static ?string $modelLabel = 'Berkas Arsip';
 
-    protected static ?string $pluralLabel = 'Pemberkasan Berkas Arsip';
+    protected static ?string $pluralLabel = 'Berkas Arsip';
 
     protected static string | UnitEnum | null $navigationGroup = 'Pemeliharaan Arsip';
 

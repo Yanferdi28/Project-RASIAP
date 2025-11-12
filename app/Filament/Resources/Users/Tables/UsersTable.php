@@ -90,7 +90,8 @@ class UsersTable
             ->recordActions([
                 EditAction::make()
                     ->label('')
-                    ->size('3md'),
+                    ->size('3md')
+                    ->tooltip('Edit Pengguna'),
             ])
             ->toolbarActions([
 

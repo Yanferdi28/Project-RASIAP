@@ -53,10 +53,8 @@ class SubkategorisTable
             ->recordActions([
                 EditAction::make()
                     ->label('')
-                    ->size('3md'),
-                DeleteAction::make()
-                    ->label('')
-                    ->size('3md'),
+                    ->size('3md')
+                    ->tooltip('Edit Sub Kategori'),
             ])
             ->toolbarActions([
 

@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('arsip_units', function (Blueprint $table) {
-            $table->renameColumn('arsip_aktif_id', 'berkas_arsip_id');
+            if (Schema::hasColumn('arsip_units', 'arsip_aktif_id')) {
+                $table->renameColumn('arsip_aktif_id', 'berkas_arsip_id');
+            }
         });
     }
 
@@ -22,7 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('arsip_units', function (Blueprint $table) {
-            $table->renameColumn('berkas_arsip_id', 'arsip_aktif_id');
+            if (Schema::hasColumn('arsip_units', 'berkas_arsip_id')) {
+                $table->renameColumn('berkas_arsip_id', 'arsip_aktif_id');
+            }
         });
     }
 };

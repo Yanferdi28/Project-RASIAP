@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('kode_klasifikasi')->unique();
             $table->string('kode_klasifikasi_induk')->nullable();
-            $table->string('fungsi');
             $table->string('uraian');
             $table->integer('retensi_aktif');
             $table->integer('retensi_inaktif');

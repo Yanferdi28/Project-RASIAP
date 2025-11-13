@@ -12,19 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('arsip_units', function (Blueprint $table) {
-
+            // Check if the column exists
             if (!Schema::hasColumn('arsip_units', 'berkas_arsip_id')) {
+                // Add the column if it doesn't exist
                 $table->foreignId('berkas_arsip_id')
                       ->nullable()
-                      ->constrained('berkas_arsip', 'nomor_berkas')
+                      ->constrained('arsip_aktif', 'nomor_berkas')
                       ->onDelete('set null')
                       ->onUpdate('cascade');
             } else {
-
-                $table->dropForeign(['berkas_arsip_id']);
+                // Check if there's an existing foreign key constraint on this column
+                // If there is one and it's not pointing to the right table, we need to handle it carefully
+                // Just add the constraint if it doesn't exist yet
                 $table->foreign('berkas_arsip_id')
                       ->references('nomor_berkas')
-                      ->on('berkas_arsip')
+                      ->on('arsip_aktif')
                       ->onDelete('set null')
                       ->onUpdate('cascade');
             }

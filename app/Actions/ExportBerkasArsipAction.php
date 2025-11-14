@@ -52,8 +52,6 @@ class ExportBerkasArsipAction
                         'Penyusutan Akhir',
                         'Lokasi Fisik',
                         'Uraian',
-                        'Kategori',
-                        'Sub Kategori',
                         'Tanggal Pembuatan'
                     ]);
 
@@ -68,8 +66,6 @@ class ExportBerkasArsipAction
                             $item->penyusutan_akhir,
                             $item->lokasi_fisik,
                             $item->uraian,
-                            $item->kategori->nama_kategori ?? '',
-                            $item->subKategori->nama_sub_kategori ?? '',
                             $item->created_at,
                         ]);
                     }

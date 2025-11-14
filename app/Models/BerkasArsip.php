@@ -22,8 +22,6 @@ class BerkasArsip extends Model
         'penyusutan_akhir',
         'lokasi_fisik',
         'uraian',
-        'kategori_id',
-        'sub_kategori_id',
     ];
     
     protected $casts = [
@@ -34,16 +32,6 @@ class BerkasArsip extends Model
     public function klasifikasi(): BelongsTo
     {
         return $this->belongsTo(KodeKlasifikasi::class, 'klasifikasi_id');
-    }
-    
-    public function kategori(): BelongsTo
-    {
-        return $this->belongsTo(Kategori::class);
-    }
-    
-    public function subKategori(): BelongsTo
-    {
-        return $this->belongsTo(SubKategori::class);
     }
     
     public function arsipUnits()

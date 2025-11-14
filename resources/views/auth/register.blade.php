@@ -22,8 +22,9 @@
                 <img src="{{ asset('images/logo-dark.png') }}" alt="Logo Dark" class="w-40 h-auto object-contain mx-auto hidden dark:block logo-dark">
             </div>
 
-            <h1 class="text-xl font-semibold text-gray-900 text-center dark:text-gray-100">Daftar Akun Baru</h1>
+            <h1 class="text-xl font-semibold text-gray-900 text-center dark:text-gray-100">Portal Data Terpadu</h1>
             <p class="text-sm text-gray-500 text-center mt-1 dark:text-gray-400">Buat akun untuk memulai</p>
+
 
             <x-auth-session-status class="mb-4 mt-4" :status="session('status')" />
 

@@ -33,7 +33,7 @@ class BerkasArsipPolicy
 
     public function delete(User $user, BerkasArsip $model): bool
     {
-        return $user->hasRole('admin');
+        return $user->hasAnyRole(['admin', 'user']);
     }
 
     public function restore(User $user, BerkasArsip $model): bool

@@ -92,7 +92,7 @@ class ArsipUnitForm
                                 modifyQueryUsing: fn ($query, callable $get) => $query->where('kategori_id', $get('kategori_id'))
                             )
                             ->searchable()
-                            ->preload(false) // Disable preload for performance, will be loaded when needed
+                            ->preload() // Disable preload for performance, will be loaded when needed
                             ->visible(function ($get) {
                                 return $get('kategori_id') !== null;
                             })

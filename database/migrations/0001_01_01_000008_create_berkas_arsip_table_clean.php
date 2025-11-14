@@ -11,29 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('arsip_inaktif', function (Blueprint $table) {
-
+        Schema::create('berkas_arsip', function (Blueprint $table) {
             $table->id('nomor_berkas');
-
-
             $table->string('nama_berkas');
-
-
             $table->foreignId('klasifikasi_id')->constrained('kode_klasifikasis');
-
-
             $table->integer('retensi_aktif')->nullable();
             $table->integer('retensi_inaktif')->nullable();
-            
-
             $table->string('penyusutan_akhir')->nullable();
-
-
             $table->string('lokasi_fisik')->nullable();
             $table->text('uraian')->nullable();
-            $table->string('kategori_berkas');
-            
-
             $table->timestamps();
         });
     }
@@ -43,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('arsip_inaktif');
+        Schema::dropIfExists('berkas_arsip');
     }
 };

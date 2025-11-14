@@ -10,6 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
+use Illuminate\Support\Facades\Auth;
 
 class ViewArsipUnit extends ViewRecord
 {
@@ -137,6 +138,8 @@ class ViewArsipUnit extends ViewRecord
                 ->visible(fn ($record) => $record && !empty($record->dokumen)),
             
             Actions\EditAction::make(),
+            Actions\DeleteAction::make()
+                ->visible(fn ($record) => Auth::user()->can('delete', $record)),
         ];
     }
 }

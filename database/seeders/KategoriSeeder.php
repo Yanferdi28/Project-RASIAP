@@ -15,6 +15,7 @@ class KategoriSeeder extends Seeder
     {
 
         $mainCategories = [
+            '-' => '',
             'Setiap Saat' => 'Informasi yang wajib disediakan dan diumumkan secara terbuka dan dapat diakses oleh publik tanpa menunggu permohonan.',
             'Berkala' => 'Informasi yang wajib diperbarui dan diumumkan secara teratur dalam jangka waktu tertentu.',
             'Serta Merta' => 'Informasi yang wajib diumumkan secara mendadak/tanpa penundaan karena menyangkut hajat hidup orang banyak atau ketertiban umum.',

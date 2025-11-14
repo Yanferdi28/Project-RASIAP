@@ -11,6 +11,8 @@ use App\Models\User;
 use App\Models\BerkasArsip;
 use App\Models\KodeKlasifikasi;
 use App\Models\UnitPengolah;
+use App\Models\Kategori;
+use App\Models\SubKategori;
 
 class ArsipUnit extends Model
 {

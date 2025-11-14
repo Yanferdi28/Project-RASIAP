@@ -20,7 +20,8 @@ class EditArsipUnit extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            \Filament\Actions\DeleteAction::make()
+                ->visible(fn ($record) => Auth::user()->can('delete', $record)),
         ];
     }
 }

@@ -47,7 +47,7 @@ class ArsipUnitPolicy
 
     public function delete(User $user, ArsipUnit $model): bool
     {
-        return $user->hasRole('admin');
+        return $user->hasAnyRole(['admin', 'user']);
     }
 
     public function submit(User $user, ArsipUnit $record): bool

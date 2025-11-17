@@ -129,8 +129,17 @@ class ArsipUnitHistory extends BaseWidget
 
     protected function getQuery(): Builder
     {
-        return ArsipUnit::query()
+        $query = ArsipUnit::query()
             ->with(['kodeKlasifikasi', 'kategori', 'subKategori', 'unitPengolah'])
             ->latest('created_at');
+
+        $user = \Illuminate\Support\Facades\Auth::user();
+
+        // Filter by user's unit if not admin, superadmin, or operator
+        if (!$user->hasRole(['admin', 'superadmin', 'operator']) && $user->unit_pengolah_id) {
+            $query->where('unit_pengolah_arsip_id', $user->unit_pengolah_id);
+        }
+
+        return $query;
     }
 }

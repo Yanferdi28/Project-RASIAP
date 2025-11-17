@@ -56,16 +56,17 @@ class ArsipUnitForm
                         Select::make('unit_pengolah_arsip_id')
                             ->label('Unit Pengolah Arsip')
                             ->relationship(
-                                name: 'unitPengolah', 
+                                name: 'unitPengolah',
                                 titleAttribute: 'nama_unit',
                                 modifyQueryUsing: fn ($query) => $query->when(
-                                    !\Illuminate\Support\Facades\Auth::user()?->hasRole('admin'),
+                                    !\Illuminate\Support\Facades\Auth::user()?->hasRole(['admin', 'superadmin']),
                                     fn ($query) => $query->where('id', \Illuminate\Support\Facades\Auth::user()?->unit_pengolah_id)
                                 )
                             )
                             ->searchable()
                             ->preload()
-                            ->required(),
+                            ->required()
+                            ->disabled(fn () => !\Illuminate\Support\Facades\Auth::user()?->hasRole(['admin', 'superadmin'])),
                     ]),
 
 

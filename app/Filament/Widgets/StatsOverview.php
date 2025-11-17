@@ -4,9 +4,9 @@ namespace App\Filament\Widgets;
 
 use App\Models\BerkasArsip;
 use App\Models\ArsipUnit;
-
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Auth;
 
 class StatsOverview extends BaseWidget
 {
@@ -16,9 +16,17 @@ class StatsOverview extends BaseWidget
     protected function getStats(): array
 
     {
+        $user = Auth::user();
+        $arsipUnitQuery = ArsipUnit::query();
+
+        // Filter by user's unit if not admin, superadmin, or operator
+        if (!$user->hasRole(['admin', 'superadmin', 'operator']) && $user->unit_pengolah_id) {
+            $arsipUnitQuery->where('unit_pengolah_arsip_id', $user->unit_pengolah_id);
+        }
+
         return [
 
-            Stat::make('Jumlah Pemberkasan Unit Berkas', ArsipUnit::count())
+            Stat::make('Jumlah Pemberkasan Unit Berkas', $arsipUnitQuery->count())
                 ->description('Total pemberkasan unit berkas yang tersimpan')
                 ->icon('heroicon-o-archive-box')
                 ->color('info'),

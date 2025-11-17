@@ -12,6 +12,19 @@ class EditArsipUnit extends EditRecord
 {
     protected static string $resource = ArsipUnitResource::class;
 
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $user = Auth::user();
+        $record = $this->getRecord();
+
+        // If the user doesn't have admin role, prevent them from changing the unit_pengolah_arsip_id
+        if (!$user->hasRole(['admin', 'superadmin'])) {
+            $data['unit_pengolah_arsip_id'] = $record->unit_pengolah_arsip_id;
+        }
+
+        return $data;
+    }
+
     public function mount($record): void
     {
         parent::mount($record);

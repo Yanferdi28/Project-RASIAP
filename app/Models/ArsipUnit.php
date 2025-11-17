@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Events\ArsipUnitCreated;
+use App\Events\ArsipUnitStatusChanged;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -105,6 +106,23 @@ class ArsipUnit extends Model
                 event(new ArsipUnitCreated($arsipUnit));
             }
         });
+
+        // Make sure non-admin users can't change the unit_pengolah_arsip_id
+        static::creating(function ($arsipUnit) {
+            $user = auth()->user();
+            if ($user && !$user->hasRole(['admin', 'superadmin']) && $user->unit_pengolah_id) {
+                $arsipUnit->unit_pengolah_arsip_id = $user->unit_pengolah_id;
+            }
+        });
+
+        static::updating(function ($arsipUnit) {
+            $user = auth()->user();
+            if ($user && !$user->hasRole(['admin', 'superadmin'])) {
+                // Prevent non-admin users from changing the unit_pengolah_arsip_id
+                $originalUnitPengolahId = $arsipUnit->getOriginal('unit_pengolah_arsip_id');
+                $arsipUnit->unit_pengolah_arsip_id = $originalUnitPengolahId;
+            }
+        });
     }
 
     /**
@@ -148,12 +166,19 @@ class ArsipUnit extends Model
      */
     public function accept($keterangan = null, $user = null)
     {
+        $oldStatus = $this->status;
+
         $this->update([
             'status' => 'diterima',
             'verifikasi_keterangan' => $keterangan,
             'verifikasi_oleh' => $user ? $user->id : Auth::id(),
             'verifikasi_tanggal' => now(),
         ]);
+
+        // Trigger event if status actually changed
+        if ($oldStatus !== $this->status) {
+            event(new ArsipUnitStatusChanged($this, $oldStatus, $this->status));
+        }
     }
 
     /**
@@ -161,12 +186,19 @@ class ArsipUnit extends Model
      */
     public function reject($keterangan = null, $user = null)
     {
+        $oldStatus = $this->status;
+
         $this->update([
             'status' => 'ditolak',
             'verifikasi_keterangan' => $keterangan,
             'verifikasi_oleh' => $user ? $user->id : Auth::id(),
             'verifikasi_tanggal' => now(),
         ]);
+
+        // Trigger event if status actually changed
+        if ($oldStatus !== $this->status) {
+            event(new ArsipUnitStatusChanged($this, $oldStatus, $this->status));
+        }
     }
 
     /**

@@ -10,7 +10,17 @@ class ArsipUnitPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['admin', 'user', 'operator']);
+        // Admin, superadmin, and operator can view all records
+        if ($user->hasAnyRole(['admin', 'superadmin', 'operator'])) {
+            return true;
+        }
+
+        // Regular users can only view records from their own unit
+        if ($user->hasRole('user') && $user->unit_pengolah_id) {
+            return true;
+        }
+
+        return false;
     }
 
     public function view(User $user, ArsipUnit $model): bool

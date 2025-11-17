@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
             KategoriSeeder::class,
             KodeKlasifikasiSeeder::class,
             UnitPengolahSeeder::class,
+            AdminSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

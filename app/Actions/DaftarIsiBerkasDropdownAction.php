@@ -15,8 +15,8 @@ class DaftarIsiBerkasDropdownAction
         return Action::make('cetak_daftar_isi_berkas')
             ->label('Cetak Daftar Isi Berkas')
             ->icon('heroicon-o-arrow-down-tray')
-            ->modalWidth('md') 
-            ->modalSubmitAction(false) 
+            ->modalWidth('md')
+            ->modalSubmitAction(false)
             ->modalCancelActionLabel('Tutup')
             ->modalContent(view('actions.daftar-isi-berkas-modal', [
                 'pdfAction' => 'cetak_daftar_isi_berkas_pdf',

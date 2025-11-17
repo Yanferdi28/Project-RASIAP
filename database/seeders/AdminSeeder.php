@@ -7,16 +7,13 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
-class SuperAdminSeeder extends Seeder
+class AdminSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        // Ensure the superadmin role exists
-        $superAdminRole = Role::firstOrCreate(['name' => 'superadmin']);
-        
         // Create a superadmin user with verification status
         $superAdmin = User::create([
             'name' => 'Super Admin',
@@ -34,3 +31,4 @@ class SuperAdminSeeder extends Seeder
         $this->command->info('Admin user created successfully!');
     }
 }
+

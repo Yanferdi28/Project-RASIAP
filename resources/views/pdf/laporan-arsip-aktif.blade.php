@@ -56,7 +56,7 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Kode Klasifikasi /<br>Nomor Berkas</th>
+                <th>Kode Klasifikasi</th>
                 <th>Nama Berkas</th>
                 <th>Tanggal Buat<br>Berkas</th>
                 <th>Kurun Waktu</th>
@@ -71,7 +71,7 @@
             @forelse($records as $index => $record)
                 <tr>
                     <td style="text-align: center;">{{ $index + 1 }}</td>
-                    <td>{{ $record->klasifikasi->kode_klasifikasi ?? 'N/A' }} / {{ $record->nomor_berkas }}</td>
+                    <td>{{ $record->klasifikasi->kode_klasifikasi ?? 'N/A' }}</td>
                     <td>{{ $record->nama_berkas }}</td>
                     <td>{{ $record->created_at->format('d-m-Y') }}</td>
                     <td>{{ $record->created_at->format('d M Y') }} s/d {{ $record->updated_at->format('d M Y') }}</td>

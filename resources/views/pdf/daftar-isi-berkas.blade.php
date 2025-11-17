@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -63,7 +64,7 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Kode Klasifikasi /<br>Nomor Berkas</th>
+                <th>Kode Klasifikasi</th>
                 <th>Nama Berkas</th>
                 <th>Jumlah<br>Item</th>
                 <th>Unit Pengolah</th>
@@ -86,10 +87,10 @@
                     $totalUnits = $arsipUnits->count();
                 @endphp
 
-                {{-- First row: Archive header --}}
+                {{-- First row: Archive header -- main berkas row shows '-' --}}
                 <tr class="archive-header">
                     <td style="text-align: center;">{{ $rowCounter++ }}</td>
-                    <td>{{ $record->klasifikasi->kode_klasifikasi ?? 'N/A' }} / {{ $record->nomor_berkas }}</td>
+                    <td>{{ $record->klasifikasi->kode_klasifikasi ?? 'N/A' }}</td>
                     <td>{{ $record->nama_berkas }}</td>
                     <td style="text-align: center;">{{ $totalUnits }}</td>
                     <td>-</td>
@@ -97,17 +98,20 @@
                     <td>-</td>
                     <td style="text-align: center;">-</td>
                     <td style="text-align: center;">-</td>
-                    <td>-</td>
+                    <td>-</td> <!-- Main berkas row shows '-' as requested -->
                     <td>-</td>
                     <td>-</td>
                 </tr>
 
-                {{-- Following rows: Related units --}}
+                {{-- Following rows: Related units with sequential numbering --}}
                 @if($totalUnits > 0)
                     @foreach($arsipUnits as $unitIndex => $unit)
+                    @php
+                        $sequentialNumber = $unitIndex + 1; // Sequential numbering: 1, 2, 3, etc.
+                    @endphp
                     <tr class="archive-unit">
                         <td style="text-align: center;">-</td>
-                        <td>{{ $unit->kodeKlasifikasi->kode_klasifikasi ?? '-' }} / {{ $unit->no_item_arsip ?? '-' }}</td>
+                        <td>{{ $unit->kodeKlasifikasi->kode_klasifikasi ?? 'N/A' }} / {{ $sequentialNumber }}</td>
                         <td>{{ $unit->uraian_informasi ?? '-' }}</td>
                         <td>-</td>
                         <td>{{ $unit->unitPengolah->nama_unit ?? 'N/A' }}</td>
@@ -115,7 +119,7 @@
                         <td>{{ $unit->uraian_informasi ?? '-' }}</td>
                         <td style="text-align: center;">{{ $unit->jumlah_nilai ?? '-' }}</td>
                         <td style="text-align: center;">{{ $unit->jumlah_satuan ?? '-' }}</td>
-                        <td>{{ $unit->no_item_arsip ?? '-' }}</td>
+                        <td>{{ $sequentialNumber }}</td> <!-- Use sequential numbering for arsip units -->
                         <td>{{ $unit->keterangan ?? '-' }}</td>
                         <td>{{ ucfirst($unit->status) ?? '-' }}</td>
                     </tr>

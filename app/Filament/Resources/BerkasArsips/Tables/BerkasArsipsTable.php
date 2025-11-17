@@ -141,16 +141,18 @@ class BerkasArsipsTable
                         \Filament\Forms\Components\DatePicker::make('tanggal_cetak_dari')
                             ->label('Dari Tanggal')
                             ->displayFormat('d/m/Y')
-                            ->extraInputAttributes(['placeholder' => 'Pilih tanggal mulai']),
+                            ->extraInputAttributes(['placeholder' => 'Pilih tanggal mulai'])
+                            ->required(),
 
                         \Filament\Forms\Components\DatePicker::make('tanggal_cetak_sampai')
                             ->label('Sampai Tanggal')
                             ->displayFormat('d/m/Y')
-                            ->extraInputAttributes(['placeholder' => 'Pilih tanggal akhir']),
+                            ->extraInputAttributes(['placeholder' => 'Pilih tanggal akhir'])
+                            ->required(),
                     ])
                     ->action(function (array $data, \Filament\Tables\Contracts\HasTable $livewire) {
                         // Buat query dasar dari tabel yang sudah difilter
-                        $query = $livewire->getFilteredTableQuery();
+                        $query = $livewire->getFilteredTableQuery()->with(['klasifikasi']);
 
                         // Tambahkan filter berdasarkan tanggal jika disediakan
                         if (isset($data['tanggal_cetak_dari']) && $data['tanggal_cetak_dari']) {

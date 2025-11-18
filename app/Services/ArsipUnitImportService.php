@@ -24,7 +24,7 @@ class ArsipUnitImportService implements ToModel, WithHeadingRow
         $retensiAktif = null;
         $retensiInaktif = null;
         $skkaad = null;
-        
+
         if (isset($row['kode_klasifikasi'])) {
             $kodeKlasifikasi = KodeKlasifikasi::where('kode_klasifikasi', $row['kode_klasifikasi'])->first();
             if ($kodeKlasifikasi) {
@@ -90,7 +90,7 @@ class ArsipUnitImportService implements ToModel, WithHeadingRow
     {
         $results = $this->toArray($file->getPathname());
         $data = $results[0]; // Get the first worksheet
-        
+
         $successCount = 0;
         $errorCount = 0;
         $errors = [];
@@ -184,8 +184,8 @@ class ArsipUnitImportService implements ToModel, WithHeadingRow
                     }
                 }
 
-                // Save the record
-                $arsipUnit->save();
+                // Save the record using create to trigger model events
+                $createdArsipUnit = ArsipUnit::create($arsipUnit->toArray());
                 $successCount++;
             } catch (\Exception $e) {
                 $errors[] = "Row " . ($index + 2) . " error: " . $e->getMessage();

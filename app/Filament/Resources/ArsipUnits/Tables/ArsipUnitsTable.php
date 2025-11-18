@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ArsipUnits\Tables;
 
 use App\Models\BerkasArsip;
 use App\Models\ArsipUnit;
+use App\Models\UnitPengolah;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
@@ -18,6 +19,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Illuminate\Database\Eloquent\Builder;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ArsipUnitsTable
 {
@@ -340,7 +342,122 @@ class ArsipUnitsTable
                         ])
 
             ->toolbarActions([
+                Action::make('printArsipUnit')
+                    ->label('Cetak Arsip Unit')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->requiresConfirmation()
+                    ->modalHeading('Cetak Arsip Unit')
+                    ->modalDescription('Pilih format ekspor dan rentang tanggal')
+                    ->form([
+                        \Filament\Forms\Components\Select::make('format_ekspor')
+                            ->label('Format Ekspor')
+                            ->options([
+                                'pdf' => 'PDF',
+                                'excel' => 'Excel',
+                            ])
+                            ->default('pdf')
+                            ->required(),
 
+                        \Filament\Forms\Components\DatePicker::make('tanggal_cetak_dari')
+                            ->label('Dari Tanggal')
+                            ->displayFormat('d/m/Y')
+                            ->extraInputAttributes(['placeholder' => 'Pilih tanggal mulai'])
+                            ->required(),
+
+                        \Filament\Forms\Components\DatePicker::make('tanggal_cetak_sampai')
+                            ->label('Sampai Tanggal')
+                            ->displayFormat('d/m/Y')
+                            ->extraInputAttributes(['placeholder' => 'Pilih tanggal akhir'])
+                            ->required(),
+
+                        \Filament\Forms\Components\Select::make('status_filter')
+                            ->label('Filter Status')
+                            ->options([
+                                '' => 'Semua Status',
+                                'pending' => 'Pending',
+                                'diterima' => 'Diterima',
+                                'ditolak' => 'Ditolak',
+                            ])
+                            ->default(''),
+
+                        \Filament\Forms\Components\Select::make('unit_pengolah_filter')
+                            ->label('Filter Unit Pengolah')
+                            ->options(\App\Models\UnitPengolah::all()->pluck('nama_unit', 'id'))
+                            ->multiple()
+                            ->placeholder('Pilih Unit Pengolah')
+                            ->visible(fn () => \Illuminate\Support\Facades\Auth::user()->hasRole(['admin', 'superadmin', 'operator'])),
+                    ])
+                    ->action(function (array $data, \Filament\Tables\Contracts\HasTable $livewire) {
+                        // Dapatkan user yang sedang login
+                        $user = \Illuminate\Support\Facades\Auth::user();
+
+                        // Buat query dasar dari tabel yang sudah difilter
+                        $query = $livewire->getFilteredTableQuery()->with(['kodeKlasifikasi', 'unitPengolah']);
+
+                        // Tambahkan filter berdasarkan tanggal jika disediakan
+                        if (isset($data['tanggal_cetak_dari']) && $data['tanggal_cetak_dari']) {
+                            $query->whereDate('tanggal', '>=', $data['tanggal_cetak_dari']);
+                        }
+
+                        if (isset($data['tanggal_cetak_sampai']) && $data['tanggal_cetak_sampai']) {
+                            $query->whereDate('tanggal', '<=', $data['tanggal_cetak_sampai']);
+                        }
+
+                        // Tambahkan filter berdasarkan status jika disediakan
+                        if (isset($data['status_filter']) && !empty($data['status_filter'])) {
+                            $query->where('status', $data['status_filter']);
+                        }
+
+                        // Tambahkan filter berdasarkan unit pengolah jika disediakan
+                        // TAPI hanya berlaku untuk admin, superadmin, atau operator
+                        if (isset($data['unit_pengolah_filter']) && !empty($data['unit_pengolah_filter'])) {
+                            if ($user->hasRole(['admin', 'superadmin', 'operator'])) {
+                                // Handle multiple unit pengolah selection
+                                $query->whereIn('unit_pengolah_arsip_id', $data['unit_pengolah_filter']);
+                            }
+                            // Jika bukan admin/operator, filter ini diabaikan
+                        }
+                        // Perhatian: Query yang diambil dengan getFilteredTableQuery()
+                        // sudah melewati modifyQueryUsing() yang sudah menerapkan
+                        // pembatasan akses berdasarkan role user
+
+                        $records = $query->get();
+
+                        // Buat periode untuk ditampilkan di laporan
+                        $dari = $data['tanggal_cetak_dari'] ?? now()->subMonth()->format('d/m/Y');
+                        $sampai = $data['tanggal_cetak_sampai'] ?? now()->format('d/m/Y');
+                        $periode = \Carbon\Carbon::parse($dari)->format('d F Y') . ' - ' . \Carbon\Carbon::parse($sampai)->format('d F Y');
+
+                        // Tentukan unit pengolah untuk ditampilkan di laporan
+                        // Jika filter unit pengolah digunakan, tampilkan semua unit yang dipilih
+                        if (isset($data['unit_pengolah_filter']) && !empty($data['unit_pengolah_filter'])) {
+                            $selectedUnits = \App\Models\UnitPengolah::whereIn('id', $data['unit_pengolah_filter'])->pluck('nama_unit')->toArray();
+                            $unitPengolah = implode(', ', $selectedUnits);
+                        } else {
+                            // Ambil unit pengolah pertama dari records atau gunakan default
+                            $unitPengolah = $records->first() ? $records->first()->unitPengolah->nama_unit : 'Unit Umum';
+                        }
+
+                        $format = $data['format_ekspor'];
+
+                        if ($format === 'pdf') {
+                            $view = view('pdf.laporan-arsip-unit', compact('records', 'unitPengolah', 'periode'))->render();
+
+                            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHtml($view)
+                                    ->setPaper('a4', 'landscape');
+
+                            return response()->streamDownload(
+                                fn () => print($pdf->output()),
+                                'Laporan Daftar Arsip Unit.pdf'
+                            );
+                        } else { // Excel
+                            // Use the new export class with proper styling
+                            $export = new \App\Exports\ArsipUnitLaporanExport($records);
+                            $filename = 'laporan_arsip_unit_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+                            return \Maatwebsite\Excel\Facades\Excel::download($export, $filename);
+                        }
+                    }),
             ]);
     }
 }

@@ -3,38 +3,25 @@
 namespace App\Notifications;
 
 use App\Models\User;
+use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Notification as LaravelNotification;
 
-class UserVerifiedNotification extends Notification
+class UserVerifiedNotification extends LaravelNotification
 {
     use Queueable;
 
-    /**
-     * Create a new notification instance.
-     */
-    protected User $user;
-
-    public function __construct(User $user)
+    public function __construct(protected User $user)
     {
-        $this->user = $user;
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
@@ -46,16 +33,13 @@ class UserVerifiedNotification extends Notification
             ->line('Terima kasih telah menggunakan layanan kami!');
     }
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
-        return [
-            'message' => 'Akun Anda telah berhasil diverifikasi oleh administrator',
-            'verified_at' => now(),
-        ];
+        return FilamentNotification::make()
+            ->title('Akun Anda Telah Diverifikasi')
+            ->body('Selamat! Akun Anda telah diverifikasi oleh administrator. Anda sekarang dapat login ke sistem.')
+            ->icon('heroicon-o-check-circle')
+            ->color('success')
+            ->getDatabaseMessage();
     }
 }

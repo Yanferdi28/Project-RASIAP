@@ -3,23 +3,18 @@
 namespace App\Notifications;
 
 use App\Models\User;
+use Filament\Notifications\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Notification as LaravelNotification;
 
-class UserRejectedNotification extends Notification
+class UserRejectedNotification extends LaravelNotification implements ShouldQueue
 {
     use Queueable;
 
-    /**
-     * Create a new notification instance.
-     */
-    protected User $user;
-
-    public function __construct(User $user)
+    public function __construct(protected User $user)
     {
-        $this->user = $user;
     }
 
     /**
@@ -29,7 +24,7 @@ class UserRejectedNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -50,11 +45,13 @@ class UserRejectedNotification extends Notification
      *
      * @return array<string, mixed>
      */
-    public function toArray(object $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
-        return [
-            'message' => 'Akun Anda telah ditolak oleh administrator',
-            'rejected_at' => now(),
-        ];
+        return Notification::make()
+            ->title('Akun Anda Ditolak')
+            ->body('Maaf, akun Anda telah ditolak oleh administrator. Jika Anda pikir ini adalah kesalahan, silakan hubungi administrator sistem.')
+            ->icon('heroicon-o-x-circle')
+            ->color('danger')
+            ->getDatabaseMessage();
     }
 }

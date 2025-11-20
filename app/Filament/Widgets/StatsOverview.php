@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\BerkasArsip;
 use App\Models\ArsipUnit;
+use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +35,11 @@ class StatsOverview extends BaseWidget
             Stat::make('Jumlah Pemberkasan Berkas Arsip', BerkasArsip::count())
                 ->description('Total pemberkasan berkas arsip yang tersimpan')
                 ->icon('heroicon-o-archive-box')
+                ->color('info'),
+
+            Stat::make('Jumlah Pengguna', User::count())
+                ->description('Total pengguna yang terdaftar')
+                ->icon('heroicon-o-user-group')
                 ->color('info'),
 
         ];

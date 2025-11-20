@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\ArsipUnitCreated;
+use App\Listeners\NotifyAdminsAboutNewUser;
 use App\Listeners\NotifyOperatorsAboutNewArsipUnit;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -22,6 +23,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         Registered::class => [
             SendEmailVerificationNotification::class,
+            NotifyAdminsAboutNewUser::class,
         ],
     ];
 

@@ -20,7 +20,7 @@ class RejectUserAction
             ->modalSubmitActionLabel('Tolak')
             ->action(function (array $data, $record) {
                 /** @var User $record */
-                
+
                 // Update user to rejected status
                 $record->update([
                     'verification_status' => 'rejected',
@@ -37,6 +37,15 @@ class RejectUserAction
 
                 // Send notification to user about rejection
                 $record->notify(new \App\Notifications\UserRejectedNotification($record));
+
+                // Send notification to admin about rejection
+                $verifier = Auth::user();
+                $admins = User::role(['admin', 'superadmin'])->get();
+                foreach ($admins as $admin) {
+                    if ($admin->id !== $verifier->id) { // Don't notify the verifier themselves
+                        $admin->notify(new \App\Notifications\AdminUserRejectedNotification($record, $verifier));
+                    }
+                }
             })
             ->form([
                 \Filament\Forms\Components\Textarea::make('verification_notes')

@@ -20,7 +20,7 @@ class VerifyUserAction
             ->modalSubmitActionLabel('Verifikasi')
             ->action(function (array $data, $record) {
                 /** @var User $record */
-                
+
                 // Update user to verified status with roles and unit
                 $record->update([
                     'verification_status' => 'verified',
@@ -41,6 +41,13 @@ class VerifyUserAction
 
                 // Send notification to user about verification
                 $record->notify(new \App\Notifications\UserVerifiedNotification($record));
+
+                // Send notification to admin about verification
+                $verifier = Auth::user();
+                $admins = User::role(['admin', 'superadmin'])->get();
+                foreach ($admins as $admin) {
+                    $admin->notify(new \App\Notifications\AdminUserVerifiedNotification($record, $verifier));
+                }
             })
             ->form([
                 \Filament\Forms\Components\Select::make('roles')
@@ -51,14 +58,14 @@ class VerifyUserAction
                     ->preload()
                     ->multiple()
                     ->required(),
-                    
+
                 \Filament\Forms\Components\Select::make('unit_pengolah_id')
                     ->label('Unit Pengolah')
                     ->relationship('unitPengolah', 'nama_unit')
                     ->placeholder('Pilih Unit Pengolah')
                     ->searchable()
                     ->preload(),
-                
+
                 \Filament\Forms\Components\Textarea::make('verification_notes')
                     ->label('Catatan Verifikasi')
                     ->rows(3)

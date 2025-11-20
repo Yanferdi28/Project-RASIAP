@@ -6,7 +6,7 @@ use App\Models\ArsipUnit;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
-class ArsipUnitCreatedNotification extends BaseNotification
+class ArsipUnitUpdatedNotification extends BaseNotification
 {
     public function __construct(
         protected ArsipUnit $arsipUnit
@@ -18,10 +18,10 @@ class ArsipUnitCreatedNotification extends BaseNotification
         $description = $this->arsipUnit->uraian_informasi ?? 'Arsip Unit ID: ' . $this->arsipUnit->id_berkas;
         
         return Notification::make()
-            ->title('Arsip Unit Baru Dibuat')
-            ->body('Arsip Unit ' . $description . ' telah ditambahkan ke sistem.')
-            ->icon('heroicon-o-archive-box')
-            ->color('info')
+            ->title('Arsip Unit Diperbarui')
+            ->body('Arsip Unit ' . $description . ' telah diperbarui.')
+            ->icon('heroicon-o-pencil')
+            ->color('warning')
             ->actions([
                 Action::make('view')
                     ->label('Lihat')

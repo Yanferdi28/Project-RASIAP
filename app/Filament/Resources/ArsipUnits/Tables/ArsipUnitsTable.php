@@ -116,9 +116,19 @@ class ArsipUnitsTable
                 // Apply common relationships
                 $query = $query->withCommonRelationships();
 
-                // Restrict records to user's unit if user is not admin, superadmin, or operator
-                if (!$user->hasRole(['admin', 'superadmin', 'operator']) && $user->unit_pengolah_id) {
+                // Restrict records to user's unit if user is not admin, superadmin, operator or manajemen
+                if (!$user->hasRole(['admin', 'superadmin', 'operator', 'manajemen']) && $user->unit_pengolah_id) {
                     $query->where('unit_pengolah_arsip_id', $user->unit_pengolah_id);
+                }
+
+                // Operator can only see records with assigned category (not null or "-")
+                if ($user->hasRole('operator')) {
+                    $query->whereNotNull('kategori_id')
+                          ->where('kategori_id', '!=', '')
+                          ->whereHas('kategori', function($q) {
+                              $q->where('nama_kategori', '!=', '-')
+                                ->where('nama_kategori', '!=', '');
+                          });
                 }
 
                 return $query;

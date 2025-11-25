@@ -10,8 +10,8 @@ class ArsipUnitPolicy
 {
     public function viewAny(User $user): bool
     {
-        // Admin, superadmin, and operator can view all records
-        if ($user->hasAnyRole(['admin', 'superadmin', 'operator'])) {
+        // Admin, superadmin, operator, and manajemen can view all records
+        if ($user->hasAnyRole(['admin', 'superadmin', 'operator', 'manajemen'])) {
             return true;
         }
 
@@ -26,16 +26,16 @@ class ArsipUnitPolicy
     public function view(User $user, ArsipUnit $model): bool
     {
         // Allow access based on role
-        if ($user->hasAnyRole(['admin', 'user', 'operator'])) {
+        if ($user->hasAnyRole(['admin', 'user', 'operator', 'manajemen'])) {
             return true;
         }
-        
+
         // Add additional context-based access control if needed
         // For example, users might be allowed to access documents from their own unit
         if ($user->unit_pengolah_id && $model->unit_pengolah_arsip_id === $user->unit_pengolah_id) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -73,30 +73,30 @@ class ArsipUnitPolicy
     public function downloadDocument(User $user, ArsipUnit $model): bool
     {
         // Allow users with appropriate roles to download documents
-        if ($user->hasAnyRole(['admin', 'user', 'operator'])) {
+        if ($user->hasAnyRole(['admin', 'user', 'operator', 'manajemen'])) {
             return true;
         }
-        
+
         // Additional context-based access control
         if ($user->unit_pengolah_id && $model->unit_pengolah_arsip_id === $user->unit_pengolah_id) {
             return true;
         }
-        
+
         return false;
     }
     
     public function viewDocument(User $user, ArsipUnit $model): bool
     {
         // Allow users with appropriate roles to view documents
-        if ($user->hasAnyRole(['admin', 'user', 'operator'])) {
+        if ($user->hasAnyRole(['admin', 'user', 'operator', 'manajemen'])) {
             return true;
         }
-        
+
         // Additional context-based access control
         if ($user->unit_pengolah_id && $model->unit_pengolah_arsip_id === $user->unit_pengolah_id) {
             return true;
         }
-        
+
         return false;
     }
 }

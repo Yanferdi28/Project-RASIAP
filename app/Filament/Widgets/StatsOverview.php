@@ -25,6 +25,16 @@ class StatsOverview extends BaseWidget
             $arsipUnitQuery->where('unit_pengolah_arsip_id', $user->unit_pengolah_id);
         }
 
+        // Operator can only see records with assigned category (not null or "-")
+        if ($user->hasRole('operator')) {
+            $arsipUnitQuery->whereNotNull('kategori_id')
+                           ->where('kategori_id', '!=', '')
+                           ->whereHas('kategori', function($q) {
+                               $q->where('nama_kategori', '!=', '-')
+                                 ->where('nama_kategori', '!=', '');
+                           });
+        }
+
         return [
 
             Stat::make('Jumlah Pemberkasan Unit Berkas', $arsipUnitQuery->count())

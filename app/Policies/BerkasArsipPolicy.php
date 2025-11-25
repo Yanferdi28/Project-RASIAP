@@ -9,12 +9,12 @@ class BerkasArsipPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['admin', 'user', 'operator']);
+        return $user->hasAnyRole(['admin', 'user', 'operator', 'manajemen']);
     }
 
     public function view(User $user, BerkasArsip $model): bool
     {
-        return $user->hasAnyRole(['admin', 'user', 'operator']);
+        return $user->hasAnyRole(['admin', 'user', 'operator', 'manajemen']);
     }
 
     public function create(User $user): bool

@@ -42,8 +42,8 @@ class BerkasArsipResource extends Resource
             return false;
         }
 
-        // Hanya admin, user, atau operator yang bisa mengakses resource ini
-        return $user->hasAnyRole(['admin', 'user', 'operator']);
+        // Hanya admin, user, operator, atau manajemen yang bisa mengakses resource ini
+        return $user->hasAnyRole(['admin', 'user', 'operator', 'manajemen']);
     }
 
     public static function canViewAny(): bool
@@ -54,7 +54,7 @@ class BerkasArsipResource extends Resource
             return false;
         }
 
-        // Hanya admin, user, atau operator yang bisa melihat daftar resource
+        // Hanya admin, user, operator, atau manajemen yang bisa melihat daftar resource
         return $user->can('viewAny', static::$model);
     }
 

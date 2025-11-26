@@ -17,21 +17,33 @@ class ListArsipUnits extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            Action::make('download_template')
-                ->label('Unduh Template')
-                ->icon('heroicon-o-arrow-down-tray')
-                ->color('info')
-                ->action(function () {
-                    return Excel::download(new ArsipUnitImportTemplate(), 'template-arsip-unit.xlsx');
-                }),
+        $user = Auth::user();
+        $canImport = $user && !$user->hasRole('manajemen');
+        $canCreate = $user && $user->can('arsipunit.create');
 
-            ImportArsipUnitAction::make(),
+        $actions = [];
 
-            Actions\CreateAction::make()
+        if ($canCreate) {
+            $actions[] = Actions\CreateAction::make()
                 ->label('Tambah Arsip Unit')
                 ->icon('heroicon-o-document-plus')
-                ->color('secondary'),
-        ];
+                ->color('secondary');
+        }
+
+        if ($canImport) {
+            $actions = array_merge([
+                Action::make('download_template')
+                    ->label('Unduh Template')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('info')
+                    ->action(function () {
+                        return Excel::download(new ArsipUnitImportTemplate(), 'template-arsip-unit.xlsx');
+                    }),
+
+                ImportArsipUnitAction::make(),
+            ], $actions);
+        }
+
+        return $actions;
     }
 }

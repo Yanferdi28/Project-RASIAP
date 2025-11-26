@@ -16,7 +16,7 @@ class ArsipUnitUpdatedNotification extends BaseNotification
     protected function buildNotification(): Notification
     {
         $description = $this->arsipUnit->uraian_informasi ?? 'Arsip Unit ID: ' . $this->arsipUnit->id_berkas;
-        
+
         return Notification::make()
             ->title('Arsip Unit Diperbarui')
             ->body('Arsip Unit ' . $description . ' telah diperbarui.')
@@ -25,7 +25,7 @@ class ArsipUnitUpdatedNotification extends BaseNotification
             ->actions([
                 Action::make('view')
                     ->label('Lihat')
-                    ->url(route('filament.admin.resources.arsip-units.edit', $this->arsipUnit->id))
+                    ->url(route('filament.admin.resources.arsip-units.edit', $this->arsipUnit->id_berkas))
                     ->icon('heroicon-o-arrow-top-right-on-square'),
             ]);
     }

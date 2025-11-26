@@ -23,7 +23,7 @@ class BerkasArsipUpdatedNotification extends BaseNotification
             ->actions([
                 Action::make('view')
                     ->label('Lihat')
-                    ->url(route('filament.admin.resources.berkas-arsips.edit', $this->berkasArsip->id))
+                    ->url(route('filament.admin.resources.berkas-arsips.edit', $this->berkasArsip->nomor_berkas))
                     ->icon('heroicon-o-arrow-top-right-on-square'),
             ]);
     }

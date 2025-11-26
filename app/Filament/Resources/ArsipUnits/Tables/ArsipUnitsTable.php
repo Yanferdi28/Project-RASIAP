@@ -262,6 +262,9 @@ class ArsipUnitsTable
                     ->visible(function ($record) {
                         /** @var \App\Models\User $user */
                         $user = \Illuminate\Support\Facades\Auth::user();
+                        if ($user->hasRole('manajemen')) {
+                            return false; // Management role cannot select/change berkas arsip
+                        }
                         if ($user->hasRole('operator')) {
                             return $record->status === 'pending';
                         }

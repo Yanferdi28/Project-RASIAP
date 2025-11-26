@@ -69,12 +69,10 @@ return new class extends Migration
         Schema::create('notifications', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('type');
-            $table->json('data');
+            $table->morphs('notifiable');
+            $table->text('data');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
-            $table->string('notifiable_type');
-            $table->unsignedBigInteger('notifiable_id');
-            $table->index(['notifiable_type', 'notifiable_id']);
         });
 
         Schema::create('imports', function (Blueprint $table) {

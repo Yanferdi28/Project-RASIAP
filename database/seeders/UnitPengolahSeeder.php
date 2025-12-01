@@ -22,7 +22,7 @@ class UnitPengolahSeeder extends Seeder
         ];
 
 
-        DB::table('unit_pengolahs')->upsert(
+        DB::table('unit_pengolah')->upsert(
             $data,
             ['id'],
             ['nama_unit']

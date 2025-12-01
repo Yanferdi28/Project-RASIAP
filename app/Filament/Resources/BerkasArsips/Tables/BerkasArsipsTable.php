@@ -36,6 +36,11 @@ class BerkasArsipsTable
                     ->searchable()
                     ->sortable(),
 
+                TextColumn::make('unitPengolah.nama_unit')
+                    ->label('Unit Pengolah')
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('nama_berkas')
                     ->label('Nama Berkas')
                     ->searchable()
@@ -101,7 +106,14 @@ class BerkasArsipsTable
                     ->searchable()
                     ->preload()
                     ->label('Kode Klasifikasi'),
+
+                SelectFilter::make('unit_pengolah_id')
+                    ->relationship('unitPengolah', 'nama_unit')
+                    ->searchable()
+                    ->preload()
+                    ->label('Unit Pengolah'),
             ])
+            ->modifyQueryUsing(fn ($query) => $query->withCommonRelationships())
             ->recordActions([
                 ViewAction::make()
                     ->label('')
@@ -170,7 +182,9 @@ class BerkasArsipsTable
                         $sampai = $data['tanggal_cetak_sampai'] ?? now()->format('d/m/Y');
                         $periode = \Carbon\Carbon::parse($dari)->format('d F Y') . ' - ' . \Carbon\Carbon::parse($sampai)->format('d F Y');
 
-                        $unitPengolah = 'RRI BANJARMASIN';
+                        // Ambil unit pengolah dari user yang login
+                        $user = auth()->user();
+                        $unitPengolah = $user->unitPengolah->nama_unit ?? 'Unit Pengolah';
 
                         $format = $data['format_ekspor'];
 
@@ -186,7 +200,7 @@ class BerkasArsipsTable
                             );
                         } else { // Excel
                             // Use the new export class with proper styling
-                            $export = new \App\Exports\BerkasArsipLaporanExport($records);
+                            $export = new \App\Exports\BerkasArsipLaporanExport($records, $unitPengolah, $periode);
                             $filename = 'laporan_berkas_arsip_' . date('Y-m-d_H-i-s') . '.xlsx';
 
                             return \Maatwebsite\Excel\Facades\Excel::download($export, $filename);
@@ -197,7 +211,7 @@ class BerkasArsipsTable
 
 
             ])
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('created_at', 'asc')
             ->striped()
             ->paginated([10, 25, 50, 100]);
     }

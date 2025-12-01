@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Cache;
 
 class UnitPengolah extends Model
 {
+    protected $table = 'unit_pengolah';
+    
     public $timestamps = false;
     protected $fillable = [
         'nama_unit',

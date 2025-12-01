@@ -53,35 +53,44 @@ class ArsipUnitsTable
                     ->formatStateUsing(function ($record) {
                         return $record->jumlah_nilai . ' ' . $record->jumlah_satuan;
                     })
-                    ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('tingkat_perkembangan')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('unitPengolah.nama_unit')
                     ->label('Unit Pengolah')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('retensi_aktif')
-                    ->numeric(),
+                    ->numeric()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('retensi_inaktif')
-                    ->numeric(),
+                    ->numeric()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('skkaad')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('ruangan')
                     ->label('No Ruang')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('no_filling')
                     ->label('No Filling/Rak/Lemari')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('no_laci')
                     ->label('No Laci')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('no_folder')
                     ->label('No Folder')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('no_box')
                     ->label('No Box')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -133,7 +142,7 @@ class ArsipUnitsTable
 
                 return $query;
             })
-            ->defaultSort('id_berkas', 'desc')
+            ->defaultSort('id_berkas', 'asc')
             ->filters([
                 SelectFilter::make('status')
                     ->options([
@@ -447,8 +456,9 @@ class ArsipUnitsTable
                             $selectedUnits = \App\Models\UnitPengolah::whereIn('id', $data['unit_pengolah_filter'])->pluck('nama_unit')->toArray();
                             $unitPengolah = implode(', ', $selectedUnits);
                         } else {
-                            // Ambil unit pengolah pertama dari records atau gunakan default
-                            $unitPengolah = $records->first() ? $records->first()->unitPengolah->nama_unit : 'Unit Umum';
+                            // Ambil unit pengolah dari user yang login
+                            $user = auth()->user();
+                            $unitPengolah = $user->unitPengolah->nama_unit ?? 'Unit Pengolah';
                         }
 
                         $format = $data['format_ekspor'];
@@ -465,7 +475,7 @@ class ArsipUnitsTable
                             );
                         } else { // Excel
                             // Use the new export class with proper styling
-                            $export = new \App\Exports\ArsipUnitLaporanExport($records);
+                            $export = new \App\Exports\ArsipUnitLaporanExport($records, $unitPengolah, $periode);
                             $filename = 'laporan_arsip_unit_' . date('Y-m-d_H-i-s') . '.xlsx';
 
                             return \Maatwebsite\Excel\Facades\Excel::download($export, $filename);

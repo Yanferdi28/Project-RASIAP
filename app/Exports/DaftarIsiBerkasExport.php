@@ -8,22 +8,43 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
-class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths, WithStyles, WithEvents
+class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths, WithStyles, WithEvents, WithTitle
 {
     protected $filters;
+    protected $unitPengolah;
+    protected $periode;
 
     public function __construct(array $filters = [])
     {
         $this->filters = $filters;
+        
+        // Ambil unit pengolah dari user yang login
+        $user = auth()->user();
+        $this->unitPengolah = $user->unitPengolah->nama_unit ?? 'Unit Pengolah';
+        
+        $dari = $filters['created_from'] ?? now()->subMonth()->format('d/m/Y');
+        $sampai = $filters['created_until'] ?? now()->format('d/m/Y');
+        $this->periode = \Carbon\Carbon::parse($dari)->format('d F Y') . ' - ' . \Carbon\Carbon::parse($sampai)->format('d F Y');
+    }
+
+    public function title(): string
+    {
+        return 'Daftar Isi Berkas';
     }
 
     public function array(): array
     {
-        $query = BerkasArsip::with(['arsipUnits', 'klasifikasi', 'arsipUnits.kodeKlasifikasi', 'arsipUnits.unitPengolah'])
-            ->orderBy('created_at', 'desc');
+        $query = BerkasArsip::with(['arsipUnits' => function($q) {
+                $q->orderBy('created_at', 'asc');
+            }, 'klasifikasi', 'unitPengolah', 'arsipUnits.kodeKlasifikasi', 'arsipUnits.unitPengolah'])
+            ->orderBy('created_at', 'asc');
 
         // Terapkan filter tanggal jika ada
         if (isset($this->filters['created_from']) && $this->filters['created_from']) {
@@ -36,93 +57,62 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
 
         $berkasArsips = $query->get();
         $rows = [];
-        $rowCounter = 1;
+        $noBerkas = 1;
 
-        foreach ($berkasArsips as $index => $record) {
+        foreach ($berkasArsips as $record) {
             $arsipUnits = $record->arsipUnits;
             $totalUnits = $arsipUnits->count();
+            $totalJumlah = $arsipUnits->sum('jumlah_nilai');
 
-            // First row: Archive header (matching PDF format) - main berkas row shows '-'
-            $rows[] = [
-                'no' => $rowCounter++,
-                'kode_klasifikasi' => $record->klasifikasi->kode_klasifikasi ?? 'N/A',
-                'nama_berkas' => $record->nama_berkas,
-                'jumlah_item' => $totalUnits,
-                'unit_pengolah' => '-',
-                'tanggal' => '-',
-                'uraian_informasi' => '-',
-                'jumlah_nilai' => 0, // Default for main archive header
-                'jumlah_satuan' => 0, // Default for main archive header
-                'no_item_arsip' => '-', // Main berkas row shows '-' as requested
-                'keterangan' => '-',
-                'status' => '-',
-                'is_archive_header' => true,
-            ];
-
-            // Following rows: Related units (matching PDF format with sequential numbering)
-            if($totalUnits > 0) {
-                foreach($arsipUnits as $unitIndex => $unit) {
-                    $sequentialNumber = $unitIndex + 1; // Sequential numbering: 1, 2, 3, etc.
+            if ($totalUnits > 0) {
+                foreach ($arsipUnits as $unitIndex => $unit) {
+                    $noItem = $unitIndex + 1;
+                    $isFirst = ($unitIndex === 0);
+                    
                     $rows[] = [
-                        'no' => '-', // No number for associated archives in the first column
-                        'kode_klasifikasi' => ($unit->kodeKlasifikasi->kode_klasifikasi ?? 'N/A') . ' / ' . $sequentialNumber, // Use sequential number instead of database value
-                        'nama_berkas' => $unit->uraian_informasi ?? '-',
-                        'jumlah_item' => '-',
-                        'unit_pengolah' => $unit->unitPengolah->nama_unit ?? 'N/A',
-                        'tanggal' => $unit->tanggal ? $unit->tanggal->format('d-m-Y') : '-',
+                        'no' => $isFirst ? $noBerkas : '',
+                        'kode_klasifikasi' => $isFirst ? ($record->klasifikasi->kode_klasifikasi ?? '-') : '',
+                        'nama_berkas' => $isFirst ? $record->nama_berkas : '',
+                        'tanggal_berkas' => $isFirst ? ($record->created_at ? $record->created_at->format('d/m/Y') : '-') : '',
+                        'no_item' => $noItem,
                         'uraian_informasi' => $unit->uraian_informasi ?? '-',
-                        'jumlah_nilai' => $unit->jumlah_nilai ?? 0, // Ensure it shows 0 if null
-                        'jumlah_satuan' => $unit->jumlah_satuan ?? 0, // Ensure it shows 0 if null
-                        'no_item_arsip' => $sequentialNumber, // Use sequential numbering instead of database value for arsip units
-                        'keterangan' => $unit->keterangan ?? '-',
-                        'status' => ucfirst($unit->status) ?? '-',
-                        'is_archive_header' => false,
+                        'tanggal_item' => $unit->tanggal ? $unit->tanggal->format('d-m-Y') : '-',
+                        'jumlah' => $isFirst ? $totalJumlah : '',
+                        'keterangan' => $unit->tingkat_perkembangan ?? '-',
                     ];
                 }
             } else {
                 $rows[] = [
-                    'no' => '-',
-                    'kode_klasifikasi' => '-', // Only kode_klasifikasi
-                    'nama_berkas' => 'Tidak ada unit arsip terkait',
-                    'jumlah_item' => '-',
-                    'unit_pengolah' => '-',
-                    'tanggal' => '-',
-                    'uraian_informasi' => '-',
-                    'jumlah_nilai' => 0,
-                    'jumlah_satuan' => 0,
-                    'no_item_arsip' => '-', // No sequential number when there are no units
+                    'no' => $noBerkas,
+                    'kode_klasifikasi' => $record->klasifikasi->kode_klasifikasi ?? '-',
+                    'nama_berkas' => $record->nama_berkas,
+                    'tanggal_berkas' => $record->created_at ? $record->created_at->format('d/m/Y') : '-',
+                    'no_item' => '-',
+                    'uraian_informasi' => 'Tidak ada item arsip',
+                    'tanggal_item' => '-',
+                    'jumlah' => 0,
                     'keterangan' => '-',
-                    'status' => '-',
-                    'is_archive_header' => false,
                 ];
             }
+            
+            $noBerkas++;
         }
 
-        // Hapus kolom is_archive_header dari hasil akhir karena hanya digunakan untuk styling
-        $cleanRows = [];
-        foreach ($rows as $row) {
-            unset($row['is_archive_header']);
-            $cleanRows[] = $row;
-        }
-
-        return $cleanRows;
+        return $rows;
     }
 
     public function headings(): array
     {
         return [
-            'No',
-            'Kode Klasifikasi / No Item Arsip',
-            'Nama Berkas',
-            'Jumlah Item',
-            'Unit Pengolah',
-            'Tanggal',
-            'Uraian Informasi',
-            'Jumlah Nilai',
-            'Jumlah Satuan',
-            'No Item Arsip',
-            'Keterangan',
-            'Status',
+            'NO',
+            'KODE KLASIFIKASI / NOMOR BERKAS',
+            'NAMA BERKAS',
+            'TANGGAL BUAT BERKAS',
+            'NO ITEM ARSIP',
+            'URAIAN INFORMASI ARSIP',
+            'TANGGAL ITEM',
+            'JUMLAH',
+            'KETERANGAN',
         ];
     }
 
@@ -130,92 +120,95 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
     {
         return [
             'A' => 5,   // No
-            'B' => 20,  // Kode Klasifikasi (wider to accommodate combined content for related units)
-            'C' => 30,  // Nama Berkas
-            'D' => 10,  // Jumlah Item
-            'E' => 20,  // Unit Pengolah
-            'F' => 12,  // Tanggal
-            'G' => 30,  // Uraian Informasi
-            'H' => 12,  // Jumlah Nilai
-            'I' => 12,  // Jumlah Satuan
-            'J' => 15,  // No Item Arsip
-            'K' => 20,  // Keterangan
-            'L' => 15,  // Status
+            'B' => 15,  // Kode Klasifikasi
+            'C' => 25,  // Nama Berkas
+            'D' => 12,  // Tanggal Buat Berkas
+            'E' => 8,   // No Item Arsip
+            'F' => 50,  // Uraian Informasi
+            'G' => 12,  // Tanggal Item
+            'H' => 8,   // Jumlah
+            'I' => 15,  // Keterangan
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
-        return [
-            1 => ['font' => ['bold' => true]], // Bold header row
-        ];
+        // Title styles
+        $sheet->mergeCells('A1:I1');
+        $sheet->setCellValue('A1', 'LAPORAN DAFTAR ISI BERKAS ARSIP AKTIF');
+        $sheet->getStyle('A1')->applyFromArray([
+            'font' => ['bold' => true, 'size' => 14],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+        ]);
+
+        $sheet->mergeCells('A2:I2');
+        $sheet->setCellValue('A2', 'UNIT PENGOLAH: ' . $this->unitPengolah);
+        $sheet->getStyle('A2')->applyFromArray([
+            'font' => ['size' => 11],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+        ]);
+
+        $sheet->mergeCells('A3:I3');
+        $sheet->setCellValue('A3', 'PERIODE: ' . $this->periode);
+        $sheet->getStyle('A3')->applyFromArray([
+            'font' => ['size' => 11],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+        ]);
+
+        // Header row style (row 5)
+        $sheet->getStyle('A5:I5')->applyFromArray([
+            'font' => ['bold' => true, 'size' => 9],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'f2f2f2'],
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+        ]);
+
+        $sheet->getRowDimension(5)->setRowHeight(30);
+
+        return [];
     }
 
     public function registerEvents(): array
     {
         return [
             AfterSheet::class => function(AfterSheet $event) {
-                $highestRow = $event->sheet->getHighestRow();
-
-                // Iterate through each row to style based on whether it's an archive header or archive unit
-                $rowNumber = 2; // Start from row 2 (after header)
-
-                while ($rowNumber <= $highestRow) {
-                    // Check if this is an archive header row by checking if the 'Jumlah Item' column contains a number
-                    $jumlahItemValue = $event->sheet->getCell('D' . $rowNumber)->getValue();
-
-                    if (is_numeric($jumlahItemValue) && $jumlahItemValue > 0) {
-                        // This is an archive header row (Bold and background color)
-                        $event->sheet->getStyle('A' . $rowNumber . ':L' . $rowNumber)->applyFromArray([
-                            'font' => [
-                                'bold' => true,
-                            ],
-                            'fill' => [
-                                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                                'startColor' => ['rgb' => 'D3D3D3'], // Match PDF header style
-                            ],
-                        ]);
-                    } else if ($jumlahItemValue === 0) {
-                        // This is an archive header with no items
-                        $event->sheet->getStyle('A' . $rowNumber . ':L' . $rowNumber)->applyFromArray([
-                            'font' => [
-                                'bold' => true,
-                            ],
-                            'fill' => [
-                                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                                'startColor' => ['rgb' => 'D3D3D3'], // Match PDF header style
-                            ],
-                        ]);
-                    } else {
-                        // This is an archive unit row (Light background color)
-                        $event->sheet->getStyle('A' . $rowNumber . ':L' . $rowNumber)->applyFromArray([
-                            'fill' => [
-                                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                                'startColor' => ['rgb' => 'F9F9F9'], // Match PDF unit style
-                            ],
-                        ]);
-                    }
-
-                    $rowNumber++;
+                $sheet = $event->sheet->getDelegate();
+                
+                // Insert 4 rows at the top for title
+                $sheet->insertNewRowBefore(1, 4);
+                
+                // Move headings to row 5
+                $headings = $this->headings();
+                foreach ($headings as $colIndex => $heading) {
+                    $col = chr(65 + $colIndex); // A, B, C, ...
+                    $sheet->setCellValue($col . '5', $heading);
                 }
 
-                // Apply borders to the entire range
-                $highestColumn = 'L';
-                $range = 'A1:' . $highestColumn . $highestRow;
-                $event->sheet->getStyle($range)->applyFromArray([
+                $highestRow = $sheet->getHighestRow();
+                $highestColumn = 'I';
+
+                // Apply borders to data area
+                $sheet->getStyle('A5:' . $highestColumn . $highestRow)->applyFromArray([
                     'borders' => [
                         'allBorders' => [
-                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                            'borderStyle' => Border::BORDER_THIN,
                             'color' => ['rgb' => '000000'],
                         ],
                     ],
                 ]);
 
-                // Center align specific columns
-                $event->sheet->getStyle('A:A')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getStyle('D:D')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getStyle('H:H')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getStyle('I:I')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                // Center align ALL columns
+                $sheet->getStyle('A5:' . $highestColumn . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('A5:' . $highestColumn . $highestRow)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+
+                // Wrap text for uraian column
+                $sheet->getStyle('F6:F' . $highestRow)->getAlignment()->setWrapText(true);
             },
         ];
     }

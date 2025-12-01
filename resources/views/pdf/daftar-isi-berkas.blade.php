@@ -4,11 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Laporan Daftar Isi Arsip</title>
+    <title>Laporan Daftar Isi Berkas Arsip Aktif</title>
     <style>
         body {
             font-family: 'Helvetica', sans-serif;
             font-size: 10px;
+            margin: 0;
+            padding: 20px;
         }
         .header {
             text-align: center;
@@ -16,13 +18,15 @@
         }
         .header h1 {
             font-size: 16px;
-            margin: 0;
+            margin: 0 0 5px 0;
             text-transform: uppercase;
+            font-weight: bold;
         }
         .header h2 {
             font-size: 12px;
-            margin: 0;
+            margin: 3px 0;
             font-weight: normal;
+            text-transform: uppercase;
         }
         table {
             width: 100%;
@@ -32,8 +36,8 @@
         th, td {
             border: 1px solid #000;
             padding: 5px;
-            text-align: left;
-            vertical-align: top;
+            text-align: center;
+            vertical-align: middle;
         }
         th {
             background-color: #f2f2f2;
@@ -41,21 +45,17 @@
             font-weight: bold;
             text-transform: uppercase;
         }
-        .page-break {
-            page-break-after: always;
+        .berkas-row {
+            background-color: #ffffff;
         }
-        .archive-header {
-            background-color: #d3d3d3;
-            font-weight: bold;
-        }
-        .archive-unit {
-            background-color: #f9f9f9;
+        .item-row {
+            background-color: #ffffff;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Laporan Daftar Isi Berkas Arsip</h1>
+        <h1>LAPORAN DAFTAR ISI BERKAS ARSIP AKTIF</h1>
         <h2>UNIT PENGOLAH: {{ $unitPengolah }}</h2>
         <h2>PERIODE: {{ $periode }}</h2>
     </div>
@@ -63,78 +63,68 @@
     <table>
         <thead>
             <tr>
-                <th>No</th>
-                <th>Kode Klasifikasi</th>
-                <th>Nama Berkas</th>
-                <th>Jumlah<br>Item</th>
-                <th>Unit Pengolah</th>
-                <th>Tanggal</th>
-                <th>Uraian Informasi</th>
-                <th>Jumlah<br>Nilai</th>
-                <th>Jumlah<br>Satuan</th>
-                <th>No Item<br>Arsip</th>
-                <th>Keterangan</th>
-                <th>Status</th>
+                <th>NO</th>
+                <th>KODE KLASIFIKASI<br>/NOMOR BERKAS</th>
+                <th>NAMA BERKAS</th>
+                <th>TANGGAL<br>BUAT BERKAS</th>
+                <th>NO<br>ITEM<br>ARSIP</th>
+                <th>URAIAN INFORMASI ARSIP</th>
+                <th>TANGGAL<br>ITEM</th>
+                <th>JUMLAH</th>
+                <th>KETERANGAN</th>
             </tr>
         </thead>
         <tbody>
             @php
-                $rowCounter = 1;
+                $noBerkas = 1;
             @endphp
-            @forelse($records as $index => $record)
+            @forelse($records as $record)
                 @php
-                    $arsipUnits = $record->arsipUnits;
+                    $arsipUnits = $record->arsipUnits->sortBy('created_at');
                     $totalUnits = $arsipUnits->count();
+                    $totalJumlah = $arsipUnits->sum('jumlah_nilai');
+                    $isFirstUnit = true;
                 @endphp
 
-                {{-- First row: Archive header -- main berkas row shows '-' --}}
-                <tr class="archive-header">
-                    <td style="text-align: center;">{{ $rowCounter++ }}</td>
-                    <td>{{ $record->klasifikasi->kode_klasifikasi ?? 'N/A' }}</td>
-                    <td>{{ $record->nama_berkas }}</td>
-                    <td style="text-align: center;">{{ $totalUnits }}</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td style="text-align: center;">-</td>
-                    <td style="text-align: center;">-</td>
-                    <td>-</td> <!-- Main berkas row shows '-' as requested -->
-                    <td>-</td>
-                    <td>-</td>
-                </tr>
-
-                {{-- Following rows: Related units with sequential numbering --}}
                 @if($totalUnits > 0)
                     @foreach($arsipUnits as $unitIndex => $unit)
-                    @php
-                        $sequentialNumber = $unitIndex + 1; // Sequential numbering: 1, 2, 3, etc.
-                    @endphp
-                    <tr class="archive-unit">
-                        <td style="text-align: center;">-</td>
-                        <td>{{ $unit->kodeKlasifikasi->kode_klasifikasi ?? 'N/A' }} / {{ $sequentialNumber }}</td>
-                        <td>{{ $unit->uraian_informasi ?? '-' }}</td>
-                        <td>-</td>
-                        <td>{{ $unit->unitPengolah->nama_unit ?? 'N/A' }}</td>
-                        <td>{{ $unit->tanggal ? $unit->tanggal->format('d-m-Y') : '-' }}</td>
-                        <td>{{ $unit->uraian_informasi ?? '-' }}</td>
-                        <td style="text-align: center;">{{ $unit->jumlah_nilai ?? '-' }}</td>
-                        <td style="text-align: center;">{{ $unit->jumlah_satuan ?? '-' }}</td>
-                        <td>{{ $sequentialNumber }}</td> <!-- Use sequential numbering for arsip units -->
-                        <td>{{ $unit->keterangan ?? '-' }}</td>
-                        <td>{{ ucfirst($unit->status) ?? '-' }}</td>
-                    </tr>
+                        @php
+                            $noItem = $unitIndex + 1;
+                        @endphp
+                        <tr class="{{ $isFirstUnit ? 'berkas-row' : 'item-row' }}">
+                            <td>{{ $isFirstUnit ? $noBerkas : '' }}</td>
+                            <td>{{ $isFirstUnit ? ($record->klasifikasi->kode_klasifikasi ?? '-') : '' }}</td>
+                            <td>{{ $isFirstUnit ? $record->nama_berkas : '' }}</td>
+                            <td>{{ $isFirstUnit ? ($record->created_at ? $record->created_at->format('d/m/Y') : '-') : '' }}</td>
+                            <td>{{ $noItem }}</td>
+                            <td>{{ $unit->uraian_informasi ?? '-' }}</td>
+                            <td>{{ $unit->tanggal ? $unit->tanggal->format('d-m-Y') : '-' }}</td>
+                            <td>{{ $isFirstUnit ? $totalJumlah : '' }}</td>
+                            <td>{{ $unit->tingkat_perkembangan ?? '-' }}</td>
+                        </tr>
+                        @php
+                            $isFirstUnit = false;
+                        @endphp
                     @endforeach
                 @else
-                    <tr class="archive-unit">
-                        <td style="text-align: center;">-</td>
+                    <tr class="berkas-row">
+                        <td>{{ $noBerkas }}</td>
+                        <td>{{ $record->klasifikasi->kode_klasifikasi ?? '-' }}</td>
+                        <td>{{ $record->nama_berkas }}</td>
+                        <td>{{ $record->created_at ? $record->created_at->format('d/m/Y') : '-' }}</td>
                         <td>-</td>
-                        <td colspan="9">Tidak ada unit arsip terkait</td>
+                        <td>Tidak ada item arsip</td>
+                        <td>-</td>
+                        <td>0</td>
                         <td>-</td>
                     </tr>
                 @endif
+                @php
+                    $noBerkas++;
+                @endphp
             @empty
                 <tr>
-                    <td colspan="12" style="text-align: center;">Tidak ada data.</td>
+                    <td colspan="9" style="text-align: center; padding: 20px;">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>

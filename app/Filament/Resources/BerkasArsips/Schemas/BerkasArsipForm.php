@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\BerkasArsips\Schemas;
 
 use App\Models\KodeKlasifikasi;
+use App\Models\UnitPengolah;
 use App\Models\Kategori;
 use App\Models\SubKategori;
 use Filament\Forms\Components\Select;
@@ -51,22 +52,29 @@ class BerkasArsipForm
                             })
                             ->columnSpanFull(),
 
+                        Select::make('unit_pengolah_id')
+                            ->label('Unit Pengolah')
+                            ->relationship(name: 'unitPengolah', titleAttribute: 'nama_unit')
+                            ->searchable()
+                            ->preload()
+                            ->required(),
+
                         TextInput::make('retensi_aktif')
                             ->label('Retensi Aktif')
                             ->numeric()
-                            ->disabled()
-                            ->dehydrated(true),
+                            ->readOnly()
+                            ->dehydrated(),
 
                         TextInput::make('retensi_inaktif')
                             ->label('Retensi Inaktif')
                             ->numeric()
-                            ->disabled()
-                            ->dehydrated(true),
+                            ->readOnly()
+                            ->dehydrated(),
 
                         TextInput::make('penyusutan_akhir')
                             ->label('Penyusutan Akhir')
-                            ->disabled()
-                            ->dehydrated(true),
+                            ->readOnly()
+                            ->dehydrated(),
                     ]),
 
 

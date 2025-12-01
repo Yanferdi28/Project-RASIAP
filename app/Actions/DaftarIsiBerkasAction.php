@@ -45,8 +45,10 @@ class DaftarIsiBerkasAction
                 try {
                     // Buat query dasar dari tabel yang sudah difilter
                     $query = $livewire->getFilteredTableQuery()
-                        ->with(['arsipUnits', 'klasifikasi', 'arsipUnits.kodeKlasifikasi', 'arsipUnits.unitPengolah'])
-                        ->orderBy('created_at', 'desc');
+                        ->with(['arsipUnits' => function($q) {
+                            $q->orderBy('created_at', 'asc');
+                        }, 'klasifikasi', 'unitPengolah', 'arsipUnits.kodeKlasifikasi', 'arsipUnits.unitPengolah'])
+                        ->orderBy('created_at', 'asc');
 
                     // Tambahkan filter berdasarkan tanggal jika disediakan
                     if (isset($data['tanggal_dari']) && $data['tanggal_dari']) {
@@ -62,9 +64,11 @@ class DaftarIsiBerkasAction
                     // Buat periode untuk ditampilkan di laporan
                     $dari = $data['tanggal_dari'] ?? now()->subMonth()->format('d/m/Y');
                     $sampai = $data['tanggal_sampai'] ?? now()->format('d/m/Y');
-                    $periode = \Carbon\Carbon::parse($dari)->format('d F Y') . ' - ' . \Carbon\Carbon::parse($sampai)->format('d F Y');
+                    $periode = \Carbon\Carbon::parse($dari)->translatedFormat('d F Y') . ' - ' . \Carbon\Carbon::parse($sampai)->translatedFormat('d F Y');
 
-                    $unitPengolah = 'RRI BANJARMASIN';
+                    // Ambil unit pengolah dari user yang login
+                    $user = auth()->user();
+                    $unitPengolah = $user->unitPengolah->nama_unit ?? 'Unit Pengolah';
 
                     $format = $data['format_ekspor'];
 

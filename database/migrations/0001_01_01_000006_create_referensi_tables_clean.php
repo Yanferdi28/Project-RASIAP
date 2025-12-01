@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kode_klasifikasis', function (Blueprint $table) {
+        Schema::create('kode_klasifikasi', function (Blueprint $table) {
             $table->id();
             $table->string('kode_klasifikasi')->unique();
             $table->string('kode_klasifikasi_induk')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('unit_pengolahs', function (Blueprint $table) {
+        Schema::create('unit_pengolah', function (Blueprint $table) {
             $table->id();
             $table->string('nama_unit');
         });
@@ -51,7 +51,7 @@ return new class extends Migration
     {
         Schema::dropIfExists('sub_kategori');
         Schema::dropIfExists('kategori');
-        Schema::dropIfExists('unit_pengolahs');
-        Schema::dropIfExists('kode_klasifikasis');
+        Schema::dropIfExists('unit_pengolah');
+        Schema::dropIfExists('kode_klasifikasi');
     }
 };

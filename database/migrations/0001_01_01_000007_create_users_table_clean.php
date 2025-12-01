@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamps();
             
             // Kolom tambahan spesifik aplikasi
-            $table->foreignId('unit_pengolah_id')->nullable()->constrained('unit_pengolahs');
+            $table->foreignId('unit_pengolah_id')->nullable()->constrained('unit_pengolah');
             $table->enum('verification_status', ['pending', 'verified', 'rejected'])->default('pending');
             $table->timestamp('verified_at')->nullable();
             $table->foreignId('verified_by')->nullable()->constrained('users');

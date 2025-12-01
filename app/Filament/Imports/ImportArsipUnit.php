@@ -18,7 +18,7 @@ class ImportArsipUnit extends Importer
             ImportColumn::make('kode_klasifikasi')
                 ->label('Kode Klasifikasi')
                 ->requiredMapping()
-                ->rules(['required', 'exists:kode_klasifikasis,kode_klasifikasi']),
+                ->rules(['required', 'exists:kode_klasifikasi,kode_klasifikasi']),
             ImportColumn::make('indeks')
                 ->label('Indeks')
                 ->requiredMapping()
@@ -42,7 +42,7 @@ class ImportArsipUnit extends Importer
                 ->rules(['nullable', 'string']),
             ImportColumn::make('unit_pengolah')
                 ->label('Unit Pengolah')
-                ->rules(['nullable', 'exists:unit_pengolahs,nama_unit']),
+                ->rules(['nullable', 'exists:unit_pengolah,nama_unit']),
             ImportColumn::make('retensi_aktif')
                 ->label('Retensi Aktif')
                 ->rules(['nullable', 'numeric']),

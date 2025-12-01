@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('berkas_arsip', function (Blueprint $table) {
             $table->id('nomor_berkas');
             $table->string('nama_berkas');
-            $table->foreignId('klasifikasi_id')->constrained('kode_klasifikasis');
+            $table->foreignId('klasifikasi_id')->constrained('kode_klasifikasi');
+            $table->foreignId('unit_pengolah_id')->nullable()->constrained('unit_pengolah');
             $table->integer('retensi_aktif')->nullable();
             $table->integer('retensi_inaktif')->nullable();
             $table->string('penyusutan_akhir')->nullable();

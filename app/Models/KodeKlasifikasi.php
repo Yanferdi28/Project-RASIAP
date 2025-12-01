@@ -10,6 +10,8 @@ class KodeKlasifikasi extends Model
 {
     use HasFactory;
 
+    protected $table = 'kode_klasifikasi';
+
     protected $fillable = [
         'kode_klasifikasi',
         'kode_klasifikasi_induk',

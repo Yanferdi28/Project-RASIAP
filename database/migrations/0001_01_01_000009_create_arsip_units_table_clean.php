@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id('id_berkas');
 
             // Relasi
-            $table->foreignId('kode_klasifikasi_id')->nullable()->constrained('kode_klasifikasis'); 
-            $table->foreignId('unit_pengolah_arsip_id')->nullable()->constrained('unit_pengolahs'); 
+            $table->foreignId('kode_klasifikasi_id')->nullable()->constrained('kode_klasifikasi'); 
+            $table->foreignId('unit_pengolah_arsip_id')->nullable()->constrained('unit_pengolah'); 
 
             // Relasi ke berkas_arsip.nomor_berkas (sekarang bigint unsigned)
             $table->foreignId('berkas_arsip_id')->nullable()->constrained('berkas_arsip', 'nomor_berkas');

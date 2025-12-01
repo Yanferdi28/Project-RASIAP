@@ -10,14 +10,29 @@ use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class ArsipUnitLaporanExport implements FromArray, WithHeadings, WithColumnWidths, WithStyles, WithEvents
 {
     protected $records;
+    protected $unitPengolah;
+    protected $periode;
 
-    public function __construct($records)
+    public function __construct($records, $unitPengolah = null, $periode = null)
     {
         $this->records = $records;
+        
+        // Ambil unit pengolah dari user yang login jika tidak disediakan
+        if ($unitPengolah) {
+            $this->unitPengolah = $unitPengolah;
+        } else {
+            $user = auth()->user();
+            $this->unitPengolah = $user->unitPengolah->nama_unit ?? 'Unit Pengolah';
+        }
+        
+        $this->periode = $periode ?? now()->format('d F Y');
     }
 
     public function array(): array
@@ -81,50 +96,83 @@ class ArsipUnitLaporanExport implements FromArray, WithHeadings, WithColumnWidth
 
     public function styles(Worksheet $sheet)
     {
-        return [
-            1 => ['font' => ['bold' => true]], // Bold header row
-        ];
+        // Title styles
+        $sheet->mergeCells('A1:L1');
+        $sheet->setCellValue('A1', 'LAPORAN DAFTAR ARSIP UNIT');
+        $sheet->getStyle('A1')->applyFromArray([
+            'font' => ['bold' => true, 'size' => 14],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+        ]);
+
+        $sheet->mergeCells('A2:L2');
+        $sheet->setCellValue('A2', 'UNIT PENGOLAH: ' . $this->unitPengolah);
+        $sheet->getStyle('A2')->applyFromArray([
+            'font' => ['size' => 11],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+        ]);
+
+        $sheet->mergeCells('A3:L3');
+        $sheet->setCellValue('A3', 'PERIODE: ' . $this->periode);
+        $sheet->getStyle('A3')->applyFromArray([
+            'font' => ['size' => 11],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+        ]);
+
+        // Header row style (row 5)
+        $sheet->getStyle('A5:L5')->applyFromArray([
+            'font' => ['bold' => true, 'size' => 9],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'f2f2f2'],
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+        ]);
+
+        $sheet->getRowDimension(5)->setRowHeight(30);
+
+        return [];
     }
 
     public function registerEvents(): array
     {
         return [
             AfterSheet::class => function(AfterSheet $event) {
-                $highestRow = $event->sheet->getHighestRow();
+                $sheet = $event->sheet->getDelegate();
+                
+                // Insert 4 rows at the top for title
+                $sheet->insertNewRowBefore(1, 4);
+                
+                // Move headings to row 5
+                $headings = $this->headings();
+                foreach ($headings as $colIndex => $heading) {
+                    $col = chr(65 + $colIndex);
+                    $sheet->setCellValue($col . '5', $heading);
+                }
 
-                // Apply borders to the entire range
+                $highestRow = $sheet->getHighestRow();
                 $highestColumn = 'L';
-                $range = 'A1:' . $highestColumn . $highestRow;
-                $event->sheet->getStyle($range)->applyFromArray([
+
+                // Apply borders to data area
+                $sheet->getStyle('A5:' . $highestColumn . $highestRow)->applyFromArray([
                     'borders' => [
                         'allBorders' => [
-                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                            'borderStyle' => Border::BORDER_THIN,
                             'color' => ['rgb' => '000000'],
                         ],
                     ],
                 ]);
 
-                // Center align specific columns
-                $event->sheet->getStyle('A:A')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getStyle('E:E')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getStyle('I:I')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getStyle('J:J')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getStyle('K:K')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-
-                // Apply header background color (similar to PDF)
-                $event->sheet->getStyle('A1:' . $highestColumn . '1')->applyFromArray([
-                    'fill' => [
-                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                        'startColor' => ['rgb' => 'F2F2F2'], // Match PDF header style
-                    ],
-                    'font' => [
-                        'bold' => true,
-                    ],
-                ]);
+                // Center align ALL columns
+                $sheet->getStyle('A5:' . $highestColumn . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('A5:' . $highestColumn . $highestRow)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
 
                 // Wrap text for the 'Uraian Informasi' and 'Keterangan' columns
-                $event->sheet->getStyle('D:D')->getAlignment()->setWrapText(true);
-                $event->sheet->getStyle('L:L')->getAlignment()->setWrapText(true);
+                $sheet->getStyle('D6:D' . $highestRow)->getAlignment()->setWrapText(true);
+                $sheet->getStyle('L6:L' . $highestRow)->getAlignment()->setWrapText(true);
             },
         ];
     }

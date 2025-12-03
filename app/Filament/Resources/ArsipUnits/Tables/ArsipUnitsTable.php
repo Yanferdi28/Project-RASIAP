@@ -282,7 +282,17 @@ class ArsipUnitsTable
                     ->form([
                         \Filament\Forms\Components\Select::make('berkas_arsip_id')
                             ->label('Pilih Berkas Arsip')
-                            ->options(\App\Models\BerkasArsip::query()->pluck('nama_berkas', 'nomor_berkas'))
+                            ->options(function () {
+                                $user = \Illuminate\Support\Facades\Auth::user();
+                                $query = \App\Models\BerkasArsip::query();
+                                
+                                // Filter berdasarkan unit pengolah untuk non-admin
+                                if (!$user->hasAnyRole(['superadmin', 'admin', 'manajemen'])) {
+                                    $query->where('unit_pengolah_id', $user->unit_pengolah_id);
+                                }
+                                
+                                return $query->pluck('nama_berkas', 'nomor_berkas');
+                            })
                             ->required()
                             ->searchable()
                             ->helperText('Pilih berkas arsip tempat naskah akan dihubungkan.'),

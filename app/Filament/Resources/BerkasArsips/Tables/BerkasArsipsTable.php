@@ -113,7 +113,17 @@ class BerkasArsipsTable
                     ->preload()
                     ->label('Unit Pengolah'),
             ])
-            ->modifyQueryUsing(fn ($query) => $query->withCommonRelationships())
+            ->modifyQueryUsing(function ($query) {
+                $query->withCommonRelationships();
+                
+                $user = auth()->user();
+                // Filter berdasarkan unit pengolah untuk non-admin
+                if ($user && !$user->hasAnyRole(['superadmin', 'admin', 'manajemen'])) {
+                    $query->where('unit_pengolah_id', $user->unit_pengolah_id);
+                }
+                
+                return $query;
+            })
             ->recordActions([
                 ViewAction::make()
                     ->label('')

@@ -164,7 +164,7 @@ class BerkasArsipsTable
                     ])
                     ->action(function (array $data, \Filament\Tables\Contracts\HasTable $livewire) {
                         // Buat query dasar dari tabel yang sudah difilter
-                        $query = $livewire->getFilteredTableQuery()->with(['klasifikasi']);
+                        $query = $livewire->getFilteredTableQuery()->with(['klasifikasi', 'arsipUnits']);
 
                         // Tambahkan filter berdasarkan tanggal jika disediakan
                         if (isset($data['tanggal_cetak_dari']) && $data['tanggal_cetak_dari']) {
@@ -189,7 +189,7 @@ class BerkasArsipsTable
                         $format = $data['format_ekspor'];
 
                         if ($format === 'pdf') {
-                            $view = view('pdf.laporan-arsip-aktif', compact('records', 'unitPengolah', 'periode'))->render();
+                            $view = view('pdf.laporan-berkas', compact('records', 'unitPengolah', 'periode'))->render();
 
                             $pdf = Pdf::loadHtml($view)
                                     ->setPaper('a4', 'landscape');

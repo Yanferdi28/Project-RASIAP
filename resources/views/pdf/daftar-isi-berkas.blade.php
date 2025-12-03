@@ -68,8 +68,8 @@
                 <th>NAMA BERKAS</th>
                 <th>TANGGAL<br>BUAT BERKAS</th>
                 <th>NO<br>ITEM<br>ARSIP</th>
-                <th>URAIAN INFORMASI ARSIP</th>
-                <th>TANGGAL<br>ITEM</th>
+                <th>URAIAN INFORMASI</th>
+                <th>TANGGAL</th>
                 <th>JUMLAH</th>
                 <th>KETERANGAN</th>
             </tr>
@@ -83,41 +83,39 @@
                     $arsipUnits = $record->arsipUnits->sortBy('created_at');
                     $totalUnits = $arsipUnits->count();
                     $totalJumlah = $arsipUnits->sum('jumlah_nilai');
-                    $isFirstUnit = true;
                 @endphp
 
+                {{-- Row 1: Berkas info only --}}
+                <tr class="berkas-row">
+                    <td>{{ $noBerkas }}</td>
+                    <td>{{ $record->klasifikasi->kode_klasifikasi ?? '-' }}</td>
+                    <td>{{ $record->nama_berkas }}</td>
+                    <td>{{ $record->created_at ? $record->created_at->format('d/m/Y') : '-' }}</td>
+                    <td>-</td>
+                    <td>{{ $record->uraian ?? '-' }}</td>
+                    <td>{{ $record->created_at ? $record->created_at->format('d-m-Y') : '-' }}</td>
+                    <td>{{ $totalUnits }}</td>
+                    <td>-</td>
+                </tr>
+
+                {{-- Row 2+: Arsip units --}}
                 @if($totalUnits > 0)
                     @foreach($arsipUnits as $unitIndex => $unit)
                         @php
                             $noItem = $unitIndex + 1;
                         @endphp
-                        <tr class="{{ $isFirstUnit ? 'berkas-row' : 'item-row' }}">
-                            <td>{{ $isFirstUnit ? $noBerkas : '' }}</td>
-                            <td>{{ $isFirstUnit ? ($record->klasifikasi->kode_klasifikasi ?? '-') : '' }}</td>
-                            <td>{{ $isFirstUnit ? $record->nama_berkas : '' }}</td>
-                            <td>{{ $isFirstUnit ? ($record->created_at ? $record->created_at->format('d/m/Y') : '-') : '' }}</td>
+                        <tr class="item-row">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                             <td>{{ $noItem }}</td>
                             <td>{{ $unit->uraian_informasi ?? '-' }}</td>
                             <td>{{ $unit->tanggal ? $unit->tanggal->format('d-m-Y') : '-' }}</td>
-                            <td>{{ $isFirstUnit ? $totalJumlah : '' }}</td>
+                            <td></td>
                             <td>{{ $unit->tingkat_perkembangan ?? '-' }}</td>
                         </tr>
-                        @php
-                            $isFirstUnit = false;
-                        @endphp
                     @endforeach
-                @else
-                    <tr class="berkas-row">
-                        <td>{{ $noBerkas }}</td>
-                        <td>{{ $record->klasifikasi->kode_klasifikasi ?? '-' }}</td>
-                        <td>{{ $record->nama_berkas }}</td>
-                        <td>{{ $record->created_at ? $record->created_at->format('d/m/Y') : '-' }}</td>
-                        <td>-</td>
-                        <td>Tidak ada item arsip</td>
-                        <td>-</td>
-                        <td>0</td>
-                        <td>-</td>
-                    </tr>
                 @endif
                 @php
                     $noBerkas++;

@@ -75,7 +75,7 @@
                     <td>{{ $record->nama_berkas }}</td>
                     <td>{{ $record->created_at->format('d-m-Y') }}</td>
                     <td>{{ $record->created_at->format('d M Y') }} s/d {{ $record->updated_at->format('d M Y') }}</td>
-                    <td style="text-align: center;">1</td>
+                    <td style="text-align: center;">{{ $record->arsipUnits->count() }}</td>
                     <td style="text-align: center;">{{ $record->retensi_aktif }}</td>
                     <td style="text-align: center;">{{ $record->retensi_inaktif }}</td>
                     <td>{{ $record->penyusutan_akhir }}</td>

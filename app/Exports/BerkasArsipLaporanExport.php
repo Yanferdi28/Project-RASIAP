@@ -46,10 +46,11 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
                 'tanggal_buat_berkas' => $record->created_at->format('d-m-Y'),
                 'kurun_waktu' => $record->created_at->format('d M Y') . ' s/d ' . $record->updated_at->format('d M Y'),
                 'jumlah_item' => 1, // Default to 1 as in the original
-                'retensi_aktif' => $record->retensi_aktif ?? 0, // Ensure it shows 0 if null
-                'retensi_inaktif' => $record->retensi_inaktif ?? 0, // Ensure it shows 0 if null
+                'retensi_aktif' => $record->retensi_aktif ?? 0,
+                'retensi_inaktif' => $record->retensi_inaktif ?? 0,
                 'status_akhir' => $record->penyusutan_akhir,
-                'keterangan' => $record->keterangan ?? $record->lokasi_fisik ?? ''
+                'keterangan' => $record->keterangan ?? '',
+                'lokasi_berkas' => $record->lokasi_fisik ?? '-'
             ];
         }
 
@@ -68,7 +69,8 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
             'Retensi Aktif',
             'Retensi Inaktif',
             'Status Akhir',
-            'Keterangan'
+            'Keterangan',
+            'Lokasi Berkas'
         ];
     }
 
@@ -76,7 +78,7 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
     {
         return [
             'A' => 5,   // No
-            'B' => 15,  // Kode Klasifikasi (narrower since no longer combined with nomor berkas)
+            'B' => 15,  // Kode Klasifikasi
             'C' => 40,  // Nama Berkas
             'D' => 15,  // Tanggal Buat Berkas
             'E' => 25,  // Kurun Waktu
@@ -85,6 +87,7 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
             'H' => 14,  // Retensi Inaktif
             'I' => 12,  // Status Akhir
             'J' => 30,  // Keterangan
+            'K' => 30,  // Lokasi Berkas
         ];
     }
 
@@ -103,7 +106,7 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
                 $sheet->insertNewRowBefore(1, 4);
                 
                 // Set title in row 1
-                $sheet->mergeCells('A1:J1');
+                $sheet->mergeCells('A1:K1');
                 $sheet->setCellValue('A1', 'LAPORAN DAFTAR BERKAS ARSIP');
                 $sheet->getStyle('A1')->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -111,7 +114,7 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
                 ]);
 
                 // Set unit pengolah in row 2
-                $sheet->mergeCells('A2:J2');
+                $sheet->mergeCells('A2:K2');
                 $sheet->setCellValue('A2', 'UNIT PENGOLAH: ' . $this->unitPengolah);
                 $sheet->getStyle('A2')->applyFromArray([
                     'font' => ['size' => 11],
@@ -119,7 +122,7 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
                 ]);
 
                 // Set periode in row 3
-                $sheet->mergeCells('A3:J3');
+                $sheet->mergeCells('A3:K3');
                 $sheet->setCellValue('A3', 'PERIODE: ' . $this->periode);
                 $sheet->getStyle('A3')->applyFromArray([
                     'font' => ['size' => 11],
@@ -134,7 +137,7 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
                 }
 
                 // Header row style (row 5)
-                $sheet->getStyle('A5:J5')->applyFromArray([
+                $sheet->getStyle('A5:K5')->applyFromArray([
                     'font' => ['bold' => true, 'size' => 9],
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
@@ -149,7 +152,7 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
                 $sheet->getRowDimension(5)->setRowHeight(30);
 
                 $highestRow = $sheet->getHighestRow();
-                $highestColumn = 'J';
+                $highestColumn = 'K';
 
                 // Apply borders to data area
                 $sheet->getStyle('A5:' . $highestColumn . $highestRow)->applyFromArray([
@@ -165,9 +168,10 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
                 $sheet->getStyle('A5:' . $highestColumn . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 $sheet->getStyle('A5:' . $highestColumn . $highestRow)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
 
-                // Wrap text for the 'Nama Berkas' and 'Keterangan' columns
+                // Wrap text for the 'Nama Berkas', 'Keterangan' and 'Lokasi Berkas' columns
                 $sheet->getStyle('C6:C' . $highestRow)->getAlignment()->setWrapText(true);
                 $sheet->getStyle('J6:J' . $highestRow)->getAlignment()->setWrapText(true);
+                $sheet->getStyle('K6:K' . $highestRow)->getAlignment()->setWrapText(true);
             },
         ];
     }

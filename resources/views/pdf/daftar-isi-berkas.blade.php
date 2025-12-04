@@ -72,6 +72,8 @@
                 <th>TANGGAL</th>
                 <th>JUMLAH</th>
                 <th>KETERANGAN</th>
+                <th>LOKASI BERKAS</th>
+                <th>LOKASI ARSIP</th>
             </tr>
         </thead>
         <tbody>
@@ -96,6 +98,8 @@
                     <td>{{ $record->created_at ? $record->created_at->format('d-m-Y') : '-' }}</td>
                     <td>{{ $totalUnits }}</td>
                     <td>-</td>
+                    <td>{{ $record->lokasi_fisik ?? '-' }}</td>
+                    <td>-</td>
                 </tr>
 
                 {{-- Row 2+: Arsip units --}}
@@ -103,6 +107,13 @@
                     @foreach($arsipUnits as $unitIndex => $unit)
                         @php
                             $noItem = $unitIndex + 1;
+                            $lokasiArsip = collect([
+                                $unit->ruangan ? 'R: ' . $unit->ruangan : null,
+                                $unit->no_filling ? 'Rak: ' . $unit->no_filling : null,
+                                $unit->no_laci ? 'Laci: ' . $unit->no_laci : null,
+                                $unit->no_folder ? 'Folder: ' . $unit->no_folder : null,
+                                $unit->no_box ? 'Box: ' . $unit->no_box : null,
+                            ])->filter()->implode(', ');
                         @endphp
                         <tr class="item-row">
                             <td></td>
@@ -114,6 +125,8 @@
                             <td>{{ $unit->tanggal ? $unit->tanggal->format('d-m-Y') : '-' }}</td>
                             <td></td>
                             <td>{{ $unit->tingkat_perkembangan ?? '-' }}</td>
+                            <td></td>
+                            <td>{{ $lokasiArsip ?: '-' }}</td>
                         </tr>
                     @endforeach
                 @endif
@@ -122,7 +135,7 @@
                 @endphp
             @empty
                 <tr>
-                    <td colspan="9" style="text-align: center; padding: 20px;">Tidak ada data.</td>
+                    <td colspan="11" style="text-align: center; padding: 20px;">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>

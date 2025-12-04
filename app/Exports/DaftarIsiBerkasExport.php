@@ -69,6 +69,14 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
                     $noItem = $unitIndex + 1;
                     $isFirst = ($unitIndex === 0);
                     
+                    $lokasiArsip = collect([
+                        $unit->ruangan ? 'R: ' . $unit->ruangan : null,
+                        $unit->no_filling ? 'Rak: ' . $unit->no_filling : null,
+                        $unit->no_laci ? 'Laci: ' . $unit->no_laci : null,
+                        $unit->no_folder ? 'Folder: ' . $unit->no_folder : null,
+                        $unit->no_box ? 'Box: ' . $unit->no_box : null,
+                    ])->filter()->implode(', ');
+                    
                     $rows[] = [
                         'no' => $isFirst ? $noBerkas : '',
                         'kode_klasifikasi' => $isFirst ? ($record->klasifikasi->kode_klasifikasi ?? '-') : '',
@@ -79,6 +87,8 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
                         'tanggal_item' => $unit->tanggal ? $unit->tanggal->format('d-m-Y') : '-',
                         'jumlah' => $isFirst ? $totalJumlah : '',
                         'keterangan' => $unit->tingkat_perkembangan ?? '-',
+                        'lokasi_berkas' => $isFirst ? ($record->lokasi_fisik ?? '-') : '',
+                        'lokasi_arsip' => $lokasiArsip ?: '-',
                     ];
                 }
             } else {
@@ -92,6 +102,8 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
                     'tanggal_item' => '-',
                     'jumlah' => 0,
                     'keterangan' => '-',
+                    'lokasi_berkas' => $record->lokasi_fisik ?? '-',
+                    'lokasi_arsip' => '-',
                 ];
             }
             
@@ -113,6 +125,8 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
             'TANGGAL',
             'JUMLAH',
             'KETERANGAN',
+            'LOKASI BERKAS',
+            'LOKASI ARSIP',
         ];
     }
 
@@ -128,6 +142,8 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
             'G' => 12,  // Tanggal Item
             'H' => 8,   // Jumlah
             'I' => 15,  // Keterangan
+            'J' => 25,  // Lokasi Berkas
+            'K' => 30,  // Lokasi Arsip
         ];
     }
 
@@ -146,7 +162,7 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
                 $sheet->insertNewRowBefore(1, 4);
                 
                 // Set title in row 1
-                $sheet->mergeCells('A1:I1');
+                $sheet->mergeCells('A1:K1');
                 $sheet->setCellValue('A1', 'LAPORAN DAFTAR ISI BERKAS ARSIP AKTIF');
                 $sheet->getStyle('A1')->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -154,7 +170,7 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
                 ]);
 
                 // Set unit pengolah in row 2
-                $sheet->mergeCells('A2:I2');
+                $sheet->mergeCells('A2:K2');
                 $sheet->setCellValue('A2', 'UNIT PENGOLAH: ' . $this->unitPengolah);
                 $sheet->getStyle('A2')->applyFromArray([
                     'font' => ['size' => 11],
@@ -162,7 +178,7 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
                 ]);
 
                 // Set periode in row 3
-                $sheet->mergeCells('A3:I3');
+                $sheet->mergeCells('A3:K3');
                 $sheet->setCellValue('A3', 'PERIODE: ' . $this->periode);
                 $sheet->getStyle('A3')->applyFromArray([
                     'font' => ['size' => 11],
@@ -177,7 +193,7 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
                 }
 
                 // Header row style (row 5)
-                $sheet->getStyle('A5:I5')->applyFromArray([
+                $sheet->getStyle('A5:K5')->applyFromArray([
                     'font' => ['bold' => true, 'size' => 9],
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
@@ -192,7 +208,7 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
                 $sheet->getRowDimension(5)->setRowHeight(30);
 
                 $highestRow = $sheet->getHighestRow();
-                $highestColumn = 'I';
+                $highestColumn = 'K';
 
                 // Apply borders to data area
                 $sheet->getStyle('A5:' . $highestColumn . $highestRow)->applyFromArray([
@@ -208,8 +224,10 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
                 $sheet->getStyle('A5:' . $highestColumn . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 $sheet->getStyle('A5:' . $highestColumn . $highestRow)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
 
-                // Wrap text for uraian column
+                // Wrap text for uraian, lokasi berkas and lokasi arsip columns
                 $sheet->getStyle('F6:F' . $highestRow)->getAlignment()->setWrapText(true);
+                $sheet->getStyle('J6:J' . $highestRow)->getAlignment()->setWrapText(true);
+                $sheet->getStyle('K6:K' . $highestRow)->getAlignment()->setWrapText(true);
             },
         ];
     }

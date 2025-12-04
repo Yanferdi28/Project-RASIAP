@@ -163,8 +163,8 @@ class BerkasArsipUnitsRelationManager extends RelationManager
                     'tanggal' => $record->tanggal,
                     'uraian_informasi' => $record->uraian_informasi,
                     'jumlah_nilai' => $record->jumlah_nilai,
-                    'jumlah_satuan' => $record->jumlah_satuan,
-                    'tingkat_perkembangan' => $record->tingkat_perkembangan,
+                    'jumlah_satuan' => $record->jumlah_satuan ? ucfirst(strtolower($record->jumlah_satuan)) : null,
+                    'tingkat_perkembangan' => $record->tingkat_perkembangan ? ucfirst(strtolower($record->tingkat_perkembangan)) : null,
                     'retensi_aktif' => $record->retensi_aktif,
                     'retensi_inaktif' => $record->retensi_inaktif,
                     'skkaad' => $record->skkaad,
@@ -181,8 +181,23 @@ class BerkasArsipUnitsRelationManager extends RelationManager
                 ->form([
                     \Filament\Forms\Components\Select::make('kode_klasifikasi_id')
                         ->label('Kode Klasifikasi')
-                        ->options(KodeKlasifikasi::all()->pluck('kode_klasifikasi', 'id'))
-                        ->searchable(),
+                        ->options(KodeKlasifikasi::all()->mapWithKeys(fn ($item) => [$item->id => "{$item->kode_klasifikasi} - {$item->uraian}"]))
+                        ->searchable()
+                        ->live()
+                        ->afterStateUpdated(function (?string $state, callable $set) {
+                            if (blank($state)) {
+                                $set('retensi_aktif', null);
+                                $set('retensi_inaktif', null);
+                                $set('skkaad', null);
+                                return;
+                            }
+                            $klasifikasi = KodeKlasifikasi::find($state);
+                            if ($klasifikasi) {
+                                $set('retensi_aktif', $klasifikasi->retensi_aktif);
+                                $set('retensi_inaktif', $klasifikasi->retensi_inaktif);
+                                $set('skkaad', $klasifikasi->klasifikasi_keamanan);
+                            }
+                        }),
                     \Filament\Forms\Components\TextInput::make('indeks')
                         ->label('Indeks'),
                     \Filament\Forms\Components\DatePicker::make('tanggal')
@@ -215,12 +230,18 @@ class BerkasArsipUnitsRelationManager extends RelationManager
                         ]),
                     \Filament\Forms\Components\TextInput::make('retensi_aktif')
                         ->label('Retensi Aktif')
-                        ->numeric(),
+                        ->numeric()
+                        ->disabled()
+                        ->dehydrated(true),
                     \Filament\Forms\Components\TextInput::make('retensi_inaktif')
                         ->label('Retensi Inaktif')
-                        ->numeric(),
+                        ->numeric()
+                        ->disabled()
+                        ->dehydrated(true),
                     \Filament\Forms\Components\TextInput::make('skkaad')
-                        ->label('SKKAAD'),
+                        ->label('SKKAAD')
+                        ->disabled()
+                        ->dehydrated(true),
                     \Filament\Forms\Components\TextInput::make('ruangan')
                         ->label('Ruangan'),
                     \Filament\Forms\Components\TextInput::make('no_filling')

@@ -39,6 +39,14 @@ class ArsipUnitLaporanExport implements FromArray, WithHeadings, WithColumnWidth
     {
         $rows = [];
         foreach ($this->records as $index => $record) {
+            $lokasiArsip = collect([
+                $record->ruangan ? 'R: ' . $record->ruangan : null,
+                $record->no_filling ? 'Rak: ' . $record->no_filling : null,
+                $record->no_laci ? 'Laci: ' . $record->no_laci : null,
+                $record->no_folder ? 'Folder: ' . $record->no_folder : null,
+                $record->no_box ? 'Box: ' . $record->no_box : null,
+            ])->filter()->implode(', ');
+
             $rows[] = [
                 'no' => $index + 1,
                 'kode_klasifikasi' => $record->kodeKlasifikasi->kode_klasifikasi ?? 'N/A',
@@ -51,7 +59,8 @@ class ArsipUnitLaporanExport implements FromArray, WithHeadings, WithColumnWidth
                 'retensi_aktif' => $record->retensi_aktif ?? 0,
                 'retensi_inaktif' => $record->retensi_inaktif ?? 0,
                 'skkaad' => $record->skkaad ?? '',
-                'keterangan' => $record->keterangan ?? ''
+                'keterangan' => $record->keterangan ?? '',
+                'lokasi_arsip' => $lokasiArsip ?: '-'
             ];
         }
 
@@ -72,7 +81,8 @@ class ArsipUnitLaporanExport implements FromArray, WithHeadings, WithColumnWidth
             'Retensi Aktif',
             'Retensi Inaktif',
             'SKKAAD',
-            'Keterangan'
+            'Keterangan',
+            'Lokasi Arsip'
         ];
     }
 
@@ -89,8 +99,9 @@ class ArsipUnitLaporanExport implements FromArray, WithHeadings, WithColumnWidth
             'H' => 20,  // Unit Pengolah
             'I' => 12,  // Retensi Aktif
             'J' => 14,  // Retensi Inaktif
-            'K' => 12,  // Status
+            'K' => 12,  // SKKAAD
             'L' => 30,  // Keterangan
+            'M' => 30,  // Lokasi Arsip
         ];
     }
 
@@ -109,7 +120,7 @@ class ArsipUnitLaporanExport implements FromArray, WithHeadings, WithColumnWidth
                 $sheet->insertNewRowBefore(1, 4);
                 
                 // Set title in row 1
-                $sheet->mergeCells('A1:L1');
+                $sheet->mergeCells('A1:M1');
                 $sheet->setCellValue('A1', 'LAPORAN DAFTAR ARSIP UNIT');
                 $sheet->getStyle('A1')->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -117,7 +128,7 @@ class ArsipUnitLaporanExport implements FromArray, WithHeadings, WithColumnWidth
                 ]);
 
                 // Set unit pengolah in row 2
-                $sheet->mergeCells('A2:L2');
+                $sheet->mergeCells('A2:M2');
                 $sheet->setCellValue('A2', 'UNIT PENGOLAH: ' . $this->unitPengolah);
                 $sheet->getStyle('A2')->applyFromArray([
                     'font' => ['size' => 11],
@@ -125,7 +136,7 @@ class ArsipUnitLaporanExport implements FromArray, WithHeadings, WithColumnWidth
                 ]);
 
                 // Set periode in row 3
-                $sheet->mergeCells('A3:L3');
+                $sheet->mergeCells('A3:M3');
                 $sheet->setCellValue('A3', 'PERIODE: ' . $this->periode);
                 $sheet->getStyle('A3')->applyFromArray([
                     'font' => ['size' => 11],
@@ -140,7 +151,7 @@ class ArsipUnitLaporanExport implements FromArray, WithHeadings, WithColumnWidth
                 }
 
                 // Header row style (row 5)
-                $sheet->getStyle('A5:L5')->applyFromArray([
+                $sheet->getStyle('A5:M5')->applyFromArray([
                     'font' => ['bold' => true, 'size' => 9],
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
@@ -155,7 +166,7 @@ class ArsipUnitLaporanExport implements FromArray, WithHeadings, WithColumnWidth
                 $sheet->getRowDimension(5)->setRowHeight(30);
 
                 $highestRow = $sheet->getHighestRow();
-                $highestColumn = 'L';
+                $highestColumn = 'M';
 
                 // Apply borders to data area
                 $sheet->getStyle('A5:' . $highestColumn . $highestRow)->applyFromArray([
@@ -171,9 +182,10 @@ class ArsipUnitLaporanExport implements FromArray, WithHeadings, WithColumnWidth
                 $sheet->getStyle('A5:' . $highestColumn . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 $sheet->getStyle('A5:' . $highestColumn . $highestRow)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
 
-                // Wrap text for the 'Uraian Informasi' and 'Keterangan' columns
+                // Wrap text for the 'Uraian Informasi', 'Lokasi Arsip' and 'Keterangan' columns
                 $sheet->getStyle('D6:D' . $highestRow)->getAlignment()->setWrapText(true);
                 $sheet->getStyle('L6:L' . $highestRow)->getAlignment()->setWrapText(true);
+                $sheet->getStyle('M6:M' . $highestRow)->getAlignment()->setWrapText(true);
             },
         ];
     }

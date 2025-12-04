@@ -67,10 +67,20 @@
                 <th>Retensi<br>Inaktif</th>
                 <th>SKKAAD</th>
                 <th>Keterangan</th>
+                <th>Lokasi Arsip</th>
             </tr>
         </thead>
         <tbody>
             @forelse($records as $index => $record)
+                @php
+                    $lokasiArsip = collect([
+                        $record->ruangan ? 'R: ' . $record->ruangan : null,
+                        $record->no_filling ? 'Rak: ' . $record->no_filling : null,
+                        $record->no_laci ? 'Laci: ' . $record->no_laci : null,
+                        $record->no_folder ? 'Folder: ' . $record->no_folder : null,
+                        $record->no_box ? 'Box: ' . $record->no_box : null,
+                    ])->filter()->implode(', ');
+                @endphp
                 <tr>
                     <td style="text-align: center;">{{ $index + 1 }}</td>
                     <td>{{ $record->kodeKlasifikasi->kode_klasifikasi ?? 'N/A' }}</td>
@@ -84,10 +94,11 @@
                     <td style="text-align: center;">{{ $record->retensi_inaktif ?? 0 }}</td>
                     <td>{{ $record->skkaad ?? '' }}</td>
                     <td>{{ $record->keterangan ?? '' }}</td>
+                    <td>{{ $lokasiArsip ?: '-' }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="12" style="text-align: center;">Tidak ada data.</td>
+                    <td colspan="13" style="text-align: center;">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>

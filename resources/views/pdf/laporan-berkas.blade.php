@@ -65,6 +65,7 @@
                 <th>Retensi<br>Inaktif</th>
                 <th>Status Akhir</th>
                 <th>Keterangan</th>
+                <th>Lokasi Berkas</th>
             </tr>
         </thead>
         <tbody>
@@ -79,11 +80,12 @@
                     <td style="text-align: center;">{{ $record->retensi_aktif }}</td>
                     <td style="text-align: center;">{{ $record->retensi_inaktif }}</td>
                     <td>{{ $record->penyusutan_akhir }}</td>
-                    <td>{{ $record->keterangan ?? $record->lokasi_fisik ?? '' }}</td>
+                    <td>{{ $record->keterangan ?? '' }}</td>
+                    <td>{{ $record->lokasi_fisik ?? '-' }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="10" style="text-align: center;">Tidak ada data.</td>
+                    <td colspan="11" style="text-align: center;">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>

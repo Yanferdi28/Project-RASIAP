@@ -17,6 +17,43 @@ class ArsipUnitImportService implements ToModel, WithHeadingRow
 {
     use Importable;
 
+    /**
+     * Parse tanggal dari berbagai format (Excel serial, DD/MM/YYYY, YYYY-MM-DD)
+     */
+    private function parseDate($value): ?string
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        // Jika berupa angka (Excel serial number)
+        if (is_numeric($value)) {
+            return \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value)->format('Y-m-d');
+        }
+
+        // Jika format DD/MM/YYYY
+        if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $value, $matches)) {
+            return $matches[3] . '-' . str_pad($matches[2], 2, '0', STR_PAD_LEFT) . '-' . str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+        }
+
+        // Jika format DD-MM-YYYY
+        if (preg_match('/^(\d{1,2})-(\d{1,2})-(\d{4})$/', $value, $matches)) {
+            return $matches[3] . '-' . str_pad($matches[2], 2, '0', STR_PAD_LEFT) . '-' . str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+        }
+
+        // Jika sudah format YYYY-MM-DD
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+            return $value;
+        }
+
+        // Coba parse dengan Carbon
+        try {
+            return \Carbon\Carbon::parse($value)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     public function model(array $row): ?ArsipUnit
     {
         // Map kode_klasifikasi to kode_klasifikasi_id and get related data
@@ -67,9 +104,9 @@ class ArsipUnitImportService implements ToModel, WithHeadingRow
             'kode_klasifikasi_id' => $kodeKlasifikasiId,
             'indeks' => $row['indeks'] ?? null,
             'uraian_informasi' => $row['uraian_informasi'] ?? null,
-            'tanggal' => $row['tanggal'] ?? null,
-            'jumlah_nilai' => $row['jumlah_nilai'] ?? null,
-            'jumlah_satuan' => $row['jumlah_satuan'] ?? null,
+            'tanggal' => $this->parseDate($row['tanggal'] ?? null),
+            'jumlah_nilai' => $row['jumlah'] ?? $row['jumlah_nilai'] ?? null,
+            'jumlah_satuan' => $row['satuan'] ?? $row['jumlah_satuan'] ?? null,
             'tingkat_perkembangan' => $row['tingkat_perkembangan'] ?? null,
             'unit_pengolah_arsip_id' => $unitPengolahId,
             'retensi_aktif' => $row['retensi_aktif'] ?? $retensiAktif, // Use provided value or auto-populated
@@ -80,7 +117,8 @@ class ArsipUnitImportService implements ToModel, WithHeadingRow
             'no_laci' => $row['no_laci'] ?? null,
             'no_folder' => $row['no_folder'] ?? null,
             'no_box' => $row['no_box'] ?? null,
-            'status' => $row['status'] ?? 'pending',
+            'keterangan' => $row['keterangan'] ?? null,
+            'status' => 'pending',
             'kategori_id' => $kategoriId,
             'sub_kategori_id' => $subKategoriId,
         ]);
@@ -144,9 +182,9 @@ class ArsipUnitImportService implements ToModel, WithHeadingRow
                     'kode_klasifikasi_id' => $kodeKlasifikasi->id,
                     'indeks' => $row['indeks'] ?? null,
                     'uraian_informasi' => $row['uraian_informasi'] ?? null,
-                    'tanggal' => $row['tanggal'] ?? null,
-                    'jumlah_nilai' => $row['jumlah_nilai'] ?? null,
-                    'jumlah_satuan' => $row['jumlah_satuan'] ?? null,
+                    'tanggal' => $this->parseDate($row['tanggal'] ?? null),
+                    'jumlah_nilai' => $row['jumlah'] ?? $row['jumlah_nilai'] ?? null,
+                    'jumlah_satuan' => $row['satuan'] ?? $row['jumlah_satuan'] ?? null,
                     'tingkat_perkembangan' => $row['tingkat_perkembangan'] ?? null,
                     'unit_pengolah_arsip_id' => null, // Will be set if provided
                     'retensi_aktif' => $row['retensi_aktif'] ?? $kodeKlasifikasi->retensi_aktif, // Auto-populate if not provided
@@ -157,7 +195,8 @@ class ArsipUnitImportService implements ToModel, WithHeadingRow
                     'no_laci' => $row['no_laci'] ?? null,
                     'no_folder' => $row['no_folder'] ?? null,
                     'no_box' => $row['no_box'] ?? null,
-                    'status' => $row['status'] ?? 'pending',
+                    'keterangan' => $row['keterangan'] ?? null,
+                    'status' => 'pending',
                     'kategori_id' => null, // Will be set if provided
                     'sub_kategori_id' => null, // Will be set if provided
                 ]);

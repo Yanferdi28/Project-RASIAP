@@ -109,8 +109,8 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
             'NAMA BERKAS',
             'TANGGAL BUAT BERKAS',
             'NO ITEM ARSIP',
-            'URAIAN INFORMASI ARSIP',
-            'TANGGAL ITEM',
+            'URAIAN INFORMASI',
+            'TANGGAL',
             'JUMLAH',
             'KETERANGAN',
         ];
@@ -133,44 +133,6 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
 
     public function styles(Worksheet $sheet)
     {
-        // Title styles
-        $sheet->mergeCells('A1:I1');
-        $sheet->setCellValue('A1', 'LAPORAN DAFTAR ISI BERKAS ARSIP AKTIF');
-        $sheet->getStyle('A1')->applyFromArray([
-            'font' => ['bold' => true, 'size' => 14],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-        ]);
-
-        $sheet->mergeCells('A2:I2');
-        $sheet->setCellValue('A2', 'UNIT PENGOLAH: ' . $this->unitPengolah);
-        $sheet->getStyle('A2')->applyFromArray([
-            'font' => ['size' => 11],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-        ]);
-
-        $sheet->mergeCells('A3:I3');
-        $sheet->setCellValue('A3', 'PERIODE: ' . $this->periode);
-        $sheet->getStyle('A3')->applyFromArray([
-            'font' => ['size' => 11],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-        ]);
-
-        // Header row style (row 5)
-        $sheet->getStyle('A5:I5')->applyFromArray([
-            'font' => ['bold' => true, 'size' => 9],
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'startColor' => ['rgb' => 'f2f2f2'],
-            ],
-            'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER,
-                'vertical' => Alignment::VERTICAL_CENTER,
-                'wrapText' => true,
-            ],
-        ]);
-
-        $sheet->getRowDimension(5)->setRowHeight(30);
-
         return [];
     }
 
@@ -183,12 +145,51 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
                 // Insert 4 rows at the top for title
                 $sheet->insertNewRowBefore(1, 4);
                 
+                // Set title in row 1
+                $sheet->mergeCells('A1:I1');
+                $sheet->setCellValue('A1', 'LAPORAN DAFTAR ISI BERKAS ARSIP AKTIF');
+                $sheet->getStyle('A1')->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                ]);
+
+                // Set unit pengolah in row 2
+                $sheet->mergeCells('A2:I2');
+                $sheet->setCellValue('A2', 'UNIT PENGOLAH: ' . $this->unitPengolah);
+                $sheet->getStyle('A2')->applyFromArray([
+                    'font' => ['size' => 11],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                ]);
+
+                // Set periode in row 3
+                $sheet->mergeCells('A3:I3');
+                $sheet->setCellValue('A3', 'PERIODE: ' . $this->periode);
+                $sheet->getStyle('A3')->applyFromArray([
+                    'font' => ['size' => 11],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                ]);
+                
                 // Move headings to row 5
                 $headings = $this->headings();
                 foreach ($headings as $colIndex => $heading) {
                     $col = chr(65 + $colIndex); // A, B, C, ...
                     $sheet->setCellValue($col . '5', $heading);
                 }
+
+                // Header row style (row 5)
+                $sheet->getStyle('A5:I5')->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 9],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => 'f2f2f2'],
+                    ],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
+                ]);
+                $sheet->getRowDimension(5)->setRowHeight(30);
 
                 $highestRow = $sheet->getHighestRow();
                 $highestColumn = 'I';

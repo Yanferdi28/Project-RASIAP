@@ -65,7 +65,7 @@
                 <th>Unit<br>Pengolah</th>
                 <th>Retensi<br>Aktif</th>
                 <th>Retensi<br>Inaktif</th>
-                <th>Status</th>
+                <th>SKKAAD</th>
                 <th>Keterangan</th>
             </tr>
         </thead>
@@ -82,7 +82,7 @@
                     <td>{{ $record->unitPengolah->nama_unit ?? 'N/A' }}</td>
                     <td style="text-align: center;">{{ $record->retensi_aktif ?? 0 }}</td>
                     <td style="text-align: center;">{{ $record->retensi_inaktif ?? 0 }}</td>
-                    <td>{{ $record->status ?? '' }}</td>
+                    <td>{{ $record->skkaad ?? '' }}</td>
                     <td>{{ $record->keterangan ?? '' }}</td>
                 </tr>
             @empty

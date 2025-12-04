@@ -12,6 +12,43 @@ class ImportArsipUnit extends Importer
 {
     protected static ?string $model = ArsipUnit::class;
 
+    /**
+     * Parse tanggal dari berbagai format (Excel serial, DD/MM/YYYY, YYYY-MM-DD)
+     */
+    private function parseDate($value): ?string
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        // Jika berupa angka (Excel serial number)
+        if (is_numeric($value)) {
+            return \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value)->format('Y-m-d');
+        }
+
+        // Jika format DD/MM/YYYY
+        if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $value, $matches)) {
+            return $matches[3] . '-' . str_pad($matches[2], 2, '0', STR_PAD_LEFT) . '-' . str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+        }
+
+        // Jika format DD-MM-YYYY
+        if (preg_match('/^(\d{1,2})-(\d{1,2})-(\d{4})$/', $value, $matches)) {
+            return $matches[3] . '-' . str_pad($matches[2], 2, '0', STR_PAD_LEFT) . '-' . str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+        }
+
+        // Jika sudah format YYYY-MM-DD
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+            return $value;
+        }
+
+        // Coba parse dengan Carbon
+        try {
+            return \Carbon\Carbon::parse($value)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     public static function getColumns(): array
     {
         return [
@@ -31,11 +68,11 @@ class ImportArsipUnit extends Importer
                 ->label('Tanggal')
                 ->requiredMapping()
                 ->rules(['required', 'date']),
-            ImportColumn::make('jumlah_nilai')
-                ->label('Jumlah Nilai')
+            ImportColumn::make('jumlah')
+                ->label('Jumlah')
                 ->rules(['nullable', 'numeric']),
-            ImportColumn::make('jumlah_satuan')
-                ->label('Jumlah Satuan')
+            ImportColumn::make('satuan')
+                ->label('Satuan')
                 ->rules(['nullable', 'string']),
             ImportColumn::make('tingkat_perkembangan')
                 ->label('Tingkat Perkembangan')
@@ -67,9 +104,9 @@ class ImportArsipUnit extends Importer
             ImportColumn::make('no_box')
                 ->label('No Box')
                 ->rules(['nullable', 'string']),
-            ImportColumn::make('status')
-                ->label('Status')
-                ->rules(['nullable', 'in:pending,diterima,ditolak']),
+            ImportColumn::make('keterangan')
+                ->label('Keterangan')
+                ->rules(['nullable', 'string']),
             ImportColumn::make('kategori')
                 ->label('Kategori')
                 ->rules(['nullable', 'exists:kategoris,nama_kategori']),
@@ -126,9 +163,9 @@ class ImportArsipUnit extends Importer
         // Set other values directly
         $record->indeks = $data['indeks'] ?? null;
         $record->uraian_informasi = $data['uraian_informasi'] ?? null;
-        $record->tanggal = $data['tanggal'] ?? null;
-        $record->jumlah_nilai = $data['jumlah_nilai'] ?? null;
-        $record->jumlah_satuan = $data['jumlah_satuan'] ?? null;
+        $record->tanggal = $this->parseDate($data['tanggal'] ?? null);
+        $record->jumlah_nilai = $data['jumlah'] ?? null;
+        $record->jumlah_satuan = $data['satuan'] ?? null;
         $record->tingkat_perkembangan = $data['tingkat_perkembangan'] ?? null;
         $record->retensi_aktif = $data['retensi_aktif'] ?? null;
         $record->retensi_inaktif = $data['retensi_inaktif'] ?? null;
@@ -138,7 +175,8 @@ class ImportArsipUnit extends Importer
         $record->no_laci = $data['no_laci'] ?? null;
         $record->no_folder = $data['no_folder'] ?? null;
         $record->no_box = $data['no_box'] ?? null;
-        $record->status = $data['status'] ?? 'pending';
+        $record->keterangan = $data['keterangan'] ?? null;
+        $record->status = 'pending';
 
         return $record;
     }

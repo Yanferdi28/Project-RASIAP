@@ -181,7 +181,7 @@ class BerkasArsipUnitsRelationManager extends RelationManager
                 ->form([
                     \Filament\Forms\Components\Select::make('kode_klasifikasi_id')
                         ->label('Kode Klasifikasi')
-                        ->options(KodeKlasifikasi::all()->pluck('kode_klasifikasi', 'id_kode_klasifikasi'))
+                        ->options(KodeKlasifikasi::all()->pluck('kode_klasifikasi', 'id'))
                         ->searchable(),
                     \Filament\Forms\Components\TextInput::make('indeks')
                         ->label('Indeks'),
@@ -189,19 +189,30 @@ class BerkasArsipUnitsRelationManager extends RelationManager
                         ->label('Tanggal'),
                     \Filament\Forms\Components\Select::make('kategori_id')
                         ->label('Kategori')
-                        ->options(Kategori::all()->pluck('nama_kategori', 'id_kategori'))
+                        ->options(Kategori::all()->pluck('nama_kategori', 'id'))
                         ->searchable(),
                     \Filament\Forms\Components\Select::make('sub_kategori_id')
                         ->label('Sub Kategori')
-                        ->options(SubKategori::all()->pluck('nama_sub_kategori', 'id_sub_kategori'))
+                        ->options(SubKategori::all()->pluck('nama_sub_kategori', 'id'))
                         ->searchable(),
                     \Filament\Forms\Components\TextInput::make('jumlah_nilai')
                         ->label('Jumlah Nilai')
                         ->numeric(),
-                    \Filament\Forms\Components\TextInput::make('jumlah_satuan')
-                        ->label('Satuan'),
-                    \Filament\Forms\Components\TextInput::make('tingkat_perkembangan')
-                        ->label('Tingkat Perkembangan'),
+                    \Filament\Forms\Components\Select::make('jumlah_satuan')
+                        ->label('Satuan')
+                        ->options([
+                            'Lembar' => 'Lembar',
+                            'Jilid' => 'Jilid',
+                            'Bundle' => 'Bundle',
+                        ]),
+                    \Filament\Forms\Components\Select::make('tingkat_perkembangan')
+                        ->label('Tingkat Perkembangan')
+                        ->options([
+                            'Asli' => 'Asli',
+                            'Salinan' => 'Salinan',
+                            'Tembusan' => 'Tembusan',
+                            'Pertinggal' => 'Pertinggal',
+                        ]),
                     \Filament\Forms\Components\TextInput::make('retensi_aktif')
                         ->label('Retensi Aktif')
                         ->numeric(),

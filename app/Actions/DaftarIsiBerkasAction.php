@@ -47,7 +47,7 @@ class DaftarIsiBerkasAction
                     $query = $livewire->getFilteredTableQuery()
                         ->with(['arsipUnits' => function($q) {
                             $q->orderBy('created_at', 'asc');
-                        }, 'klasifikasi', 'arsipUnits.kodeKlasifikasi', 'arsipUnits.unitPengolah'])
+                        }, 'klasifikasi', 'arsipUnits.kodeKlasifikasi'])
                         ->orderBy('created_at', 'asc');
 
                     // Tambahkan filter berdasarkan tanggal jika disediakan

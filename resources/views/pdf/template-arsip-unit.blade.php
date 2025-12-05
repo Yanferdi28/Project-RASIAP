@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Laporan Daftar Arsip Unit</title>
+    <title>Template Laporan Daftar Arsip Unit</title>
     <style>
         body {
             font-family: 'Helvetica', sans-serif;
@@ -40,16 +40,13 @@
             font-weight: bold;
             text-transform: uppercase;
         }
-        .page-break {
-            page-break-after: always;
-        }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>Laporan Daftar Arsip Unit</h1>
-        <h2>UNIT PENGOLAH: {{ $unitPengolah }}</h2>
-        <h2>PERIODE: {{ $periode }}</h2>
+        <h2>UNIT PENGOLAH: {{ $unitPengolah ?? '...................' }}</h2>
+        <h2>PERIODE: {{ $periode ?? '...................' }}</h2>
     </div>
 
     <table>
@@ -78,31 +75,25 @@
             </tr>
         </thead>
         <tbody>
-            @forelse($records as $index => $record)
-                <tr>
-                    <td style="text-align: center;">{{ $index + 1 }}</td>
-                    <td>{{ $record->kodeKlasifikasi->kode_klasifikasi ?? 'N/A' }}</td>
-                    <td>{{ $record->indeks ?? '' }}</td>
-                    <td>{{ $record->uraian_informasi ?? '' }}</td>
-                    <td>{{ $record->tanggal ? $record->tanggal->format('d-m-Y') : '' }}</td>
-                    <td>{{ $record->jumlah_nilai . ' ' . ($record->jumlah_satuan ?? '') }}</td>
-                    <td>{{ $record->tingkat_perkembangan ?? '' }}</td>
-                    <td>{{ $record->unitPengolah->nama_unit ?? 'N/A' }}</td>
-                    <td style="text-align: center;">{{ $record->retensi_aktif ?? 0 }}</td>
-                    <td style="text-align: center;">{{ $record->retensi_inaktif ?? 0 }}</td>
-                    <td>{{ $record->skkaad ?? '' }}</td>
-                    <td>{{ $record->ruangan ?? '-' }}</td>
-                    <td>{{ $record->no_filling ?? '-' }}</td>
-                    <td>{{ $record->no_laci ?? '-' }}</td>
-                    <td>{{ $record->no_box ?? '-' }}</td>
-                    <td>{{ $record->no_folder ?? '-' }}</td>
-                    <td>{{ $record->keterangan ?? '' }}</td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="17" style="text-align: center;">Tidak ada data.</td>
-                </tr>
-            @endforelse
+            <tr>
+                <td style="text-align: center; height: 30px;">&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
         </tbody>
     </table>
 </body>

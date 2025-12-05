@@ -63,17 +63,28 @@
     <table>
         <thead>
             <tr>
-                <th>NO</th>
-                <th>KODE KLASIFIKASI<br>/NOMOR BERKAS</th>
-                <th>NAMA BERKAS</th>
-                <th>TANGGAL<br>BUAT BERKAS</th>
-                <th>NO<br>ITEM<br>ARSIP</th>
-                <th>URAIAN INFORMASI</th>
-                <th>TANGGAL</th>
-                <th>JUMLAH</th>
-                <th>KETERANGAN</th>
-                <th>LOKASI BERKAS</th>
-                <th>LOKASI ARSIP</th>
+                <th rowspan="2">NO</th>
+                <th rowspan="2">KODE KLASIFIKASI<br>/NOMOR BERKAS</th>
+                <th rowspan="2">INDEKS</th>
+                <th rowspan="2">NAMA BERKAS</th>
+                <th rowspan="2">TANGGAL<br>BUAT BERKAS</th>
+                <th rowspan="2">NO<br>ITEM<br>ARSIP</th>
+                <th rowspan="2">URAIAN INFORMASI</th>
+                <th rowspan="2">TANGGAL</th>
+                <th rowspan="2">JUMLAH<br>ITEM</th>
+                <th rowspan="2">RETENSI<br>AKTIF</th>
+                <th rowspan="2">RETENSI<br>INAKTIF</th>
+                <th rowspan="2">SKKAAD</th>
+                <th rowspan="2">LOKASI BERKAS</th>
+                <th colspan="5" style="text-align: center;">LOKASI ARSIP</th>
+                <th rowspan="2">KETERANGAN</th>
+            </tr>
+            <tr>
+                <th>Ruang</th>
+                <th>No Rak</th>
+                <th>No Laci</th>
+                <th>No Box</th>
+                <th>No Folder</th>
             </tr>
         </thead>
         <tbody>
@@ -91,15 +102,23 @@
                 <tr class="berkas-row">
                     <td>{{ $noBerkas }}</td>
                     <td>{{ $record->klasifikasi->kode_klasifikasi ?? '-' }}</td>
+                    <td></td>
                     <td>{{ $record->nama_berkas }}</td>
                     <td>{{ $record->created_at ? $record->created_at->format('d/m/Y') : '-' }}</td>
-                    <td>-</td>
+                    <td></td>
                     <td>{{ $record->uraian ?? '-' }}</td>
                     <td>{{ $record->created_at ? $record->created_at->format('d-m-Y') : '-' }}</td>
                     <td>{{ $totalUnits }}</td>
-                    <td>-</td>
+                    <td>{{ $record->retensi_aktif ?? '-' }}</td>
+                    <td>{{ $record->retensi_inaktif ?? '-' }}</td>
+                    <td>{{ $record->klasifikasi->status_akhir ?? '-' }}</td>
                     <td>{{ $record->lokasi_fisik ?? '-' }}</td>
-                    <td>-</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
 
                 {{-- Row 2+: Arsip units --}}
@@ -107,26 +126,27 @@
                     @foreach($arsipUnits as $unitIndex => $unit)
                         @php
                             $noItem = $unitIndex + 1;
-                            $lokasiArsip = collect([
-                                $unit->ruangan ? 'R: ' . $unit->ruangan : null,
-                                $unit->no_filling ? 'Rak: ' . $unit->no_filling : null,
-                                $unit->no_laci ? 'Laci: ' . $unit->no_laci : null,
-                                $unit->no_folder ? 'Folder: ' . $unit->no_folder : null,
-                                $unit->no_box ? 'Box: ' . $unit->no_box : null,
-                            ])->filter()->implode(', ');
                         @endphp
                         <tr class="item-row">
                             <td></td>
                             <td></td>
+                            <td>{{ $unit->indeks ?? '-' }}</td>
                             <td></td>
                             <td></td>
                             <td>{{ $noItem }}</td>
                             <td>{{ $unit->uraian_informasi ?? '-' }}</td>
                             <td>{{ $unit->tanggal ? $unit->tanggal->format('d-m-Y') : '-' }}</td>
                             <td></td>
-                            <td>{{ $unit->tingkat_perkembangan ?? '-' }}</td>
                             <td></td>
-                            <td>{{ $lokasiArsip ?: '-' }}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>{{ $unit->ruangan ?? '-' }}</td>
+                            <td>{{ $unit->no_filling ?? '-' }}</td>
+                            <td>{{ $unit->no_laci ?? '-' }}</td>
+                            <td>{{ $unit->no_box ?? '-' }}</td>
+                            <td>{{ $unit->no_folder ?? '-' }}</td>
+                            <td>{{ $unit->tingkat_perkembangan ?? '-' }}</td>
                         </tr>
                     @endforeach
                 @endif
@@ -135,7 +155,7 @@
                 @endphp
             @empty
                 <tr>
-                    <td colspan="11" style="text-align: center; padding: 20px;">Tidak ada data.</td>
+                    <td colspan="19" style="text-align: center; padding: 20px;">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>

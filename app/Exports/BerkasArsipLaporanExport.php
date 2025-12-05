@@ -39,18 +39,19 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
     {
         $rows = [];
         foreach ($this->records as $index => $record) {
+            $jumlahItem = $record->arsipUnits()->count();
             $rows[] = [
                 'no' => $index + 1,
                 'kode_klasifikasi' => $record->klasifikasi->kode_klasifikasi ?? 'N/A',
                 'nama_berkas' => $record->nama_berkas,
                 'tanggal_buat_berkas' => $record->created_at->format('d-m-Y'),
                 'kurun_waktu' => $record->created_at->format('d M Y') . ' s/d ' . $record->updated_at->format('d M Y'),
-                'jumlah_item' => 1, // Default to 1 as in the original
+                'jumlah_item' => $jumlahItem,
                 'retensi_aktif' => $record->retensi_aktif ?? 0,
                 'retensi_inaktif' => $record->retensi_inaktif ?? 0,
-                'status_akhir' => $record->penyusutan_akhir,
+                'skkaad' => $record->klasifikasi->status_akhir ?? '-',
+                'lokasi_berkas' => $record->lokasi_fisik ?? '-',
                 'keterangan' => $record->keterangan ?? '',
-                'lokasi_berkas' => $record->lokasi_fisik ?? '-'
             ];
         }
 
@@ -68,9 +69,9 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
             'Jumlah Item',
             'Retensi Aktif',
             'Retensi Inaktif',
-            'Status Akhir',
-            'Keterangan',
-            'Lokasi Berkas'
+            'SKKAAD',
+            'Lokasi Fisik',
+            'Keterangan'
         ];
     }
 

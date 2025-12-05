@@ -174,24 +174,26 @@ class ArsipUnitForm
 
                 Section::make('Lokasi Fisik Arsip')
                     ->description('Detail lokasi penyimpanan fisik arsip.')
-                    ->columns(2)
+                    ->columns(5)
                     ->schema([
-                        TextInput::make('ruangan')->label('Ruangan'),
-                        TextInput::make('no_filling')->label('No. Filling/Rak/Lemari'),
+                        TextInput::make('ruangan')->label('Ruang'),
+                        TextInput::make('no_filling')->label('No. Rak'),
                         TextInput::make('no_laci')->label('No. Laci'),
-                        TextInput::make('no_folder')->label('No. Folder'),
                         TextInput::make('no_box')->label('No. Box'),
+                        TextInput::make('no_folder')->label('No. Folder'),
                     ]),
 
-
-                Section::make('Dokumen Digital')
-                    ->description('Unggah hasil pindai (scan) dokumen.')
+                Section::make('Keterangan & Dokumen')
+                    ->columns(1)
                     ->schema([
+                        Textarea::make('keterangan')
+                            ->label('Keterangan')
+                            ->rows(2),
+
                         FileUpload::make('dokumen')
                             ->label('Upload Dokumen')
                             ->directory('arsip-dokumen')
                             ->preserveFilenames()
-                            ->hiddenLabel()
                             ->visibility('public')
                             ->disk('public')
                             ->imagePreviewHeight('250')

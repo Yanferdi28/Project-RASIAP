@@ -63,25 +63,28 @@
                 <th>Jumlah Item</th>
                 <th>Retensi<br>Aktif</th>
                 <th>Retensi<br>Inaktif</th>
-                <th>Status Akhir</th>
+                <th>SKKAAD</th>
+                <th>Lokasi Fisik</th>
                 <th>Keterangan</th>
-                <th>Lokasi Berkas</th>
             </tr>
         </thead>
         <tbody>
             @forelse($records as $index => $record)
+                @php
+                    $jumlahItem = $record->arsipUnits()->count();
+                @endphp
                 <tr>
                     <td style="text-align: center;">{{ $index + 1 }}</td>
                     <td>{{ $record->klasifikasi->kode_klasifikasi ?? 'N/A' }}</td>
                     <td>{{ $record->nama_berkas }}</td>
                     <td>{{ $record->created_at->format('d-m-Y') }}</td>
                     <td>{{ $record->created_at->format('d M Y') }} s/d {{ $record->updated_at->format('d M Y') }}</td>
-                    <td style="text-align: center;">{{ $record->arsipUnits->count() }}</td>
+                    <td style="text-align: center;">{{ $jumlahItem }}</td>
                     <td style="text-align: center;">{{ $record->retensi_aktif }}</td>
                     <td style="text-align: center;">{{ $record->retensi_inaktif }}</td>
-                    <td>{{ $record->penyusutan_akhir }}</td>
-                    <td>{{ $record->keterangan ?? '' }}</td>
+                    <td>{{ $record->klasifikasi->status_akhir ?? '-' }}</td>
                     <td>{{ $record->lokasi_fisik ?? '-' }}</td>
+                    <td>{{ $record->keterangan ?? '' }}</td>
                 </tr>
             @empty
                 <tr>

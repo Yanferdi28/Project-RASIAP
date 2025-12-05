@@ -185,11 +185,14 @@ class BerkasArsipUnitsRelationManager extends RelationManager
                             ->numeric()
                             ->disabled()
                             ->dehydrated(true),
-                        TextInput::make('ruangan')->label('Ruangan'),
-                        TextInput::make('no_filling')->label('No. Filling/Rak/Lemari'),
+                        TextInput::make('ruangan')->label('Ruang'),
+                        TextInput::make('no_filling')->label('No. Rak'),
                         TextInput::make('no_laci')->label('No. Laci'),
-                        TextInput::make('no_folder')->label('No. Folder'),
                         TextInput::make('no_box')->label('No. Box'),
+                        TextInput::make('no_folder')->label('No. Folder'),
+                        Textarea::make('keterangan')
+                            ->label('Keterangan')
+                            ->rows(2),
                         FileUpload::make('dokumen')
                             ->label('Upload Dokumen')
                             ->directory('arsip-dokumen')
@@ -372,26 +375,28 @@ class BerkasArsipUnitsRelationManager extends RelationManager
                         ->label('SKKAAD')
                         ->disabled()
                         ->dehydrated(true),
-                    \Filament\Forms\Components\TextInput::make('ruangan')
-                        ->label('Ruangan'),
-                    \Filament\Forms\Components\TextInput::make('no_filling')
-                        ->label('No. Filling'),
-                    \Filament\Forms\Components\TextInput::make('no_laci')
-                        ->label('No. Laci'),
-                    \Filament\Forms\Components\TextInput::make('no_folder')
-                        ->label('No. Folder'),
-                    \Filament\Forms\Components\TextInput::make('no_box')
-                        ->label('No. Box'),
                     \Filament\Forms\Components\Select::make('status')
                         ->options([
                             'menunggu' => 'Menunggu',
                             'disetujui' => 'Disetujui',
                             'ditolak' => 'Ditolak',
                         ]),
-                    \Filament\Forms\Components\TextInput::make('keterangan')
-                        ->label('Keterangan'),
+                    \Filament\Forms\Components\TextInput::make('ruangan')
+                        ->label('Ruang'),
+                    \Filament\Forms\Components\TextInput::make('no_filling')
+                        ->label('No. Rak'),
+                    \Filament\Forms\Components\TextInput::make('no_laci')
+                        ->label('No. Laci'),
+                    \Filament\Forms\Components\TextInput::make('no_box')
+                        ->label('No. Box'),
+                    \Filament\Forms\Components\TextInput::make('no_folder')
+                        ->label('No. Folder'),
                     \Filament\Forms\Components\Textarea::make('uraian_informasi')
                         ->label('Uraian Informasi')
+                        ->columnSpanFull(),
+                    \Filament\Forms\Components\Textarea::make('keterangan')
+                        ->label('Keterangan')
+                        ->rows(2)
                         ->columnSpanFull(),
                 ])
                 ->action(function ($record, array $data) {

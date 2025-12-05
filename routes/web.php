@@ -41,6 +41,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/dokumen/download/{id}', [App\Http\Controllers\DocumentController::class, 'download'])->name('dokumen.download');
     Route::get('/dokumen/view/{id}', [App\Http\Controllers\DocumentController::class, 'view'])->name('dokumen.view');
     Route::get('/dokumen/{id}', [App\Http\Controllers\DocumentController::class, 'show'])->name('dokumen.show');
+
+    // Template Download Routes
+    Route::get('/template/arsip-unit/excel', [App\Actions\TemplateExportAction::class, 'arsipUnitExcel'])->name('template.arsip-unit.excel');
+    Route::get('/template/arsip-unit/pdf', [App\Actions\TemplateExportAction::class, 'arsipUnitPdf'])->name('template.arsip-unit.pdf');
+    Route::get('/template/daftar-isi-berkas/excel', [App\Actions\TemplateExportAction::class, 'daftarIsiBerkasExcel'])->name('template.daftar-isi-berkas.excel');
+    Route::get('/template/daftar-isi-berkas/pdf', [App\Actions\TemplateExportAction::class, 'daftarIsiBerkasPdf'])->name('template.daftar-isi-berkas.pdf');
+    Route::get('/template/import-arsip-unit/excel', [App\Actions\TemplateExportAction::class, 'importArsipUnitExcel'])->name('template.import-arsip-unit.excel');
 });
 
 

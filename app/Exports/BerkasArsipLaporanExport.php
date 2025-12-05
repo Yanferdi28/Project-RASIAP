@@ -49,7 +49,8 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
                 'jumlah_item' => $jumlahItem,
                 'retensi_aktif' => $record->retensi_aktif ?? 0,
                 'retensi_inaktif' => $record->retensi_inaktif ?? 0,
-                'skkaad' => $record->klasifikasi->status_akhir ?? '-',
+                'skkaad' => $record->klasifikasi->klasifikasi_keamanan ?? '-',
+                'status_akhir' => $record->klasifikasi->status_akhir ?? '-',
                 'lokasi_berkas' => $record->lokasi_fisik ?? '-',
                 'keterangan' => $record->keterangan ?? '',
             ];
@@ -70,6 +71,7 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
             'Retensi Aktif',
             'Retensi Inaktif',
             'SKKAAD',
+            'Status Akhir',
             'Lokasi Fisik',
             'Keterangan'
         ];
@@ -86,9 +88,10 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
             'F' => 10,  // Jumlah Item
             'G' => 12,  // Retensi Aktif
             'H' => 14,  // Retensi Inaktif
-            'I' => 12,  // Status Akhir
-            'J' => 30,  // Keterangan
-            'K' => 30,  // Lokasi Berkas
+            'I' => 12,  // SKKAAD
+            'J' => 12,  // Status Akhir
+            'K' => 30,  // Lokasi Fisik
+            'L' => 30,  // Keterangan
         ];
     }
 
@@ -107,7 +110,7 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
                 $sheet->insertNewRowBefore(1, 4);
                 
                 // Set title in row 1
-                $sheet->mergeCells('A1:K1');
+                $sheet->mergeCells('A1:L1');
                 $sheet->setCellValue('A1', 'LAPORAN DAFTAR BERKAS ARSIP');
                 $sheet->getStyle('A1')->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -115,7 +118,7 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
                 ]);
 
                 // Set unit pengolah in row 2
-                $sheet->mergeCells('A2:K2');
+                $sheet->mergeCells('A2:L2');
                 $sheet->setCellValue('A2', 'UNIT PENGOLAH: ' . $this->unitPengolah);
                 $sheet->getStyle('A2')->applyFromArray([
                     'font' => ['size' => 11],
@@ -123,7 +126,7 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
                 ]);
 
                 // Set periode in row 3
-                $sheet->mergeCells('A3:K3');
+                $sheet->mergeCells('A3:L3');
                 $sheet->setCellValue('A3', 'PERIODE: ' . $this->periode);
                 $sheet->getStyle('A3')->applyFromArray([
                     'font' => ['size' => 11],
@@ -138,7 +141,7 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
                 }
 
                 // Header row style (row 5)
-                $sheet->getStyle('A5:K5')->applyFromArray([
+                $sheet->getStyle('A5:L5')->applyFromArray([
                     'font' => ['bold' => true, 'size' => 9],
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
@@ -153,7 +156,7 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
                 $sheet->getRowDimension(5)->setRowHeight(30);
 
                 $highestRow = $sheet->getHighestRow();
-                $highestColumn = 'K';
+                $highestColumn = 'L';
 
                 // Apply borders to data area
                 $sheet->getStyle('A5:' . $highestColumn . $highestRow)->applyFromArray([
@@ -169,10 +172,10 @@ class BerkasArsipLaporanExport implements FromArray, WithHeadings, WithColumnWid
                 $sheet->getStyle('A5:' . $highestColumn . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 $sheet->getStyle('A5:' . $highestColumn . $highestRow)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
 
-                // Wrap text for the 'Nama Berkas', 'Keterangan' and 'Lokasi Berkas' columns
+                // Wrap text for the 'Nama Berkas', 'Lokasi Fisik' and 'Keterangan' columns
                 $sheet->getStyle('C6:C' . $highestRow)->getAlignment()->setWrapText(true);
-                $sheet->getStyle('J6:J' . $highestRow)->getAlignment()->setWrapText(true);
                 $sheet->getStyle('K6:K' . $highestRow)->getAlignment()->setWrapText(true);
+                $sheet->getStyle('L6:L' . $highestRow)->getAlignment()->setWrapText(true);
             },
         ];
     }

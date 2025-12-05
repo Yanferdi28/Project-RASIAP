@@ -76,7 +76,7 @@ class DaftarIsiBerkasAction
                         $view = view('pdf.daftar-isi-berkas', compact('records', 'unitPengolah', 'periode'))->render();
 
                         $pdf = Pdf::loadHtml($view)
-                                ->setPaper('a4', 'landscape');
+                                ->setPaper('legal', 'landscape');
 
                         return response()->streamDownload(
                             fn () => print($pdf->output()),

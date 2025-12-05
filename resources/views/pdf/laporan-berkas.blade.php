@@ -64,6 +64,7 @@
                 <th>Retensi<br>Aktif</th>
                 <th>Retensi<br>Inaktif</th>
                 <th>SKKAAD</th>
+                <th>Status Akhir</th>
                 <th>Lokasi Fisik</th>
                 <th>Keterangan</th>
             </tr>
@@ -82,13 +83,14 @@
                     <td style="text-align: center;">{{ $jumlahItem }}</td>
                     <td style="text-align: center;">{{ $record->retensi_aktif }}</td>
                     <td style="text-align: center;">{{ $record->retensi_inaktif }}</td>
+                    <td>{{ $record->klasifikasi->klasifikasi_keamanan ?? '-' }}</td>
                     <td>{{ $record->klasifikasi->status_akhir ?? '-' }}</td>
                     <td>{{ $record->lokasi_fisik ?? '-' }}</td>
                     <td>{{ $record->keterangan ?? '' }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="11" style="text-align: center;">Tidak ada data.</td>
+                    <td colspan="12" style="text-align: center;">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>

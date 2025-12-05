@@ -6,44 +6,50 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Laporan Daftar Isi Berkas Arsip Aktif</title>
     <style>
+        @page {
+            size: legal landscape;
+            margin: 10mm;
+        }
         body {
             font-family: 'Helvetica', sans-serif;
-            font-size: 10px;
+            font-size: 7px;
             margin: 0;
-            padding: 20px;
+            padding: 5px;
         }
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         .header h1 {
-            font-size: 16px;
-            margin: 0 0 5px 0;
+            font-size: 12px;
+            margin: 0 0 3px 0;
             text-transform: uppercase;
             font-weight: bold;
         }
         .header h2 {
-            font-size: 12px;
-            margin: 3px 0;
+            font-size: 9px;
+            margin: 2px 0;
             font-weight: normal;
             text-transform: uppercase;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 9px;
+            font-size: 6px;
         }
         th, td {
             border: 1px solid #000;
-            padding: 5px;
+            padding: 2px 1px;
             text-align: center;
             vertical-align: middle;
+            word-wrap: break-word;
         }
         th {
             background-color: #f2f2f2;
             text-align: center;
             font-weight: bold;
             text-transform: uppercase;
+            font-size: 5.5px;
         }
         .berkas-row {
             background-color: #ffffff;
@@ -71,10 +77,12 @@
                 <th rowspan="2">NO<br>ITEM<br>ARSIP</th>
                 <th rowspan="2">URAIAN INFORMASI</th>
                 <th rowspan="2">TANGGAL</th>
+                <th rowspan="2">TINGKAT<br>PERKEMBANGAN</th>
                 <th rowspan="2">JUMLAH<br>ITEM</th>
                 <th rowspan="2">RETENSI<br>AKTIF</th>
                 <th rowspan="2">RETENSI<br>INAKTIF</th>
                 <th rowspan="2">SKKAAD</th>
+                <th rowspan="2">STATUS<br>AKHIR</th>
                 <th rowspan="2">LOKASI BERKAS</th>
                 <th colspan="5" style="text-align: center;">LOKASI ARSIP</th>
                 <th rowspan="2">KETERANGAN</th>
@@ -108,9 +116,11 @@
                     <td></td>
                     <td>{{ $record->uraian ?? '-' }}</td>
                     <td>{{ $record->created_at ? $record->created_at->format('d-m-Y') : '-' }}</td>
+                    <td></td>
                     <td>{{ $totalUnits }}</td>
                     <td>{{ $record->retensi_aktif ?? '-' }}</td>
                     <td>{{ $record->retensi_inaktif ?? '-' }}</td>
+                    <td>{{ $record->klasifikasi->klasifikasi_keamanan ?? '-' }}</td>
                     <td>{{ $record->klasifikasi->status_akhir ?? '-' }}</td>
                     <td>{{ $record->lokasi_fisik ?? '-' }}</td>
                     <td></td>
@@ -136,6 +146,8 @@
                             <td>{{ $noItem }}</td>
                             <td>{{ $unit->uraian_informasi ?? '-' }}</td>
                             <td>{{ $unit->tanggal ? $unit->tanggal->format('d-m-Y') : '-' }}</td>
+                            <td>{{ $unit->tingkat_perkembangan ?? '-' }}</td>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -146,7 +158,7 @@
                             <td>{{ $unit->no_laci ?? '-' }}</td>
                             <td>{{ $unit->no_box ?? '-' }}</td>
                             <td>{{ $unit->no_folder ?? '-' }}</td>
-                            <td>{{ $unit->tingkat_perkembangan ?? '-' }}</td>
+                            <td>{{ $unit->keterangan ?? '-' }}</td>
                         </tr>
                     @endforeach
                 @endif
@@ -155,7 +167,7 @@
                 @endphp
             @empty
                 <tr>
-                    <td colspan="19" style="text-align: center; padding: 20px;">Tidak ada data.</td>
+                    <td colspan="21" style="text-align: center; padding: 20px;">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>

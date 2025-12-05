@@ -52,13 +52,6 @@ class BerkasArsipForm
                             })
                             ->columnSpanFull(),
 
-                        Select::make('unit_pengolah_id')
-                            ->label('Unit Pengolah')
-                            ->relationship(name: 'unitPengolah', titleAttribute: 'nama_unit')
-                            ->searchable()
-                            ->preload()
-                            ->required(),
-
                         TextInput::make('retensi_aktif')
                             ->label('Retensi Aktif')
                             ->numeric()

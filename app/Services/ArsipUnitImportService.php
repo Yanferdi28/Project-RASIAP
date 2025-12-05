@@ -118,7 +118,7 @@ class ArsipUnitImportService implements ToModel, WithHeadingRow
             'no_folder' => $row['no_folder'] ?? null,
             'no_box' => $row['no_box'] ?? null,
             'keterangan' => $row['keterangan'] ?? null,
-            'status' => 'pending',
+            'status' => 'menunggu',
             'kategori_id' => $kategoriId,
             'sub_kategori_id' => $subKategoriId,
         ]);
@@ -196,7 +196,7 @@ class ArsipUnitImportService implements ToModel, WithHeadingRow
                     'no_folder' => $row['no_folder'] ?? null,
                     'no_box' => $row['no_box'] ?? null,
                     'keterangan' => $row['keterangan'] ?? null,
-                    'status' => 'pending',
+                    'status' => 'menunggu',
                     'kategori_id' => null, // Will be set if provided
                     'sub_kategori_id' => null, // Will be set if provided
                 ]);

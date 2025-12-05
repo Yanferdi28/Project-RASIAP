@@ -15,7 +15,7 @@ class DaftarIsiBerkasAction
     {
         return Action::make('cetak_daftar_isi_berkas')
             ->label('Cetak Daftar Isi Berkas')
-            ->icon('heroicon-o-arrow-down-tray')
+            ->icon('heroicon-o-printer')
             ->requiresConfirmation()
             ->modalHeading('Cetak Daftar Isi Berkas Arsip Aktif')
             ->modalDescription('Pilih format ekspor dan rentang tanggal')
@@ -47,7 +47,7 @@ class DaftarIsiBerkasAction
                     $query = $livewire->getFilteredTableQuery()
                         ->with(['arsipUnits' => function($q) {
                             $q->orderBy('created_at', 'asc');
-                        }, 'klasifikasi', 'unitPengolah', 'arsipUnits.kodeKlasifikasi', 'arsipUnits.unitPengolah'])
+                        }, 'klasifikasi', 'arsipUnits.kodeKlasifikasi', 'arsipUnits.unitPengolah'])
                         ->orderBy('created_at', 'asc');
 
                     // Tambahkan filter berdasarkan tanggal jika disediakan

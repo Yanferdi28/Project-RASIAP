@@ -102,7 +102,7 @@ class ArsipUnit extends Model
 
         static::created(function ($arsipUnit) {
 
-            if ($arsipUnit->status === 'pending') {
+            if ($arsipUnit->status === 'menunggu') {
                 event(new ArsipUnitCreated($arsipUnit));
             }
         });
@@ -162,20 +162,19 @@ class ArsipUnit extends Model
     }
 
     /**
-     * Method to accept the archive unit
+     * Method to approve the archive unit
      */
-    public function accept($keterangan = null, $user = null)
+    public function approve($keterangan = null, $user = null)
     {
         $oldStatus = $this->status;
 
         $this->update([
-            'status' => 'diterima',
+            'status' => 'disetujui',
             'verifikasi_keterangan' => $keterangan,
             'verifikasi_oleh' => $user ? $user->id : Auth::id(),
             'verifikasi_tanggal' => now(),
         ]);
 
-        // Trigger event if status actually changed
         if ($oldStatus !== $this->status) {
             event(new ArsipUnitStatusChanged($this, $oldStatus, $this->status));
         }
@@ -195,32 +194,31 @@ class ArsipUnit extends Model
             'verifikasi_tanggal' => now(),
         ]);
 
-        // Trigger event if status actually changed
         if ($oldStatus !== $this->status) {
             event(new ArsipUnitStatusChanged($this, $oldStatus, $this->status));
         }
     }
 
     /**
-     * Scope to get pending archive units
+     * Scope: arsip menunggu verifikasi
      */
-    public function scopePending($query)
+    public function scopeMenunggu($query)
     {
-        return $query->where('status', 'pending');
+        return $query->where('status', 'menunggu');
     }
 
     /**
-     * Scope to get accepted archive units
+     * Scope: arsip yang sudah disetujui
      */
-    public function scopeAccepted($query)
+    public function scopeDisetujui($query)
     {
-        return $query->where('status', 'diterima');
+        return $query->where('status', 'disetujui');
     }
 
     /**
-     * Scope to get rejected archive units
+     * Scope: arsip yang ditolak
      */
-    public function scopeRejected($query)
+    public function scopeDitolak($query)
     {
         return $query->where('status', 'ditolak');
     }

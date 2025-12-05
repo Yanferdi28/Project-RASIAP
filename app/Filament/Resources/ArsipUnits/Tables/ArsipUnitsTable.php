@@ -93,9 +93,15 @@ class ArsipUnitsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'menunggu' => 'Menunggu',
+                        'disetujui' => 'Disetujui',
+                        'ditolak' => 'Ditolak',
+                        default => $state,
+                    })
                     ->color(fn (string $state): string => match ($state) {
-                        'pending' => 'warning',
-                        'diterima' => 'success',
+                        'menunggu' => 'warning',
+                        'disetujui' => 'success',
                         'ditolak' => 'danger',
                         default => 'gray',
                     }),
@@ -146,8 +152,8 @@ class ArsipUnitsTable
             ->filters([
                 SelectFilter::make('status')
                     ->options([
-                        'pending' => 'Pending',
-                        'diterima' => 'Diterima',
+                        'menunggu' => 'Menunggu',
+                        'disetujui' => 'Disetujui',
                         'ditolak' => 'Ditolak',
                     ])
                     ->label('Status Verifikasi'),
@@ -210,10 +216,10 @@ class ArsipUnitsTable
                     ->tooltip('Verifikasi')
                     ->color(function ($record) {
                         return match ($record->status) {
-                            'pending'  => 'info',
-                            'diterima' => 'success',
-                            'ditolak'  => 'danger',
-                            default    => 'info',
+                            'menunggu'  => 'info',
+                            'disetujui' => 'success',
+                            'ditolak'   => 'danger',
+                            default     => 'info',
                         };
                     })
                     ->visible(function ($record) {
@@ -223,7 +229,7 @@ class ArsipUnitsTable
                     })
                     ->modalHeading('Verifikasi Arsip Unit')
                     ->modalDescription(function ($record) {
-                        return $record->status === 'pending'
+                        return $record->status === 'menunggu'
                             ? 'Pilih tindakan untuk verifikasi arsip unit ini.'
                             : 'Ubah verifikasi untuk arsip unit ini.';
                     })
@@ -233,18 +239,18 @@ class ArsipUnitsTable
                         \Filament\Forms\Components\Radio::make('keputusan')
                             ->label('Keputusan')
                             ->options([
-                                'diterima' => 'Terima',
-                                'ditolak'  => 'Tolak',
+                                'disetujui' => 'Setujui',
+                                'ditolak'   => 'Tolak',
                             ])
                             ->required()
-                            ->default(fn ($record) => $record->status === 'pending' ? 'diterima' : $record->status),
+                            ->default(fn ($record) => $record->status === 'menunggu' ? 'disetujui' : $record->status),
                         \Filament\Forms\Components\Textarea::make('keterangan')
                             ->label('Keterangan (Opsional)')
                             ->placeholder('Tambahkan keterangan jika diperlukan'),
                     ])
                     ->action(function ($record, array $data) {
-                        if ($data['keputusan'] === 'diterima') {
-                            $record->accept($data['keterangan'] ?? null);
+                        if ($data['keputusan'] === 'disetujui') {
+                            $record->approve($data['keterangan'] ?? null);
                         } else {
                             $record->reject($data['keterangan'] ?? null);
                         }
@@ -275,7 +281,7 @@ class ArsipUnitsTable
                             return false; // Management role cannot select/change berkas arsip
                         }
                         if ($user->hasRole('operator')) {
-                            return $record->status === 'pending';
+                            return $record->status === 'menunggu';
                         }
                         return true;
                     })
@@ -376,7 +382,7 @@ class ArsipUnitsTable
             ->toolbarActions([
                 Action::make('printArsipUnit')
                     ->label('Cetak Arsip Unit')
-                    ->icon('heroicon-o-arrow-down-tray')
+                    ->icon('heroicon-o-printer')
                     ->requiresConfirmation()
                     ->modalHeading('Cetak Arsip Unit')
                     ->modalDescription('Pilih format ekspor dan rentang tanggal')
@@ -406,8 +412,8 @@ class ArsipUnitsTable
                             ->label('Filter Status')
                             ->options([
                                 '' => 'Semua Status',
-                                'pending' => 'Pending',
-                                'diterima' => 'Diterima',
+                                'menunggu' => 'Menunggu',
+                                'disetujui' => 'Disetujui',
                                 'ditolak' => 'Ditolak',
                             ])
                             ->default(''),
@@ -484,7 +490,6 @@ class ArsipUnitsTable
                                 'Laporan Daftar Arsip Unit.pdf'
                             );
                         } else { // Excel
-                            // Use the new export class with proper styling
                             $export = new \App\Exports\ArsipUnitLaporanExport($records, $unitPengolah, $periode);
                             $filename = 'laporan_arsip_unit_' . date('Y-m-d_H-i-s') . '.xlsx';
 

@@ -17,7 +17,6 @@ class BerkasArsip extends Model
     protected $fillable = [
         'nama_berkas',
         'klasifikasi_id',
-        'unit_pengolah_id',
         'retensi_aktif',
         'retensi_inaktif',
         'penyusutan_akhir',
@@ -35,17 +34,12 @@ class BerkasArsip extends Model
      */
     public function scopeWithCommonRelationships($query)
     {
-        return $query->with(['klasifikasi', 'unitPengolah']);
+        return $query->with(['klasifikasi']);
     }
     
     public function klasifikasi(): BelongsTo
     {
         return $this->belongsTo(KodeKlasifikasi::class, 'klasifikasi_id');
-    }
-
-    public function unitPengolah(): BelongsTo
-    {
-        return $this->belongsTo(UnitPengolah::class, 'unit_pengolah_id');
     }
     
     public function arsipUnits()

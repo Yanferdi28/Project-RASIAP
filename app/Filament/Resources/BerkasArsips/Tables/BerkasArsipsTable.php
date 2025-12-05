@@ -36,11 +36,6 @@ class BerkasArsipsTable
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('unitPengolah.nama_unit')
-                    ->label('Unit Pengolah')
-                    ->searchable()
-                    ->sortable(),
-
                 TextColumn::make('nama_berkas')
                     ->label('Nama Berkas')
                     ->searchable()
@@ -106,21 +101,9 @@ class BerkasArsipsTable
                     ->searchable()
                     ->preload()
                     ->label('Kode Klasifikasi'),
-
-                SelectFilter::make('unit_pengolah_id')
-                    ->relationship('unitPengolah', 'nama_unit')
-                    ->searchable()
-                    ->preload()
-                    ->label('Unit Pengolah'),
             ])
             ->modifyQueryUsing(function ($query) {
                 $query->withCommonRelationships();
-                
-                $user = auth()->user();
-                // Filter berdasarkan unit pengolah untuk non-admin
-                if ($user && !$user->hasAnyRole(['superadmin', 'admin', 'manajemen'])) {
-                    $query->where('unit_pengolah_id', $user->unit_pengolah_id);
-                }
                 
                 return $query;
             })
@@ -146,7 +129,7 @@ class BerkasArsipsTable
             ->toolbarActions([
                 Action::make('printCustomPdf')
                     ->label('Cetak Berkas')
-                    ->icon('heroicon-o-arrow-down-tray')
+                    ->icon('heroicon-o-printer')
                     ->requiresConfirmation()
                     ->modalHeading('Cetak Berkas Arsip')
                     ->modalDescription('Pilih format ekspor dan rentang tanggal')
@@ -173,10 +156,8 @@ class BerkasArsipsTable
                             ->required(),
                     ])
                     ->action(function (array $data, \Filament\Tables\Contracts\HasTable $livewire) {
-                        // Buat query dasar dari tabel yang sudah difilter
                         $query = $livewire->getFilteredTableQuery()->with(['klasifikasi', 'arsipUnits']);
 
-                        // Tambahkan filter berdasarkan tanggal jika disediakan
                         if (isset($data['tanggal_cetak_dari']) && $data['tanggal_cetak_dari']) {
                             $query->whereDate('created_at', '>=', $data['tanggal_cetak_dari']);
                         }
@@ -187,12 +168,10 @@ class BerkasArsipsTable
 
                         $records = $query->get();
 
-                        // Buat periode untuk ditampilkan di laporan
                         $dari = $data['tanggal_cetak_dari'] ?? now()->subMonth()->format('d/m/Y');
                         $sampai = $data['tanggal_cetak_sampai'] ?? now()->format('d/m/Y');
                         $periode = \Carbon\Carbon::parse($dari)->format('d F Y') . ' - ' . \Carbon\Carbon::parse($sampai)->format('d F Y');
 
-                        // Ambil unit pengolah dari user yang login
                         $user = auth()->user();
                         $unitPengolah = $user->unitPengolah->nama_unit ?? 'Unit Pengolah';
 
@@ -209,7 +188,6 @@ class BerkasArsipsTable
                                 'Laporan Daftar Berkas Arsip.pdf'
                             );
                         } else { // Excel
-                            // Use the new export class with proper styling
                             $export = new \App\Exports\BerkasArsipLaporanExport($records, $unitPengolah, $periode);
                             $filename = 'laporan_berkas_arsip_' . date('Y-m-d_H-i-s') . '.xlsx';
 
@@ -218,8 +196,6 @@ class BerkasArsipsTable
                     }),
 
                 \App\Actions\DaftarIsiBerkasAction::make(),
-
-
             ])
             ->defaultSort('created_at', 'asc')
             ->striped()

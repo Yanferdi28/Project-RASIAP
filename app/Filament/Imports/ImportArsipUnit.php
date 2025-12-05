@@ -176,7 +176,7 @@ class ImportArsipUnit extends Importer
         $record->no_folder = $data['no_folder'] ?? null;
         $record->no_box = $data['no_box'] ?? null;
         $record->keterangan = $data['keterangan'] ?? null;
-        $record->status = 'pending';
+        $record->status = 'menunggu';
 
         return $record;
     }

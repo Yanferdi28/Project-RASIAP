@@ -31,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
         App::setLocale('id');
 
         // Optimisasi: Prevent lazy loading in development (catches N+1 issues)
-        // Model::preventLazyLoading(!app()->isProduction());
+        Model::preventLazyLoading(!app()->isProduction());
         
         // Optimisasi: Prevent silently discarding attributes
         Model::preventSilentlyDiscardingAttributes(!app()->isProduction());

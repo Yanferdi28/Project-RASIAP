@@ -73,7 +73,7 @@ class DaftarIsiBerkasExport implements FromArray, WithHeadings, WithColumnWidths
                 'tanggal_berkas' => $record->created_at ? $record->created_at->format('d/m/Y') : '-',
                 'no_item' => '',
                 'uraian_informasi' => $record->uraian ?? '-',
-                'tanggal_item' => $record->created_at ? $record->created_at->format('d-m-Y') : '-',
+                'tanggal_item' => '',
                 'tingkat_perkembangan' => '',
                 'jumlah_item' => $totalUnits,
                 'retensi_aktif' => $record->retensi_aktif ?? '-',

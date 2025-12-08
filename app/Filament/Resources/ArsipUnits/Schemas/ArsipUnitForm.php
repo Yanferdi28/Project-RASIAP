@@ -198,7 +198,7 @@ class ArsipUnitForm
                             ->disk('public')
                             ->imagePreviewHeight('250')
                             ->acceptedFileTypes(['application/pdf', 'image/*', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
-                            ->maxSize(10240)
+                            ->maxSize(20480)
                             ->downloadable()
                             ->openable(),
                     ]),
